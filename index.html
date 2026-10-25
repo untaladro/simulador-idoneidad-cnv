@@ -228,6 +228,87 @@ details.fcalc[open]>summary::before{content:"▾ "}
 .nodate{background:var(--panel);border:1px dashed var(--line2);border-radius:14px;padding:18px;color:var(--ink2);font-size:14.5px;line-height:1.55}
 .nodate b{color:var(--ink)}
 
+
+/* ---- color por módulo ---- */
+:root{--m1:#2f5bd3;--m2:#c4314b;--m3:#0e8a8c;--m4:#b26b00;--m5:#2c8a4f;--m6:#7a4bc8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--m1:#86a2f7;--m2:#f2869a;--m3:#4fcfc8;--m4:#f0b256;--m5:#6fd49a;--m6:#b99cf6}}
+:root[data-theme="dark"]{--m1:#86a2f7;--m2:#f2869a;--m3:#4fcfc8;--m4:#f0b256;--m5:#6fd49a;--m6:#b99cf6}
+.mc1{--mc:var(--m1)}.mc2{--mc:var(--m2)}.mc3{--mc:var(--m3)}.mc4{--mc:var(--m4)}.mc5{--mc:var(--m5)}.mc6{--mc:var(--m6)}
+.mtag{background:color-mix(in srgb,var(--mc) 13%,var(--panel));color:var(--mc);border:1px solid color-mix(in srgb,var(--mc) 35%,transparent)}
+.mdot{display:inline-flex;align-items:center;gap:6px;color:var(--mc);font-weight:650}
+.mdot::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mc)}
+
+/* encabezados de sección en minúscula, sin rótulo en mayúsculas */
+.sect>h2{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.015em;text-transform:none;color:var(--ink);margin-bottom:12px}
+.sect>h2 em{font-family:var(--sans);font-size:13.5px;color:var(--ink3);font-weight:400}
+
+/* mapa de módulos */
+.hero{padding-bottom:4px}
+.modmap{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:20px}
+.mtile{position:relative;text-align:left;color:inherit;background:color-mix(in srgb,var(--mc) 9%,var(--panel));border:1px solid color-mix(in srgb,var(--mc) 30%,var(--line));border-top:4px solid var(--mc);border-radius:10px;padding:10px 11px 11px;display:flex;flex-direction:column;gap:6px;min-width:0;transition:border-color .12s,background .12s}
+.mtile:hover{background:color-mix(in srgb,var(--mc) 16%,var(--panel));border-color:var(--mc)}
+.mtile .mnum{font-family:var(--serif);font-size:30px;font-weight:700;line-height:.9;color:var(--mc);letter-spacing:-.03em}
+.mtile .mname{font-size:12.5px;font-weight:600;line-height:1.3;color:var(--ink);min-height:2.6em}
+.mtile .mbar{height:7px;border-radius:99px;background:color-mix(in srgb,var(--mc) 14%,var(--panel2));overflow:hidden;display:flex}
+.mtile .mbar i{display:block;height:100%}
+.mtile .mbar i.d{background:var(--mc)}
+.mtile .mbar i.s{background:color-mix(in srgb,var(--mc) 38%,transparent)}
+.mtile .mst{font-size:11.5px;color:var(--ink2);line-height:1.35;font-variant-numeric:tabular-nums}
+.mtile .mst b{color:var(--ink);font-weight:650}
+.mtile.weak::after{content:"más flojo";position:absolute;top:8px;right:9px;font-size:10.5px;font-weight:650;color:var(--mc);background:var(--panel);border:1px solid var(--mc);border-radius:99px;padding:0 7px}
+.maplegend{display:flex;gap:14px;flex-wrap:wrap;margin-top:9px;font-size:12px;color:var(--ink3)}
+.maplegend i{display:inline-block;width:18px;height:6px;border-radius:99px;margin-right:6px;vertical-align:1px;background:var(--ink2)}
+.maplegend i.s{opacity:.35}
+@media (max-width:860px){.modmap{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:420px){.modmap{grid-template-columns:repeat(2,1fr)}}
+
+/* composición de cada modo */
+.mcomp{display:flex;height:5px;border-radius:99px;overflow:hidden;margin-top:auto;padding-top:0;gap:2px}
+.mode .mcomp{margin-top:9px}
+.mcomp i{display:block;height:100%;border-radius:2px}
+.mode{border-top-width:1px}
+.mode.primary{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 16%,var(--panel)),var(--panel) 70%);border-color:var(--accent);border-width:1.5px}
+.mode.primary .mt{color:var(--accent)}
+
+/* módulos con color en el resto de la app */
+.modchk[aria-pressed="true"]{background:color-mix(in srgb,var(--mc) 12%,var(--panel));border-color:var(--mc)}
+.modchk[aria-pressed="true"] .box{background:var(--mc);border-color:var(--mc)}
+.modchk .mn{color:var(--mc)}
+.cell[class*="mc"]{box-shadow:inset 0 -3px 0 var(--mc)}
+.gmod{border-top:4px solid var(--mc)}
+.gmod .gh{background:color-mix(in srgb,var(--mc) 8%,var(--panel2))}
+.gmod .gh b{color:var(--mc)}
+.card.mfic{border-top:4px solid var(--mc)}
+.card.mfic>h3{color:var(--mc)}
+.revq .rh .mdot{font-size:11px}
+.today{border-color:var(--accent);border-width:1.5px}
+.today .th{background:linear-gradient(100deg,color-mix(in srgb,var(--accent) 18%,var(--panel)),color-mix(in srgb,var(--accent) 5%,var(--panel)))}
+
+/* banco vs. norma */
+.wlead{color:var(--ink2);font-size:15px;max-width:68ch;margin:8px 0 0;line-height:1.6}
+.wtip{margin-top:14px;max-width:72ch;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:11px 14px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.wtip b{color:var(--ink)}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:12px}
+@media (max-width:520px){.wgrid{grid-template-columns:1fr}}
+.wrow{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mc);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.wrow .whd{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px}
+.wrow .wcat{color:var(--ink3)}
+.wrow .wq{margin:0;font-family:var(--serif);font-size:16px;line-height:1.45}
+.wrow .wcmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:520px){.wrow .wcmp{grid-template-columns:1fr}}
+.wrow .wcmp>div{border-radius:8px;padding:8px 10px;font-size:13.5px;line-height:1.45}
+.wrow .wcmp b{display:block;font-size:12px;font-weight:650;margin-bottom:2px}
+.wrow .wb{background:var(--panel2);border:1px solid var(--line2);color:var(--ink2)}
+.wrow .wb b{color:var(--ink3)}
+.wrow .wn{background:var(--ok-soft);border:1px solid color-mix(in srgb,var(--ok) 45%,transparent);color:var(--ink)}
+.wrow .wn b{color:var(--ok)}
+.wrow details>summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--accent)}
+.wrow .fund{margin-top:8px}
+.wrow .fund .fn.warn{display:none}
+.filters .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.blk[class*=" mc"]{box-shadow:inset 4px 0 0 var(--mc)}
+.blk[class*=" mc"] .bt{color:var(--ink)}
+
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -388,6 +469,8 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <div class="examdate"><label for="examDate">Fecha de tu examen</label><input type="date" id="examDate"><span id="examDateHint"></span></div>
     <p>Ocho modos de práctica sobre el mismo banco, un plan día por día y la ficha de datos duros para el último repaso. Las estadísticas se comparten entre modos, así que lo que fallás en tarjetas vuelve en el repaso de errores.</p>
     <div class="statline" id="statline"></div>
+    <div class="modmap" id="modMap"></div>
+    <div class="maplegend"><span><i></i>dominadas (2 aciertos, sin errores)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para practicarlo.</span></div>
   </div>
 
   <div class="sect">
@@ -465,6 +548,11 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
         <span class="md">Todos los plazos, porcentajes, umbrales y normas del banco, agrupados. Se pueden tapar las respuestas.</span>
         <span class="mspec" id="specFicha"></span>
       </button>
+      <button class="mode" data-nav="warn">
+        <span class="mt">Banco vs. norma vigente</span>
+        <span class="md">Las preguntas cuya respuesta oficial quedó vieja o es discutible frente al texto vigente. Para tener en cuenta, no para memorizar.</span>
+        <span class="mspec" id="specWarn"></span>
+      </button>
       <button class="mode" data-nav="plan">
         <span class="mt">Plan completo</span>
         <span class="md">Nueve días de estudio hasta tu fecha de examen, con lo que toca cada día y el seguimiento de lo hecho.</span>
@@ -473,13 +561,6 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="sect" id="warnSect">
-    <h2>La norma vigente no coincide con el banco <em id="warnCount"></em></h2>
-    <div class="cfg" style="padding:12px 16px">
-      <div style="font-size:13.5px;color:var(--ink2);margin-bottom:10px;max-width:70ch">Preguntas donde el texto vigente de la norma dice otra cosa que la respuesta marcada como correcta. Repasalas antes del examen: conocé las dos versiones.</div>
-      <div id="warnList" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
-  </div>
   <div class="sect" id="cfgSect">
     <h2>Configuración <em id="cfgFor"></em></h2>
     <div class="cfg">
@@ -637,6 +718,24 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       </div>
     </div>
     <div id="fichaHost"></div>
+  </div>
+</div>
+
+<!-- ============ BANCO VS NORMA ============ -->
+<div id="scr-warn" class="wrap hide">
+  <div class="res">
+    <div>
+      <h1 style="font-family:var(--serif);font-size:27px;font-weight:600;letter-spacing:-.02em">Banco vs. norma vigente</h1>
+      <p class="wlead">Preguntas en las que la respuesta marcada como correcta no coincide con el texto vigente de la ley o de las Normas CNV. Algunas quedaron viejas porque la norma cambió y otras ya eran discutibles en el banco.</p>
+      <div class="wtip"><b>¿Hay que memorizarlas?</b> No. El examen se arma con el banco oficial, así que si aparece la opción del banco, lo más probable es que sea la que corrige como buena. Esta lista sirve para que no te desconcierte cuando la teoría que estudiaste dice otra cosa, y para el trabajo real, donde vale la norma vigente.</div>
+      <div class="filters" id="warnFilters" style="margin-top:16px">
+        <button class="btn ghost sm" data-f="all" aria-pressed="true">Todas</button>
+        <button class="btn ghost sm" data-f="a" aria-pressed="false">La norma cambió</button>
+        <button class="btn ghost sm" data-f="d" aria-pressed="false">Respuesta discutible</button>
+      </div>
+    </div>
+    <div class="wgrid" id="warnList"></div>
+    <div><button class="btn ghost" data-nav="home">← Volver al inicio</button></div>
   </div>
 </div>
 
@@ -861,6 +960,45 @@ function renderExamHeader(){
   $('heroTitle').textContent=t; $('examDateHint').textContent=hint;
 }
 
+
+/* ---------- mapa por módulo y composición ---------- */
+function modStats(m){
+  const qs=BANK.filter(q=>q.m===m); let seen=0,dom=0,r=0,w=0;
+  qs.forEach(q=>{const s=store.stats[q.id]; if(!s) return; seen++; r+=s.r; w+=s.w; if(s.r>=2&&s.w===0) dom++;});
+  return {n:qs.length,seen,dom,r,w,acc:(r+w)?r/(r+w):null};
+}
+function renderModMap(){
+  const S={}; for(let m=1;m<=6;m++) S[m]=modStats(m);
+  const cand=Object.keys(S).filter(m=>S[m].r+S[m].w>=8);
+  const weak=cand.length>=2?cand.sort((a,b)=>S[a].acc-S[b].acc)[0]:null;
+  const host=$('modMap'); host.innerHTML="";
+  for(let m=1;m<=6;m++){
+    const s=S[m], pd=s.dom/s.n*100, ps=(s.seen-s.dom)/s.n*100;
+    const b=el('button','mtile mc'+m+(String(m)===weak?' weak':''),
+      `<span class="mnum">${m}</span><span class="mname">${esc(MODSHORT[m])}</span>
+       <span class="mbar"><i class="d" style="width:${pd}%"></i><i class="s" style="width:${ps}%"></i></span>
+       <span class="mst"><b>${s.dom}</b> de ${s.n} dominadas${s.acc!=null?` · <b>${Math.round(s.acc*100)}%</b> acierto`:""}</span>`);
+    b.type="button"; b.title=`Practicar el módulo ${m}`;
+    b.addEventListener('click',()=>{applyMode('practice'); CFG.mods=[m]; refreshCfg();});
+    host.appendChild(b);
+  }
+}
+function compBar(qs,eq){
+  const c={}; qs.forEach(q=>c[q.m]=(c[q.m]||0)+1);
+  const tot=Object.values(c).reduce((a,b)=>a+b,0)||1;
+  return Object.keys(c).sort().map(m=>`<i class="mc${m}" style="background:var(--mc);flex:${eq?1:c[m]/tot}" title="Módulo ${m}: ${c[m]}"></i>`).join("");
+}
+function renderComp(){
+  const all=[1,2,3,4,5,6];
+  const pools={cards:BANK,recall:BANK,datos:poolFor('datos',all),ejercicios:poolFor('ejercicios',all),
+    full:BANK,partial:BANK.filter(q=>q.m<=3),practice:BANK,wrong:wrongPool()};
+  document.querySelectorAll('.mode[data-mode]').forEach(b=>{
+    let c=b.querySelector('.mcomp'); if(!c){c=el('span','mcomp'); b.appendChild(c);}
+    const md=b.dataset.mode; c.innerHTML=compBar(pools[md]||[],md==="full"||md==="partial");
+    c.title=md==="full"||md==="partial"?"Misma cantidad de preguntas por módulo":"Mezcla de módulos";
+  });
+}
+
 /* ---------- selección ponderada ---------- */
 function weight(q){
   const st=store.stats[q.id];
@@ -943,21 +1081,24 @@ function renderHome(){
   $('wrongBtn').disabled=wp.length===0;
   $('sourceNote').innerHTML="La duración oficial figura distinta según la fuente: argentina.gob.ar indica 45 minutos para el examen completo y el sitio de la CNV indica 90. El examen completo arranca en 45, que es el escenario exigente, y el otro valor está disponible. Confirmá la duración vigente con la CNV antes de rendir. El banco base proviene de la guía de estudio oficial y algunas referencias normativas pueden haber quedado desactualizadas. Las opciones incorrectas no figuran en la guía oficial: están generadas, acá y en cualquier otro simulador, así que el descarte de opciones no es una técnica confiable y conviene estudiar con tarjetas.";
   $('todayDate').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
-  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); renderWarn();
+  $('specWarn').textContent=`${warnQs().length} preguntas`;
+  renderModMap(); renderComp();
+  renderToday(); renderModGrid(); applyMode("full",false); renderHistory();
 }
+const WCAT={"15": "a", "146": "a", "243": "a", "252": "a", "257": "a", "261": "a", "306": "a", "331": "a", "340": "a", "371": "a", "624": "a", "709": "a", "727": "a", "741": "a", "749": "a", "753": "a", "760": "a", "11": "d", "140": "d", "155": "d", "260": "d", "454": "d", "504": "d", "520": "d", "556": "d", "732": "d", "884": "d"};
+let warnF="all";
+function warnQs(){ return Object.keys(FUND).filter(k=>FUND[k].w).map(Number).sort((a,b)=>a-b).map(id=>BANK.find(q=>q.id===id)).filter(Boolean); }
 function renderWarn(){
-  const ids=Object.keys(FUND).filter(k=>FUND[k].w).map(Number).sort((a,b)=>a-b);
-  const qs=ids.map(id=>BANK.find(q=>q.id===id)).filter(Boolean);
-  $('warnCount').textContent=qs.length+" preguntas";
   const host=$('warnList'); host.innerHTML="";
-  qs.forEach(q=>{
-    const d=el('details','fund lite');
-    const inner=fundHTML(q,true).replace(/^<details class="fund[^"]*"( open)?>/,'<div class="fund" style="margin-top:0">').replace(/<\/details>$/,'</div>');
-    d.innerHTML=`<summary><span class="ft">Módulo ${q.m}</span><span class="fs" style="font-family:var(--sans);font-size:13.5px;color:var(--ink)">${esc(q.q.length>150?q.q.slice(0,150)+"…":q.q)}</span></summary>
-      <div class="fbody"><div class="fn"><b>Respuesta del banco:</b> ${esc(q.a)}</div>${inner}</div>`;
+  warnQs().filter(q=>warnF==="all"||WCAT[q.id]===warnF).forEach(q=>{
+    const f=FUND[q.id], cat=WCAT[q.id]==="a"?"La norma cambió":"Respuesta discutible";
+    const d=el('article','wrow mc'+q.m);
+    d.innerHTML=`<div class="whd"><span class="tag mtag">Módulo ${q.m}</span><span class="wcat">${cat}</span></div>
+      <p class="wq">${esc(q.q)}</p>
+      <div class="wcmp"><div class="wb"><b>El banco marca</b>${esc(q.a)}</div><div class="wn"><b>${WCAT[q.id]==="a"?"Texto vigente":"Lo correcto"}</b>${esc(f.n||"")}</div></div>
+      ${f.k!=="e"&&f.k!=="x"?`<details><summary>Ver la fuente</summary>${fundHTML(q,true)}</details>`:""}`;
     host.appendChild(d);
   });
-  $('warnSect').classList.toggle('hide',!qs.length);
 }
 function renderToday(){
   const t=today();
@@ -989,7 +1130,8 @@ function fillBlocks(host,day){
   host.innerHTML="";
   day.b.forEach((b,i)=>{
     const key=day.d+"#"+i, on=!!store.plan[key];
-    const row=el('div','blk'+(on?' done':''));
+    const mm=/m[oó]dulos? (\d)/i.exec(b.t);
+    const row=el('div','blk'+(on?' done':'')+(mm?' mc'+mm[1]:''));
     row.innerHTML=`<button class="tick" aria-label="Marcar como hecho">✓</button>
       <span class="bt">${esc(b.t)}${b.min?`<span class="bmin">~${b.min} min</span>`:""}</span>`;
     row.querySelector('.tick').addEventListener('click',()=>{
@@ -1030,7 +1172,7 @@ function renderModGrid(){
   const g=$('modGrid'); g.innerHTML="";
   for(let m=1;m<=6;m++){
     const n=BANK.filter(q=>q.m===m).length;
-    const b=el('button','modchk',`<span class="box">✓</span><span><span class="mn">Módulo ${m}</span><span class="mc">${MODSHORT[m]} · ${n}</span></span>`);
+    const b=el('button','modchk mc'+m,`<span class="box">✓</span><span><span class="mn">Módulo ${m}</span><span class="mc">${MODSHORT[m]} · ${n}</span></span>`);
     b.type="button"; b.dataset.m=m;
     b.addEventListener('click',()=>{
       if(P[CFG.mode].lock) return;
@@ -1158,7 +1300,7 @@ function goTo(i){
   if(EX.items[EX.idx]) markSpent(EX.idx);
   EX.idx=Math.max(0,Math.min(EX.items.length-1,i));
   const it=EX.items[EX.idx]; it.t0=Date.now(); const q=it.q;
-  $('qMod').textContent="MÓDULO "+q.m; $('qTopic').textContent=q.t;
+  $('qMod').textContent="Módulo "+q.m; $('qMod').className="tag mtag mc"+q.m; $('qTopic').textContent=q.t;
   $('qNum').textContent=(EX.idx+1)+" / "+EX.items.length;
   $('qText').textContent=q.q;
   const host=$('qOpts'); host.innerHTML="";
@@ -1203,7 +1345,7 @@ function buildSheet(){
 function updateSheet(){
   const cells=$('sheetGrid').children;
   EX.items.forEach((it,i)=>{
-    const c=cells[i]; if(!c) return; c.className="cell";
+    const c=cells[i]; if(!c) return; c.className="cell mc"+it.q.m;
     if(EX.corr==="now"&&it.revealed) c.classList.add(it.sel!==null&&it.opts[it.sel].ok?"ok":"bad");
     else if(it.sel!==null) c.classList.add("done");
     if(it.flag) c.classList.add("flag");
@@ -1211,7 +1353,7 @@ function updateSheet(){
   });
   const mods={};
   EX.items.forEach(it=>{const m=it.q.m;(mods[m]=mods[m]||{n:0,d:0}).n++;if(it.sel!==null)mods[m].d++;});
-  $('sheetMods').innerHTML=Object.keys(mods).sort().map(m=>`<div><span>Módulo ${m}</span><b>${mods[m].d}/${mods[m].n}</b></div>`).join("");
+  $('sheetMods').innerHTML=Object.keys(mods).sort().map(m=>`<div><span class="mdot mc${m}">Módulo ${m}</span><b>${mods[m].d}/${mods[m].n}</b></div>`).join("");
 }
 function reviewBeforeSubmit(){
   const blank=EX.items.filter(i=>i.sel===null).length, flags=EX.items.filter(i=>i.flag).length;
@@ -1245,7 +1387,7 @@ function startStudy(){
 }
 function showCard(){
   const it=ST.items[ST.idx], q=it.q, isRecall=ST.mode==="recall", isDato=ST.mode==="datos";
-  $('sMod').textContent="MÓDULO "+q.m;
+  $('sMod').textContent="Módulo "+q.m; $('sMod').className="tag mtag mc"+q.m;
   $('sTopic').textContent=q.t;
   $('sNum').textContent=(ST.idx+1)+" / "+ST.items.length;
   $('sProg').style.width=Math.round(ST.idx/ST.items.length*100)+"%";
@@ -1326,7 +1468,7 @@ function renderResults(correct,pct){
   EX.items.forEach(it=>{const b=mods[it.q.m]=mods[it.q.m]||{n:0,ok:0,t:0};b.n++;b.t+=it.spent;if(it.sel!==null&&it.opts[it.sel].ok)b.ok++;});
   $('cardMods').innerHTML=`<h3>Resultado por módulo</h3><table><thead><tr><th>Mód.</th><th>Contenido</th><th class="num">Correctas</th><th style="width:90px">Nivel</th><th class="num">Tiempo</th></tr></thead><tbody>`+
     Object.keys(mods).sort().map(m=>{const b=mods[m],p=b.ok/b.n;
-      return `<tr><td><b>${m}</b></td><td style="color:var(--ink2);font-size:13px">${esc(MODSHORT[m])}</td><td class="num">${b.ok}/${b.n}</td><td><div class="minibar ${pctClass(p)}"><i style="width:${Math.round(p*100)}%"></i></div></td><td class="num">${fmtDur(b.t)}</td></tr>`;}).join("")+
+      return `<tr><td><span class="mdot mc${m}">${m}</span></td><td style="color:var(--ink2);font-size:13px">${esc(MODSHORT[m])}</td><td class="num">${b.ok}/${b.n}</td><td><div class="minibar ${pctClass(p)}"><i style="width:${Math.round(p*100)}%"></i></div></td><td class="num">${fmtDur(b.t)}</td></tr>`;}).join("")+
     `</tbody></table><p style="font-size:12.5px;color:var(--ink3);margin:11px 0 0">La nota del examen real es global, no por módulo. Igual conviene ver dónde se concentran los errores.</p>`;
   const tops={};
   EX.items.forEach(it=>{const b=tops[it.q.t]=tops[it.q.t]||{n:0,ok:0};b.n++;if(it.sel!==null&&it.opts[it.sel].ok)b.ok++;});
@@ -1352,7 +1494,7 @@ function renderReview(){
     const ok=it.sel!==null&&it.opts[it.sel].ok;
     const ci=it.opts.findIndex(o=>o.ok);
     const d=el('div','revq '+(it.sel===null?"skip":(ok?"ok":"bad")));
-    d.innerHTML=`<div class="rh"><span>#${i+1}</span><span>MÓDULO ${it.q.m}</span><span>${esc(it.q.t)}</span><span>${fmtDur(it.spent)}</span>${it.flag?'<span style="color:var(--flag)">⚑</span>':''}</div>
+    d.innerHTML=`<div class="rh"><span>#${i+1}</span><span class="mdot mc${it.q.m}">Módulo ${it.q.m}</span><span>${esc(it.q.t)}</span><span>${fmtDur(it.spent)}</span>${it.flag?'<span style="color:var(--flag)">⚑</span>':''}</div>
       <div class="rq">${esc(it.q.q)}</div>
       ${it.sel!==null&&!ok?`<div class="ra w">Tu respuesta: ${LETTERS[it.sel]}. ${esc(it.opts[it.sel].t)}</div>`:""}
       ${it.sel===null?`<div class="ra w">Sin responder</div>`:""}
@@ -1415,7 +1557,7 @@ function renderGuia(){
     const st=qs.map(q=>store.stats[q.id]).filter(Boolean);
     const r=st.reduce((a,x)=>a+x.r,0), w=st.reduce((a,x)=>a+x.w,0);
     const rend=(r+w)?Math.round(r/(r+w)*100)+"%":"sin datos";
-    const d=el('div','gmod');
+    const d=el('div','gmod mc'+m);
     d.innerHTML=`<div class="gh"><b>Módulo ${m}</b><span>${esc(s.t)}</span></div>
       <div class="gb">
         <ul>${s.lee.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
@@ -1444,7 +1586,7 @@ let fichaHidden=false;
 function renderFicha(){
   const host=$('fichaHost'); host.innerHTML="";
   Object.keys(FICHA).sort().forEach(m=>{
-    const card=el('div','card');
+    const card=el('div','card mfic mc'+m);
     let h=`<h3>Módulo ${m} · ${esc(MODSHORT[m])}</h3>`;
     Object.entries(FICHA[m]).forEach(([tema,items])=>{
       h+=`<div class="fgroup"><h4>${esc(tema)}</h4><div class="fsub">${esc(SRC.temas[tema]||"")}</div>`;
@@ -1488,14 +1630,15 @@ function renderPlan(sel){
 
 /* ============================================================ UI */
 function nav(s){
-  ['home','exam','study','guia','ficha','plan','res','form'].forEach(x=>$('scr-'+x).classList.toggle('hide',x!==s));
-  if(s==='home'||s==='guia'||s==='ficha'||s==='plan'||s==='form'){
+  ['home','exam','study','guia','ficha','plan','res','form','warn'].forEach(x=>$('scr-'+x).classList.toggle('hide',x!==s));
+  if(s==='home'||s==='guia'||s==='ficha'||s==='plan'||s==='form'||s==='warn'){
     $('clock').classList.add('hide'); $('progpill').classList.add('hide'); $('abortBtn').classList.add('hide');
   }
   if(s==='guia') renderGuia();
   if(s==='ficha') renderFicha();
   if(s==='plan') renderPlan();
   if(s==='form') renderForm();
+  if(s==='warn') renderWarn();
   window.scrollTo({top:0,behavior:"instant"});
 }
 function confirmModal(title,body,okLabel,onOk,danger){
@@ -1529,6 +1672,7 @@ $('homeBtn').addEventListener('click',()=>{EX=null;nav('home');renderHome();});
 $('exportBtn').addEventListener('click',exportReport);
 $('fichaHide').addEventListener('click',()=>{fichaHidden=!fichaHidden;renderFicha();});
 $('fichaPrint').addEventListener('click',()=>window.print());
+$('warnFilters').addEventListener('click',e=>{const b=e.target.closest('[data-f]'); if(!b) return; warnF=b.dataset.f; [...$('warnFilters').children].forEach(x=>x.setAttribute('aria-pressed',x===b)); renderWarn();});
 $('formHide').addEventListener('click',()=>{formHidden=!formHidden;renderForm();});
 $('formPractice').addEventListener('click',()=>practiceIds(formIdsAll()));
 $('formPrint').addEventListener('click',()=>{const ds=[...document.querySelectorAll('#formHost details.fcalc')];const was=ds.map(d=>d.open);ds.forEach(d=>d.open=true);window.print();ds.forEach((d,i)=>d.open=was[i]);});

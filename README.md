@@ -6,7 +6,7 @@ Simulador no oficial del examen de idoneidad de la Comisión Nacional de Valores
 
 ## Qué incluye
 
-- Las 735 preguntas de la Guía de Estudio v5 de la CNV (25/06/2026), con enunciado y respuesta literales y la referencia a la pregunta de la guía, más 197 preguntas complementarias que no entran en los simulacros.
+- Las 735 preguntas de la Guía de Estudio v5 de la CNV (25/06/2026), con enunciado y respuesta literales, verificados uno por uno contra el PDF oficial (guia_de_estudio_v5.pdf de argentina.gob.ar), y la referencia a la pregunta de la guía, más 197 preguntas complementarias que no entran en los simulacros.
 - Opciones incorrectas de largo parecido al de la correcta: la correcta es la opción más larga en el 22% de las preguntas, por debajo del 25% que daría el azar.
 - Examen completo (60 preguntas, 10 por módulo, 45 min, 70%), examen parcial (30 preguntas de los módulos elegidos, 23 min), diagnóstico rápido de 12 preguntas, práctica por módulo y repaso de errores (una pregunta sale de la lista con dos aciertos seguidos).
 - Tarjetas, recall escrito y drill de datos duros.

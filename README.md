@@ -1,23 +1,28 @@
 # Simulador Idoneidad CNV
 
-Simulador no oficial del examen de idoneidad de la Comisión Nacional de Valores (Argentina). Es una sola página HTML, sin servidor ni base de datos: el progreso se guarda en el navegador de cada usuario.
+Simulador no oficial del examen de idoneidad de la Comisión Nacional de Valores (Argentina). Es una sola página HTML, sin servidor ni base de datos: el progreso se guarda en el navegador de cada usuario y se puede pasar a otro dispositivo con una copia descargable.
+
+**En línea:** https://untaladro.github.io/simulador-idoneidad-cnv/ (se puede instalar en el celular y funciona sin conexión).
 
 ## Qué incluye
 
-- 925 preguntas de los 6 módulos, con examen completo (60 preguntas, 45 min, 70%), examen parcial, práctica por módulo y repaso de errores.
+- Las 735 preguntas de la Guía de Estudio v5 de la CNV (25/06/2026), con enunciado y respuesta literales y la referencia a la pregunta de la guía, más 197 preguntas complementarias que no entran en los simulacros.
+- Opciones incorrectas de largo parecido al de la correcta: la correcta es la opción más larga en el 22% de las preguntas, por debajo del 25% que daría el azar.
+- Examen completo (60 preguntas, 10 por módulo, 45 min, 70%), examen parcial (30 preguntas de los módulos elegidos, 23 min), diagnóstico rápido de 12 preguntas, práctica por módulo y repaso de errores (una pregunta sale de la lista con dos aciertos seguidos).
 - Tarjetas, recall escrito y drill de datos duros.
-- Fundamento de cada respuesta: el pasaje textual de la Ley 26.831, las Normas CNV (N.T. 2013 y mod.), la Ley 25.246, la Ley 23.576 o la Res. UIF 21/2018, con link al texto actualizado en argentina.gob.ar. Para los manuales (CAFCI, IAMC, MATBA/ROFEX) se indica la obra y la página.
-- Lista de preguntas donde la norma vigente no coincide con la respuesta del banco.
+- Fundamento de cada respuesta: el pasaje textual de la Ley 26.831, las Normas CNV, la Ley 25.246, la Ley 23.576 o la Res. UIF 21/2018, con link al texto actualizado. Para los manuales (CAFCI, IAMC, MATBA/ROFEX) se indica la obra y la página.
+- Banco vs. norma vigente: las preguntas cuya respuesta oficial quedó vieja o es discutible frente al texto vigente.
 - Fórmulas para los ejercicios numéricos, con el paso a paso en calculadora simple.
-
-## Uso
-
-Abrir `index.html` en el navegador, o la versión publicada en GitHub Pages.
+- Plan de estudio de nueve días armado hacia atrás desde la fecha de examen de cada usuario, y mapa de avance por módulo.
+- Botón para reportar un error en cada pregunta (abre un issue en este repositorio).
 
 ## Fuentes y créditos
 
-- Banco base: [octavioes/cnv-idoneo-v2](https://github.com/octavioes/cnv-idoneo-v2), licencia MIT.
+- Enunciados y respuestas: Guía de Estudio para el Examen de Idoneidad, versión 5, publicada por la CNV.
+- Opciones incorrectas de las preguntas de la guía: [valentin-fabre/simulador-idoneidad-cnv](https://github.com/valentin-fabre/simulador-idoneidad-cnv), licencia MIT.
+- Preguntas complementarias: [octavioes/cnv-idoneo-v2](https://github.com/octavioes/cnv-idoneo-v2), licencia MIT, con opciones reescritas.
 - Textos normativos: [argentina.gob.ar/normativa](https://www.argentina.gob.ar/normativa).
-- Bibliografía oficial del examen: CNV.
 
-Sin vínculo ni aval de la Comisión Nacional de Valores. Las respuestas del banco pueden estar desactualizadas respecto de la norma vigente; ante cualquier duda, manda el texto oficial.
+Ver [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+
+Sin vínculo ni aval de la Comisión Nacional de Valores. Ante cualquier duda, manda el texto oficial vigente.

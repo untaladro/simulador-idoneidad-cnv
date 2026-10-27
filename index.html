@@ -548,7 +548,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       </button>
       <button class="mode" data-mode="cards">
         <span class="mt">Tarjetas</span>
-        <span class="md">Ves la pregunta, pensás la respuesta y la revelás. Después marcás si la reconocerías entre opciones, si tenías una idea o si la dejás para repasar. Es la forma más rápida de recorrer la guía: unos 20 segundos por pregunta.</span>
+        <span class="md">Ves la pregunta, pensás la respuesta y la revelás. Marcás qué tan seguro estás; no cuenta como acierto, y después lo comprobás con opciones en Verificar. Es la forma más rápida de recorrer la guía: unos 20 segundos por pregunta.</span>
         <span class="mspec" id="specCards"></span>
       </button>
       <button class="mode" data-mode="recall">
@@ -591,6 +591,11 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
         <span class="mt">Práctica por módulo</span>
         <span class="md">Elegís los módulos y la cantidad de preguntas, y si querés ver la corrección después de cada respuesta o al final.</span>
         <span class="mspec">configurable</span>
+      </button>
+      <button class="mode" data-mode="verif" id="verifBtn">
+        <span class="mt">Verificar con opciones</span>
+        <span class="md">Las preguntas que leíste en tarjetas pero todavía no respondiste con opciones. Con reloj, para comprobar que las distinguís como en el examen. Primero van las que dejaste para repasar.</span>
+        <span class="mspec" id="specVerif"></span>
       </button>
       <button class="mode" data-mode="wrong" id="wrongBtn">
         <span class="mt">Repaso de errores</span>
@@ -685,7 +690,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 27/10/2026 11:15.</p>
+    <p class="note">Versión 27/10/2026 11:30.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -876,7 +881,8 @@ const PLAN  = JSON.parse(document.getElementById('PDATA').textContent);
 
 const MODSHORT={1:"Marco normativo / OPA",2:"PLAFT",3:"Transparencia / Informativo",4:"Valuación / NIIF",5:"Agentes / Operaciones",6:"FCI / Fideicomisos"};
 const PASS=0.70, LETTERS=["A","B","C","D"], LS="cnv_sim_v2";
-const MCMODES=["full","partial","practice","wrong","ejercicios"];
+const MCMODES=["full","partial","practice","wrong","ejercicios","verif"];
+const isVerif=q=>{const s=store.stats[q.id];return !!(s&&s.g&&(s.r||0)+(s.w||0)===0);};
 const STMODES=["cards","recall","datos","nuevas"];
 
 /* ---------- storage ---------- */
@@ -1118,7 +1124,7 @@ function compBar(qs,eq){
 }
 function renderComp(){
   const all=[1,2,3,4,5,6];
-  const pools={nuevas:BANK.filter(q=>q.o===1&&!store.stats[q.id]),cards:BANK,recall:BANK,datos:poolFor('datos',all),ejercicios:poolFor('ejercicios',all),
+  const pools={verif:BANK.filter(isVerif),nuevas:BANK.filter(q=>q.o===1&&!store.stats[q.id]),cards:BANK,recall:BANK,datos:poolFor('datos',all),ejercicios:poolFor('ejercicios',all),
     full:BANK.filter(q=>q.o===1),partial:BANK.filter(q=>q.o===1&&q.m<=3),diag:BANK.filter(q=>q.o===1),practice:BANK,wrong:wrongPool()};
   document.querySelectorAll('.mode[data-mode]').forEach(b=>{
     let c=b.querySelector('.mcomp'); if(!c){c=el('span','mcomp'); b.appendChild(c);}
@@ -1180,6 +1186,7 @@ function exampleFor(q){
 function weight(q){
   const st=store.stats[q.id];
   if(!st) return 3.2;
+  if((st.r||0)+(st.w||0)===0&&st.g) return {rep:3.0,idea:2.3,ok:1.6}[st.g]||2;
   const errRate=st.s? st.w/st.s : 0;
   let w=1+errRate*3.5;
   if(st.r>=2&&st.w===0) w*=0.35;
@@ -1214,6 +1221,7 @@ const P={
  partial: {count:30,time:23*60,corr:"end",order:"mod",mods:[1,2,3],counts:[30],times:[[23*60,"23 min"],[30*60,"30 min"]],lock:false,label:"Examen parcial"},
  diag:    {count:12,time:0,corr:"end",order:"mod",mods:[1,2,3,4,5,6],counts:[12],times:[[0,"Sin límite"]],lock:true,label:"Diagnóstico rápido"},
  practice:{count:20,time:0,corr:"now",order:"rand",mods:[1,2,3,4,5,6],counts:[10,20,30,45,60,80],times:[[0,"Sin límite"],[15*60,"15 min"],[30*60,"30 min"],[45*60,"45 min"]],lock:false,label:"Práctica por módulo"},
+ verif:   {count:20,time:15*60,corr:"now",order:"rand",mods:[1,2,3,4,5,6],counts:[10,20,30,50],times:[[15*60,"15 min (45 s por pregunta)"],[0,"Sin límite"]],lock:false,label:"Verificar con opciones"},
  wrong:   {count:20,time:0,corr:"now",order:"rand",mods:[1,2,3,4,5,6],counts:[10,20,30,50,80],times:[[0,"Sin límite"],[15*60,"15 min"],[30*60,"30 min"]],lock:false,label:"Repaso de errores"},
  ejercicios:{count:20,time:0,corr:"now",order:"rand",mods:[1,2,3,4,5,6],counts:[10,20,40],times:[[0,"Sin límite"],[30*60,"30 min"],[45*60,"45 min"]],lock:false,label:"Ejercicios numéricos"},
  cards:   {count:40,time:0,corr:"now",order:"mod",mods:[1,2,3,4,5,6],counts:[20,40,70,100,140],times:[[0,"Sin límite"]],lock:false,label:"Tarjetas"},
@@ -1228,6 +1236,7 @@ function poolFor(mode,mods){
   else if(mode==="ejercicios") p=BANK.filter(q=>q.calc===1);
   else if(mode==="datos") p=BANK.filter(q=>q.hard===1);
   else if(mode==="nuevas") p=BANK.filter(q=>q.o===1&&!store.stats[q.id]);
+  else if(mode==="verif") p=BANK.filter(isVerif);
   else p=BANK;
   return p.filter(q=>mods.includes(q.m));
 }
@@ -1250,6 +1259,7 @@ function renderHome(){
   $('brandsub').textContent=`${nq} preguntas · 6 módulos`;
   $('specCards').textContent=`${nq} tarjetas`;
   $('specRecall').textContent=`sin opciones`;
+  { const vf=BANK.filter(isVerif).length; $('specVerif').textContent=vf?`${vf} para verificar`:"nada pendiente"; $('verifBtn').disabled=vf===0; }
   { const nv=BANK.filter(q=>q.o===1&&!store.stats[q.id]).length; $('specNuevas').textContent=`${nv} sin ver de 735`; }
   $('specDatos').textContent=`${BANK.filter(q=>q.hard===1).length} datos`;
   $('specEjer').textContent=`${BANK.filter(q=>q.calc===1).length} ejercicios`;
@@ -1410,6 +1420,7 @@ function refreshCfg(){
   else if(CFG.mode==="datos") hint=`${pool.length} preguntas cuya respuesta es un dato que no se puede deducir.`;
   else if(CFG.mode==="nuevas") hint=`${pool.length} preguntas de la guía que todavía no viste. Tarjetas: leés la pregunta, pensás la respuesta y la revelás.`;
   else if(CFG.mode==="ejercicios") hint=`${pool.length} ejercicios de cálculo, con corrección inmediata.`;
+  else if(CFG.mode==="verif") hint=`${pool.length} leídas en tarjetas sin responder con opciones. Corrección inmediata y reloj, como en el examen.`;
   else if(CFG.mode==="wrong") hint=`${pool.length} falladas disponibles, las más problemáticas primero.`;
   else hint=`${pool.length} disponibles con esta selección.`;
   if(pool.length<CFG.count&&CFG.mode!=="full"){
@@ -1422,18 +1433,20 @@ function refreshCfg(){
 function renderHistory(){
   const h=store.history.slice(-40), body=$('histBody');
   if(!h.length){ body.innerHTML=`<div style="color:var(--ink3);font-size:14px">Todavía no hay intentos. Cuando practiques, acá vas a ver la evolución.</div>`; return; }
-  const bars=h.slice(-24).map(r=>`<i class="${r.pass?'p':'f'}" style="height:${Math.max(6,Math.round(r.pct*100))}%" title="${Math.round(r.pct*100)}%"></i>`).join("");
+  const isSelf=r=>r.self||STMODES.includes(r.mode);
+  const hm=h.filter(r=>!isSelf(r));
+  const bars=hm.slice(-24).map(r=>`<i class="${r.pass?'p':'f'}" style="height:${Math.max(6,Math.round(r.pct*100))}%" title="${Math.round(r.pct*100)}%"></i>`).join("");
   const rows=h.slice().reverse().slice(0,12).map(r=>{
     const d=new Date(r.ts);
     const ds=d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'})+" "+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    return `<div class="hrow"><span class="hd">${ds}</span><span class="hm">${esc(r.label)}</span><span class="hs ${r.pass?'p':'f'}">${Math.round(r.pct*100)}%</span><span class="hd">${r.correct}/${r.n}</span></div>`;
+    return `<div class="hrow"><span class="hd">${ds}</span><span class="hm">${esc(r.label)}</span>${isSelf(r)?`<span class="hs">—</span><span class="hd">${r.n} leídas</span>`:`<span class="hs ${r.pass?'p':'f'}">${Math.round(r.pct*100)}%</span><span class="hd">${r.correct}/${r.n}</span>`}</div>`;
   }).join("");
-  const best=Math.max(...h.map(r=>r.pct)), avg=h.reduce((a,r)=>a+r.pct,0)/h.length;
+  const best=hm.length?Math.max(...hm.map(r=>r.pct)):0, avg=hm.length?hm.reduce((a,r)=>a+r.pct,0)/hm.length:0;
   body.innerHTML=`<div class="spark" style="margin-bottom:12px">${bars}</div>`+
     `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       <span class="chip">intentos <b>${store.history.length}</b></span>
-      <span class="chip">mejor <b>${Math.round(best*100)}%</b></span>
-      <span class="chip">promedio <b>${Math.round(avg*100)}%</b></span></div>`+
+      <span class="chip">mejor con opciones <b>${Math.round(best*100)}%</b></span>
+      <span class="chip">promedio con opciones <b>${Math.round(avg*100)}%</b></span></div>`+
     `<div class="hist">${rows}</div>`+
     `<div style="margin-top:12px"><button class="btn ghost sm" id="clearHist">Borrar historial y estadísticas</button></div>`;
   $('clearHist').addEventListener('click',()=>{
@@ -1631,7 +1644,7 @@ function showCard(){
     const sk=el('button','btn ghost sm','Saltear →');
     sk.addEventListener('click',()=>nextCard()); f.appendChild(sk);
   }else{
-    f.appendChild(el('div','gq','En el examen vas a tener cuatro opciones. ¿La reconocerías?'));
+    f.appendChild(el('div','gq','¿Qué tan seguro estás de reconocerla entre cuatro opciones? No cuenta como acierto: sirve para decidir cuándo te la volvemos a preguntar con opciones y reloj.'));
     const rp=el('button','btn ghost g-rep','1 · ↻ Para repasar');
     rp.addEventListener('click',()=>grade('rep'));
     const id=el('button','btn ghost g-idea','2 · ≈ Tenía una idea');
@@ -1655,9 +1668,9 @@ function grade(v){
   if(v===true) v='ok'; if(v===false) v='rep';
   const it=ST.items[ST.idx];
   if(it.graded===null){
-    if(v==='ok'){ recordStat(it.q.id,true); ST.r++; }
-    else if(v==='rep'){ recordStat(it.q.id,false); ST.w++; }
-    else { const s=store.stats[it.q.id]||(store.stats[it.q.id]={s:0,w:0,r:0,l:0}); s.s++; s.l=Date.now(); ST.i=(ST.i||0)+1; }
+    const s=store.stats[it.q.id]||(store.stats[it.q.id]={s:0,w:0,r:0,l:0});
+    s.s++; s.l=Date.now(); s.g=v;
+    if(v==='ok') ST.r++; else if(v==='rep') ST.w++; else ST.i=(ST.i||0)+1;
   }
   it.graded=v; saveStore(); nextCard();
 }
@@ -1668,14 +1681,14 @@ function nextCard(){
 function finishStudy(){
   const n=ST.r+ST.w+(ST.i||0), pct=n?ST.r/n:0;
   const planMarked=planDone(ST.planKey); ST.planKey=null;
-  store.history.push({ts:Date.now(),mode:ST.mode,label:ST.label,n:n||ST.items.length,correct:ST.r,pct,
-    pass:pct>=PASS,secs:(Date.now()-ST.startedAt)/1000});
+  store.history.push({ts:Date.now(),mode:ST.mode,label:ST.label,n:n||ST.items.length,correct:ST.r,pct,self:true,
+    pass:false,secs:(Date.now()-ST.startedAt)/1000});
   saveStore();
   const host=$('modalHost');
   host.innerHTML=`<div class="modal"><div>
     <h3>${esc(ST.label)} terminado</h3>
     <p>Recorriste <b>${n}</b> preguntas de la guía${ST.items.length-n>0?` (salteaste ${ST.items.length-n})`:""}: <b>${ST.r}</b> las reconocerías, en <b>${ST.i||0}</b> tenías una idea y <b>${ST.w}</b> quedaron para repasar.</p>
-    <p>Las que tenías una idea vuelven a aparecer en próximas tandas. Las que quedaron para repasar están en Repaso de errores, con opciones, para que practiques reconocerlas.</p>
+    <p>Ninguna cuenta como acierto todavía. Para comprobarlas, usá <b>Verificar con opciones</b>: te las pregunta con cuatro opciones y reloj, empezando por las que dejaste para repasar.</p>
     ${planMarked?'<p class="planok">✓ Bloque del plan de hoy marcado como hecho.</p>':''}
     <div class="mb"><button class="btn ghost" data-x="c">Al inicio</button><button class="btn" data-x="o">Otra tanda</button></div>
   </div></div>`;

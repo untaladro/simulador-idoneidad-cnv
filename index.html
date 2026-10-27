@@ -343,6 +343,8 @@ a{color:var(--accent)}
 .opt.correct mark.dv{background:color-mix(in srgb,var(--ok) 26%,transparent)}
 .opt.wrong mark.dv{background:color-mix(in srgb,var(--bad) 22%,transparent)}
 
+.planhint{padding:9px 18px;font-size:12.5px;color:var(--ink3);border-bottom:1px solid var(--line)}
+.planok{flex-basis:100%;margin-top:6px;font-size:14px;font-weight:600;color:var(--ok)}
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -1229,6 +1231,7 @@ function renderToday(){
 }
 function fillBlocks(host,day){
   host.innerHTML="";
+  host.appendChild(el('div','planhint','Cada bloque se marca solo cuando terminás la actividad desde su botón. Si lo hiciste por tu cuenta, tildalo a mano.'));
   day.b.forEach((b,i)=>{
     const key=day.d+"#"+i, on=!!store.plan[key];
     const mm=/m[oó]dulos? (\d)/i.exec(b.t);
@@ -1241,7 +1244,7 @@ function fillBlocks(host,day){
     });
     if(b.m){
       const go=el('button','btn sm go',labelFor(b));
-      go.addEventListener('click',()=>launchBlock(b));
+      go.addEventListener('click',()=>{ PLAN_PENDING=key; launchBlock(b); });
       row.appendChild(go);
     }
     host.appendChild(row);
@@ -1258,15 +1261,16 @@ function labelFor(b){
   return {full:"Rendir",partial:"Rendir",practice:"Practicar",wrong:"Repasar",ejercicios:"Resolver",
           cards:"Tarjetas",recall:"Recall",datos:"Drill",guia:"Leer",ficha:"Abrir"}[b.m]||"Ir";
 }
+let PLAN_PENDING=null;
+function planDone(key){ if(!key) return false; store.plan[key]=true; saveStore(); return true; }
 function launchBlock(b){
-  if(b.m==="guia"){ nav('guia'); return; }
-  if(b.m==="ficha"){ nav('ficha'); return; }
+  if(b.m==="guia"||b.m==="ficha"){ planDone(PLAN_PENDING); PLAN_PENDING=null; nav(b.m); return; }
   const p=P[b.m]; if(!p) return;
   CFG.mode=b.m; CFG.corr=p.corr; CFG.order=p.order; CFG.time=p.time;
   CFG.mods=b.mod? b.mod.slice() : p.mods.slice();
   const pool=poolFor(b.m,CFG.mods);
   CFG.count=Math.min(b.n||p.count,pool.length);
-  if(!pool.length){ alert("No hay preguntas disponibles para ese bloque."); return; }
+  if(!pool.length){ PLAN_PENDING=null; alert("No hay preguntas disponibles para ese bloque."); return; }
   if(STMODES.includes(b.m)) startStudy(); else buildExam();
 }
 function renderModGrid(){
@@ -1378,7 +1382,8 @@ function buildExam(){
   }
   if(CFG.order==="rand") qs=shuffle(qs); else qs.sort((a,b)=>a.m-b.m);
   if(!qs.length){ alert("No hay preguntas disponibles."); return; }
-  EX={mode:CFG.mode,label:P[CFG.mode].label,corr:CFG.corr,timeLimit:CFG.time,
+  const planKey=PLAN_PENDING; PLAN_PENDING=null;
+  EX={planKey,mode:CFG.mode,label:P[CFG.mode].label,corr:CFG.corr,timeLimit:CFG.time,
       startedAt:Date.now(),endsAt:CFG.time?Date.now()+CFG.time*1000:0,idx:0,finished:false,
       items:qs.map(q=>({q,opts:q.vf?[{t:q.a,ok:true},{t:q.w[0],ok:false}].sort((x,y)=>/^Verdadero/.test(x.t)?-1:/^Verdadero/.test(y.t)?1:0):shuffle([{t:q.a,ok:true},...q.w.map(w=>({t:w,ok:false}))]),sel:null,flag:false,revealed:false,t0:0,spent:0}))};
   nav('exam');
@@ -1475,7 +1480,9 @@ function finishExam(byTime){
   const pct=correct/EX.items.length;
   store.history.push({ts:Date.now(),mode:EX.mode,label:EX.label,n:EX.items.length,correct,pct,pass:pct>=PASS,
     secs:(EX.endedAt-EX.startedAt)/1000});
+  EX.planMarked=planDone(EX.planKey);
   saveStore(); renderResults(correct,pct); nav('res');
+  if(EX.planMarked) $('verdict').insertAdjacentHTML('beforeend','<div class="planok">✓ Bloque del plan de hoy marcado como hecho.</div>');
 }
 
 /* ============================================================ STUDY (tarjetas / recall / datos) */
@@ -1485,7 +1492,8 @@ function startStudy(){
   let qs=pickWeighted(pool,Math.min(CFG.count,pool.length));
   if(CFG.order==="mod") qs.sort((a,b)=>a.m-b.m||a.id-b.id); else qs=shuffle(qs);
   if(!qs.length){ alert("No hay preguntas disponibles."); return; }
-  ST={mode:CFG.mode,label:P[CFG.mode].label,idx:0,r:0,w:0,startedAt:Date.now(),
+  const planKey=PLAN_PENDING; PLAN_PENDING=null;
+  ST={planKey,mode:CFG.mode,label:P[CFG.mode].label,idx:0,r:0,w:0,startedAt:Date.now(),
       items:qs.map(q=>({q,revealed:false,graded:null,typed:""}))};
   nav('study'); $('abortBtn').classList.remove('hide'); $('progpill').classList.remove('hide');
   showCard();
@@ -1541,6 +1549,7 @@ function nextCard(){
 }
 function finishStudy(){
   const n=ST.r+ST.w, pct=n?ST.r/n:0;
+  const planMarked=planDone(ST.planKey); ST.planKey=null;
   store.history.push({ts:Date.now(),mode:ST.mode,label:ST.label,n:n||ST.items.length,correct:ST.r,pct,
     pass:pct>=PASS,secs:(Date.now()-ST.startedAt)/1000});
   saveStore();
@@ -1549,6 +1558,7 @@ function finishStudy(){
     <h3>${esc(ST.label)} terminado</h3>
     <p>Dijiste que sabías <b>${ST.r}</b> de ${n||0} calificadas${ST.items.length-n>0?`, y salteaste ${ST.items.length-n}`:""}.</p>
     <p>Las que marcaste como no sabidas ya entraron al repaso de errores.</p>
+    ${planMarked?'<p class="planok">✓ Bloque del plan de hoy marcado como hecho.</p>':''}
     <div class="mb"><button class="btn ghost" data-x="c">Al inicio</button><button class="btn" data-x="o">Otra tanda</button></div>
   </div></div>`;
   const close=()=>{host.innerHTML="";ST=null;nav('home');renderHome();};
@@ -1768,6 +1778,7 @@ $('clearBtn').addEventListener('click',()=>{const it=EX.items[EX.idx];if(it.reve
 $('submitBtn').addEventListener('click',reviewBeforeSubmit);
 $('sExit').addEventListener('click',()=>{ST=null;nav('home');renderHome();});
 $('abortBtn').addEventListener('click',()=>{
+  PLAN_PENDING=null;
   if(ST){ ST=null; nav('home'); renderHome(); return; }
   confirmModal("Salir","Se descarta el intento en curso y no queda en el historial.","Salir",()=>{
     stopTicker();EX=null;nav('home');renderHome();},true);

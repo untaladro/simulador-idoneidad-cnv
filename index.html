@@ -655,6 +655,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
+    <p class="note">Versión 26/10/2026 22:40.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -1780,6 +1781,14 @@ $('sExit').addEventListener('click',()=>{ST=null;nav('home');renderHome();});
 $('abortBtn').addEventListener('click',()=>{
   PLAN_PENDING=null;
   if(ST){ ST=null; nav('home'); renderHome(); return; }
+  const answered=EX?EX.items.filter(i=>i.sel!==null).length:0;
+  if(EX&&EX.corr==="now"&&answered){
+    const all=answered===EX.items.length;
+    confirmModal("Salir",all?"Respondiste todas. Se guarda el resultado y se muestra el informe.":`Respondiste ${answered} de ${EX.items.length}. Se guardan las respondidas; las que faltan no cuentan como error.`,"Guardar y salir",()=>{
+      if(!all){ EX.items=EX.items.filter(i=>i.sel!==null); EX.planKey=null; EX.idx=0; }
+      finishExam(false);});
+    return;
+  }
   confirmModal("Salir","Se descarta el intento en curso y no queda en el historial.","Salir",()=>{
     stopTicker();EX=null;nav('home');renderHome();},true);
 });

@@ -345,6 +345,10 @@ a{color:var(--accent)}
 
 .planhint{padding:9px 18px;font-size:12.5px;color:var(--ink3);border-bottom:1px solid var(--line)}
 .planok{flex-basis:100%;margin-top:6px;font-size:14px;font-weight:600;color:var(--ok)}
+
+.resume{margin-top:18px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn-soft);border:1px solid var(--warn);border-radius:12px;padding:12px 16px;font-size:14.5px}
+.resume .rb{display:flex;gap:8px}
+
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -509,6 +513,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <div class="maplegend"><span><i></i>dominadas (2 aciertos seguidos)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para practicarlo.</span></div>
   </div>
 
+  <div id="resumeHost"></div>
   <div class="sect">
     <h2>Hoy <em id="todayDate"></em></h2>
     <div id="todayHost"></div>
@@ -517,6 +522,11 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   <div class="sect">
     <h2>Estudiar <em>sin opciones, que es lo único que la guía garantiza</em></h2>
     <div class="modes">
+      <button class="mode" data-mode="nuevas">
+        <span class="mt">Lo que nunca viste</span>
+        <span class="md">Tarjetas solo con las preguntas de la guía que todavía no te salieron. El examen sale de la guía: cada pregunta nueva que leés es una que ya no vas a adivinar.</span>
+        <span class="mspec" id="specNuevas"></span>
+      </button>
       <button class="mode" data-mode="cards">
         <span class="mt">Tarjetas</span>
         <span class="md">Enunciado y respuesta correcta sola. Te autocalificás. Es la forma honesta de estudiar el par que sí está en la guía oficial.</span>
@@ -655,7 +665,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 26/10/2026 22:40.</p>
+    <p class="note">Versión 27/10/2026 01:30.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -844,7 +854,7 @@ const PLAN  = JSON.parse(document.getElementById('PDATA').textContent);
 const MODSHORT={1:"Marco normativo / OPA",2:"PLAFT",3:"Transparencia / Informativo",4:"Valuación / NIIF",5:"Agentes / Operaciones",6:"FCI / Fideicomisos"};
 const PASS=0.70, LETTERS=["A","B","C","D"], LS="cnv_sim_v2";
 const MCMODES=["full","partial","practice","wrong","ejercicios"];
-const STMODES=["cards","recall","datos"];
+const STMODES=["cards","recall","datos","nuevas"];
 
 /* ---------- storage ---------- */
 let memStore=null;
@@ -859,7 +869,20 @@ function loadStore(){
   if(!s.know) s.know={};
   memStore=s; return s;
 }
-function saveStore(){ try{ localStorage.setItem(LS,JSON.stringify(memStore)); }catch(e){} }
+function mergeStore(m,d){
+  if(!d||typeof d!=="object") return;
+  Object.entries(d.stats||{}).forEach(([k,v])=>{ const a=m.stats[k]; if(!a||(v.s||0)>(a.s||0)) m.stats[k]=v; });
+  const seen=new Set((m.history||[]).map(x=>x.ts)); (d.history||[]).forEach(x=>{ if(!seen.has(x.ts)) m.history.push(x); });
+  m.history.sort((a,b)=>a.ts-b.ts);
+  Object.entries(d.plan||{}).forEach(([k,v])=>{ if(!(k in m.plan)) m.plan[k]=v; });
+  Object.entries(d.know||{}).forEach(([k,v])=>{ if(!(k in m.know)) m.know[k]=v; });
+}
+function saveStore(replace){
+  try{
+    if(!replace){ const raw=localStorage.getItem(LS); if(raw) mergeStore(memStore,JSON.parse(raw)); }
+    localStorage.setItem(LS,JSON.stringify(memStore));
+  }catch(e){}
+}
 const store=loadStore();
 
 /* ---------- utils ---------- */
@@ -1067,7 +1090,7 @@ function compBar(qs,eq){
 }
 function renderComp(){
   const all=[1,2,3,4,5,6];
-  const pools={cards:BANK,recall:BANK,datos:poolFor('datos',all),ejercicios:poolFor('ejercicios',all),
+  const pools={nuevas:BANK.filter(q=>q.o===1&&!store.stats[q.id]),cards:BANK,recall:BANK,datos:poolFor('datos',all),ejercicios:poolFor('ejercicios',all),
     full:BANK.filter(q=>q.o===1),partial:BANK.filter(q=>q.o===1&&q.m<=3),diag:BANK.filter(q=>q.o===1),practice:BANK,wrong:wrongPool()};
   document.querySelectorAll('.mode[data-mode]').forEach(b=>{
     let c=b.querySelector('.mcomp'); if(!c){c=el('span','mcomp'); b.appendChild(c);}
@@ -1143,6 +1166,7 @@ const P={
  ejercicios:{count:20,time:0,corr:"now",order:"rand",mods:[1,2,3,4,5,6],counts:[10,20,40],times:[[0,"Sin límite"],[30*60,"30 min"],[45*60,"45 min"]],lock:false,label:"Ejercicios numéricos"},
  cards:   {count:40,time:0,corr:"now",order:"mod",mods:[1,2,3,4,5,6],counts:[20,40,70,100,140],times:[[0,"Sin límite"]],lock:false,label:"Tarjetas"},
  recall:  {count:25,time:0,corr:"now",order:"rand",mods:[1,2,3,4,5,6],counts:[15,25,40,60],times:[[0,"Sin límite"]],lock:false,label:"Recall escrito"},
+ nuevas:  {count:50,time:0,corr:"now",order:"mod",mods:[1,2,3,4,5,6],counts:[25,50,100,200],times:[[0,"Sin límite"]],lock:false,label:"Lo que nunca viste"},
  datos:   {count:30,time:0,corr:"now",order:"mod",mods:[1,2,3,4,5,6],counts:[15,30,50,123],times:[[0,"Sin límite"]],lock:false,label:"Datos duros"}
 };
 function poolFor(mode,mods){
@@ -1151,6 +1175,7 @@ function poolFor(mode,mods){
   if(mode==="wrong") p=wrongPool();
   else if(mode==="ejercicios") p=BANK.filter(q=>q.calc===1);
   else if(mode==="datos") p=BANK.filter(q=>q.hard===1);
+  else if(mode==="nuevas") p=BANK.filter(q=>q.o===1&&!store.stats[q.id]);
   else p=BANK;
   return p.filter(q=>mods.includes(q.m));
 }
@@ -1167,12 +1192,13 @@ function renderHome(){
     `<span class="chip"><b>${nq}</b> preguntas</span>`+
     `<span class="chip"><b>${BANK.filter(q=>q.hard===1).length}</b> datos duros</span>`+
     `<span class="chip"><b>${BANK.filter(q=>q.calc===1).length}</b> ejercicios</span>`+
-    `<span class="chip">vistas <b>${seen}</b></span>`+
+    `<span class="chip">guía vista <b>${BANK.filter(q=>q.o===1&&store.stats[q.id]).length}</b> de 735</span>`+
     `<span class="chip">dominadas <b>${mastered}</b></span>`+
     `<span class="chip">a corregir <b>${wrongPool().length}</b></span>`;
   $('brandsub').textContent=`${nq} preguntas · 6 módulos`;
   $('specCards').textContent=`${nq} tarjetas`;
   $('specRecall').textContent=`sin opciones`;
+  { const nv=BANK.filter(q=>q.o===1&&!store.stats[q.id]).length; $('specNuevas').textContent=`${nv} sin ver de 735`; }
   $('specDatos').textContent=`${BANK.filter(q=>q.hard===1).length} datos`;
   $('specEjer').textContent=`${BANK.filter(q=>q.calc===1).length} ejercicios`;
   $('specForm').textContent=`${FORM.grupos.reduce((a,g)=>a+g.items.length,0)} fórmulas`;
@@ -1186,7 +1212,7 @@ function renderHome(){
   $('sourceNote').innerHTML="La duración oficial figura distinta según la fuente: argentina.gob.ar indica 45 minutos para el examen completo y el sitio de la CNV indica 90. El examen completo arranca en 45, que es el escenario exigente, y el otro valor está disponible. Confirmá la duración vigente con la CNV antes de rendir. Las 735 preguntas de la guía siguen la Guía de Estudio v5 (25/06/2026) en enunciado y respuesta (solo se corrigió la errata «PLavado» en II-53 y II-101), aun donde la norma vigente dice otra cosa: esos casos están en Banco vs. norma vigente. Las 197 complementarias no salen en los simulacros. La guía no trae opciones incorrectas: las de acá están escritas con un largo parecido al de la correcta para que no se pueda acertar por descarte.";
   $('todayDate').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
   $('specWarn').textContent=`${warnQs().length} preguntas`;
-  renderModMap(); renderComp();
+  renderModMap(); renderComp(); renderResume();
   renderToday(); renderModGrid(); applyMode("full",false); renderHistory();
 }
 const WCAT={"15": "a", "146": "a", "243": "a", "252": "a", "257": "a", "261": "a", "306": "a", "331": "a", "340": "a", "371": "a", "624": "a", "709": "a", "727": "a", "11": "d", "140": "d", "155": "d", "260": "d", "504": "d", "520": "d", "556": "d"};
@@ -1326,10 +1352,11 @@ function refreshCfg(){
   const warn=$('cfgWarn'); warn.innerHTML="";
   let hint="";
   if(CFG.mode==="full") hint="10 preguntas por módulo, en orden, sin corrección. Aprobás con 42 de 60.";
-  else if(CFG.mode==="partial") hint=`Módulos 1 a 3. Aprobás con ${Math.ceil(CFG.count*PASS)} de ${CFG.count}.`;
+  else if(CFG.mode==="partial") hint=`Módulos ${CFG.mods.join(", ")}. Aprobás con ${Math.ceil(CFG.count*PASS)} de ${CFG.count}.`;
   else if(CFG.mode==="cards") hint=`Enunciado y respuesta, sin opciones. ${pool.length} disponibles.`;
   else if(CFG.mode==="recall") hint=`Escribís la respuesta antes de revelar. ${pool.length} disponibles.`;
   else if(CFG.mode==="datos") hint=`${pool.length} preguntas cuya respuesta es un dato que no se puede deducir.`;
+  else if(CFG.mode==="nuevas") hint=`${pool.length} preguntas de la guía que todavía no viste. Tarjetas: leés la pregunta, pensás la respuesta y la revelás.`;
   else if(CFG.mode==="ejercicios") hint=`${pool.length} ejercicios de cálculo, con corrección inmediata.`;
   else if(CFG.mode==="wrong") hint=`${pool.length} falladas disponibles, las más problemáticas primero.`;
   else hint=`${pool.length} disponibles con esta selección.`;
@@ -1404,6 +1431,32 @@ function startTicker(){
   tick(); ticker=setInterval(tick,250);
 }
 function stopTicker(){ if(ticker){clearInterval(ticker);ticker=null;} }
+function saveCur(){
+  if(!EX||EX.finished){ return; }
+  store.cur={mode:EX.mode,label:EX.label,corr:EX.corr,timeLimit:EX.timeLimit,startedAt:EX.startedAt,endsAt:EX.endsAt,idx:EX.idx,planKey:EX.planKey||null,
+    items:EX.items.map(it=>({id:it.q.id,o:it.opts.map(o=>o.t),sel:it.sel,flag:it.flag,rev:it.revealed,spent:it.spent}))};
+  try{ localStorage.setItem(LS,JSON.stringify(memStore)); }catch(e){}
+}
+function clearCur(){ if(store.cur){ delete store.cur; try{ localStorage.setItem(LS,JSON.stringify(memStore)); }catch(e){} } }
+function resumeCur(){
+  const c=store.cur; if(!c) return;
+  const items=c.items.map(x=>{ const q=BANK.find(b=>b.id===x.id); if(!q) return null;
+    return {q,opts:x.o.map(t=>({t,ok:t===q.a})),sel:x.sel,flag:x.flag,revealed:x.rev,t0:0,spent:x.spent||0}; }).filter(Boolean);
+  EX={planKey:c.planKey,mode:c.mode,label:c.label,corr:c.corr,timeLimit:c.timeLimit,startedAt:c.startedAt,endsAt:c.endsAt,idx:Math.min(c.idx,items.length-1),finished:false,items};
+  nav('exam'); $('abortBtn').classList.remove('hide'); $('progpill').classList.remove('hide');
+  if(EX.timeLimit){ $('clock').classList.remove('hide'); }
+  buildSheet(); goTo(EX.idx); startTicker();
+}
+function renderResume(){
+  const c=store.cur, host=$('resumeHost'); if(!host) return;
+  if(!c){ host.innerHTML=""; return; }
+  const n=c.items.length, done=c.items.filter(x=>x.sel!==null).length;
+  const left=c.timeLimit?Math.max(0,Math.round((c.endsAt-Date.now())/60000)):null;
+  host.innerHTML=`<div class="resume"><div><b>Tenés un ${esc(c.label.toLowerCase())} sin terminar.</b> Respondiste ${done} de ${n}${left!==null?(left>0?`, quedan ${left} min de reloj`:", el tiempo ya se cumplió"):""}.</div>
+    <div class="rb"><button class="btn sm" id="resYes">${left===0?"Ver resultado":"Retomar"}</button><button class="btn ghost sm" id="resNo">Descartar</button></div></div>`;
+  $('resYes').addEventListener('click',()=>{ resumeCur(); if(left===0) finishExam(true); });
+  $('resNo').addEventListener('click',()=>confirmModal("Descartar","Se pierde el intento sin terminar.","Descartar",()=>{ clearCur(); renderHome(); },true));
+}
 function goTo(i){
   if(!EX) return;
   if(EX.items[EX.idx]) markSpent(EX.idx);
@@ -1428,6 +1481,7 @@ function goTo(i){
   $('prevBtn').disabled=EX.idx===0;
   $('nextBtn').textContent=EX.idx===EX.items.length-1?"Revisar y entregar":"Siguiente →";
   updateSheet(); updateProg(); window.scrollTo({top:0,behavior:"instant"});
+  saveCur();
 }
 function markSpent(i){const it=EX.items[i];if(it&&it.t0){it.spent+=(Date.now()-it.t0)/1000;it.t0=0;}}
 function answer(k){
@@ -1475,7 +1529,7 @@ function reviewBeforeSubmit(){
 }
 function finishExam(byTime){
   if(!EX||EX.finished) return;
-  stopTicker(); markSpent(EX.idx); EX.finished=true; EX.endedAt=Date.now(); EX.byTime=!!byTime;
+  stopTicker(); markSpent(EX.idx); EX.finished=true; EX.endedAt=Date.now(); EX.byTime=!!byTime; delete store.cur;
   EX.items.forEach(it=>recordStat(it.q.id,it.sel!==null&&it.opts[it.sel].ok));
   const correct=EX.items.filter(it=>it.sel!==null&&it.opts[it.sel].ok).length;
   const pct=correct/EX.items.length;
@@ -1491,7 +1545,8 @@ let ST=null;
 function startStudy(){
   const pool=poolFor();
   let qs=pickWeighted(pool,Math.min(CFG.count,pool.length));
-  if(CFG.order==="mod") qs.sort((a,b)=>a.m-b.m||a.id-b.id); else qs=shuffle(qs);
+  if(CFG.mode==="nuevas"){ const acc=m=>{const s=modStats(m);return s.acc==null?0.5:s.acc;}; qs=pool.slice().sort((a,b)=>acc(a.m)-acc(b.m)||a.m-b.m||a.id-b.id).slice(0,CFG.count); }
+  else if(CFG.order==="mod") qs.sort((a,b)=>a.m-b.m||a.id-b.id); else qs=shuffle(qs);
   if(!qs.length){ alert("No hay preguntas disponibles."); return; }
   const planKey=PLAN_PENDING; PLAN_PENDING=null;
   ST={planKey,mode:CFG.mode,label:P[CFG.mode].label,idx:0,r:0,w:0,startedAt:Date.now(),
@@ -1790,7 +1845,7 @@ $('abortBtn').addEventListener('click',()=>{
     return;
   }
   confirmModal("Salir","Se descarta el intento en curso y no queda en el historial.","Salir",()=>{
-    stopTicker();EX=null;nav('home');renderHome();},true);
+    stopTicker();EX=null;clearCur();nav('home');renderHome();},true);
 });
 $('againBtn').addEventListener('click',()=>{nav('home');renderHome();buildExam();});
 $('homeBtn').addEventListener('click',()=>{EX=null;nav('home');renderHome();});
@@ -1815,7 +1870,7 @@ $('impFile').addEventListener('change',e=>{
     confirmModal("Reemplazar tu progreso",`La copia tiene ${Object.keys(s.stats).length} preguntas vistas. Reemplaza lo que hay guardado en este navegador.`,"Reemplazar",()=>{
       Object.keys(store).forEach(k=>delete store[k]); Object.assign(store,s);
       ['stats','plan','know'].forEach(k=>{ if(!store[k]) store[k]={}; }); if(!store.history) store.history=[];
-      saveStore(); applyExamDate(); renderHome();
+      saveStore(true); applyExamDate(); renderHome();
     },true);
   };
   rd.readAsText(f); e.target.value="";

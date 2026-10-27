@@ -681,7 +681,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 27/10/2026 10:30.</p>
+    <p class="note">Versión 27/10/2026 10:45.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -833,6 +833,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 <!-- ============ RESULTS ============ -->
 <div id="scr-res" class="wrap hide">
   <div class="res">
+    <div><button class="btn ghost sm" id="resHomeTop">← Volver al inicio</button></div>
     <div class="verdict" id="verdict"></div>
     <div class="card" id="cardMods"></div>
     <div class="card" id="cardTopics"></div>
@@ -1851,7 +1852,7 @@ function renderPlan(sel){
 /* ============================================================ UI */
 function nav(s){
   ['home','exam','study','guia','ficha','plan','res','form','warn'].forEach(x=>$('scr-'+x).classList.toggle('hide',x!==s));
-  if(s==='home'||s==='guia'||s==='ficha'||s==='plan'||s==='form'||s==='warn'){
+  if(s==='home'||s==='guia'||s==='ficha'||s==='plan'||s==='form'||s==='warn'||s==='res'){
     $('clock').classList.add('hide'); $('progpill').classList.add('hide'); $('abortBtn').classList.add('hide');
   }
   if(s==='guia') renderGuia();
@@ -1885,6 +1886,7 @@ $('sExit').addEventListener('click',()=>{ST=null;nav('home');renderHome();});
 $('abortBtn').addEventListener('click',()=>{
   PLAN_PENDING=null;
   if(ST){ ST=null; nav('home'); renderHome(); return; }
+  if(!EX||EX.finished){ EX=null; nav('home'); renderHome(); return; }
   const answered=EX?EX.items.filter(i=>i.sel!==null).length:0;
   if(EX&&EX.corr==="now"&&answered){
     const all=answered===EX.items.length;
@@ -1898,6 +1900,7 @@ $('abortBtn').addEventListener('click',()=>{
 });
 $('againBtn').addEventListener('click',()=>{nav('home');renderHome();buildExam();});
 $('homeBtn').addEventListener('click',()=>{EX=null;nav('home');renderHome();});
+$('resHomeTop').addEventListener('click',()=>{EX=null;nav('home');renderHome();});
 $('exportBtn').addEventListener('click',exportReport);
 $('fichaHide').addEventListener('click',()=>{fichaHidden=!fichaHidden;renderFicha();});
 $('fichaPrint').addEventListener('click',()=>window.print());

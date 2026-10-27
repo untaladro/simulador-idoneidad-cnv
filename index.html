@@ -365,6 +365,9 @@ a{color:var(--accent)}
 .fbk .howto b{display:block;font-size:12.5px;margin-bottom:4px}
 .fbk .howto .fsteps{padding:4px 0 0}
 
+.ffoot .gq{flex-basis:100%;font-size:13.5px;color:var(--ink2);margin-bottom:2px}
+.ffoot .g-rep{border-color:var(--line2);color:var(--ink)}
+.ffoot .g-idea{border-color:var(--warn);color:var(--ink);background:var(--warn-soft)}
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -545,7 +548,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       </button>
       <button class="mode" data-mode="cards">
         <span class="mt">Tarjetas</span>
-        <span class="md">Ves la pregunta, pensás la respuesta y la revelás. Después marcás si la sabías o no. Es la forma más rápida de recorrer la guía: unos 20 segundos por pregunta.</span>
+        <span class="md">Ves la pregunta, pensás la respuesta y la revelás. Después marcás si la reconocerías entre opciones, si tenías una idea o si la dejás para repasar. Es la forma más rápida de recorrer la guía: unos 20 segundos por pregunta.</span>
         <span class="mspec" id="specCards"></span>
       </button>
       <button class="mode" data-mode="recall">
@@ -677,12 +680,12 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <li>Material propio: bibliografía oficial del examen, Manual de Idoneidad CAFCI, Manual IAMC, presentaciones MATBA ROFEX y unidades del curso de Mercado de Capitales de UTN</li>
     </ul>
     <p class="note" id="sourceNote"></p>
-    <p class="note">Atajos: <kbd>1</kbd>–<kbd>4</kbd> o <kbd>A</kbd>–<kbd>D</kbd> para responder, <kbd>←</kbd> <kbd>→</kbd> para navegar, <kbd>F</kbd> para marcar. En tarjetas: <kbd>espacio</kbd> revela, <kbd>1</kbd> no la sabía, <kbd>2</kbd> la sabía.</p>
+    <p class="note">Atajos: <kbd>1</kbd>–<kbd>4</kbd> o <kbd>A</kbd>–<kbd>D</kbd> para responder, <kbd>←</kbd> <kbd>→</kbd> para navegar, <kbd>F</kbd> para marcar. En tarjetas: <kbd>espacio</kbd> revela, <kbd>1</kbd> para repasar, <kbd>2</kbd> tenía una idea, <kbd>3</kbd> la reconocería.</p>
     <p class="note" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">Para pasar tu progreso a otro dispositivo o navegador:
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 27/10/2026 11:00.</p>
+    <p class="note">Versión 27/10/2026 11:15.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -1601,7 +1604,7 @@ function startStudy(){
   if(!qs.length){ alert("No hay preguntas disponibles."); return; }
   const planKey=PLAN_PENDING; PLAN_PENDING=null;
   ST={planKey,mode:CFG.mode,label:P[CFG.mode].label,idx:0,r:0,w:0,startedAt:Date.now(),
-      items:qs.map(q=>({q,revealed:false,graded:null,typed:""}))};
+      i:0,items:qs.map(q=>({q,revealed:false,graded:null,typed:""}))};
   nav('study'); $('abortBtn').classList.remove('hide'); $('progpill').classList.remove('hide');
   showCard();
 }
@@ -1628,15 +1631,18 @@ function showCard(){
     const sk=el('button','btn ghost sm','Saltear →');
     sk.addEventListener('click',()=>nextCard()); f.appendChild(sk);
   }else{
-    const no=el('button','btn danger','1 · No la sabía');
-    no.addEventListener('click',()=>grade(false));
-    const si=el('button','btn ok','2 · La sabía');
-    si.addEventListener('click',()=>grade(true));
-    f.appendChild(no); f.appendChild(si);
+    f.appendChild(el('div','gq','En el examen vas a tener cuatro opciones. ¿La reconocerías?'));
+    const rp=el('button','btn ghost g-rep','1 · ↻ Para repasar');
+    rp.addEventListener('click',()=>grade('rep'));
+    const id=el('button','btn ghost g-idea','2 · ≈ Tenía una idea');
+    id.addEventListener('click',()=>grade('idea'));
+    const si=el('button','btn ok','3 · ✓ La reconocería');
+    si.addEventListener('click',()=>grade('ok'));
+    f.appendChild(rp); f.appendChild(id); f.appendChild(si);
     f.appendChild(el('span','spacer'));
     if(ST.idx>0){ const p=el('button','btn ghost sm','← Anterior'); p.addEventListener('click',()=>{ST.idx--;showCard();}); f.appendChild(p); }
   }
-  $('progpill').textContent=`${ST.r} sabidas · ${ST.w} falladas`;
+  $('progpill').textContent=`${ST.r} reconocidas · ${ST.i||0} con idea · ${ST.w} para repasar`;
   $('sStat').textContent=`${P[ST.mode].label} · ${ST.items.length} tarjetas`;
   window.scrollTo({top:0,behavior:"instant"});
 }
@@ -1645,17 +1651,22 @@ function reveal(){
   if(ST.mode==="recall") it.typed=$('sInput').value;
   it.revealed=true; showCard();
 }
-function grade(ok){
+function grade(v){
+  if(v===true) v='ok'; if(v===false) v='rep';
   const it=ST.items[ST.idx];
-  if(it.graded===null){ recordStat(it.q.id,ok); if(ok)ST.r++; else ST.w++; }
-  it.graded=ok; saveStore(); nextCard();
+  if(it.graded===null){
+    if(v==='ok'){ recordStat(it.q.id,true); ST.r++; }
+    else if(v==='rep'){ recordStat(it.q.id,false); ST.w++; }
+    else { const s=store.stats[it.q.id]||(store.stats[it.q.id]={s:0,w:0,r:0,l:0}); s.s++; s.l=Date.now(); ST.i=(ST.i||0)+1; }
+  }
+  it.graded=v; saveStore(); nextCard();
 }
 function nextCard(){
   if(ST.idx>=ST.items.length-1){ finishStudy(); return; }
   ST.idx++; showCard();
 }
 function finishStudy(){
-  const n=ST.r+ST.w, pct=n?ST.r/n:0;
+  const n=ST.r+ST.w+(ST.i||0), pct=n?ST.r/n:0;
   const planMarked=planDone(ST.planKey); ST.planKey=null;
   store.history.push({ts:Date.now(),mode:ST.mode,label:ST.label,n:n||ST.items.length,correct:ST.r,pct,
     pass:pct>=PASS,secs:(Date.now()-ST.startedAt)/1000});
@@ -1663,8 +1674,8 @@ function finishStudy(){
   const host=$('modalHost');
   host.innerHTML=`<div class="modal"><div>
     <h3>${esc(ST.label)} terminado</h3>
-    <p>Dijiste que sabías <b>${ST.r}</b> de ${n||0} calificadas${ST.items.length-n>0?`, y salteaste ${ST.items.length-n}`:""}.</p>
-    <p>Las que marcaste como no sabidas ya entraron al repaso de errores.</p>
+    <p>Recorriste <b>${n}</b> preguntas de la guía${ST.items.length-n>0?` (salteaste ${ST.items.length-n})`:""}: <b>${ST.r}</b> las reconocerías, en <b>${ST.i||0}</b> tenías una idea y <b>${ST.w}</b> quedaron para repasar.</p>
+    <p>Las que tenías una idea vuelven a aparecer en próximas tandas. Las que quedaron para repasar están en Repaso de errores, con opciones, para que practiques reconocerlas.</p>
     ${planMarked?'<p class="planok">✓ Bloque del plan de hoy marcado como hecho.</p>':''}
     <div class="mb"><button class="btn ghost" data-x="c">Al inicio</button><button class="btn" data-x="o">Otra tanda</button></div>
   </div></div>`;
@@ -1958,8 +1969,9 @@ document.addEventListener('keydown',e=>{
     const it=ST.items[ST.idx];
     if(typing){ if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();reveal();} return; }
     if(e.code==="Space"||e.key==="Enter"){ e.preventDefault(); it.revealed?nextCard():reveal(); }
-    else if(it.revealed&&(e.key==="1")){ e.preventDefault(); grade(false); }
-    else if(it.revealed&&(e.key==="2")){ e.preventDefault(); grade(true); }
+    else if(it.revealed&&(e.key==="1")){ e.preventDefault(); grade('rep'); }
+    else if(it.revealed&&(e.key==="2")){ e.preventDefault(); grade('idea'); }
+    else if(it.revealed&&(e.key==="3")){ e.preventDefault(); grade('ok'); }
     else if(e.key==="ArrowLeft"&&ST.idx>0){ e.preventDefault(); ST.idx--; showCard(); }
     else if(e.key==="ArrowRight"){ e.preventDefault(); nextCard(); }
     return;

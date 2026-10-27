@@ -832,7 +832,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 27/10/2026 19:45.</p>
+    <p class="note">Versión 27/10/2026 20:00.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -854,7 +854,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <div class="qfoot">
         <button class="btn ghost sm" id="prevBtn">← Anterior</button>
         <button class="btn ghost sm" id="flagBtn">⚑ Marcar</button>
-        <button class="btn ghost sm" id="clearBtn">Borrar</button>
+        <button class="btn ghost sm" id="clearBtn" title="Quita la opción elegida y deja la pregunta sin responder">Quitar respuesta</button>
         <span class="spacer"></span>
         <button class="btn sm" id="nextBtn">Siguiente →</button>
       </div>
@@ -1779,6 +1779,7 @@ function goTo(i){
   $('flagBtn').textContent=it.flag?"⚑ Marcada":"⚑ Marcar";
   $('flagBtn').style.color=it.flag?"var(--flag)":"";
   $('prevBtn').disabled=EX.idx===0;
+  $('clearBtn').classList.toggle('hide',it.revealed||it.sel===null);
   $('nextBtn').textContent=EX.idx===EX.items.length-1?"Revisar y entregar":"Siguiente →";
   updateSheet(); updateProg(); window.scrollTo({top:0,behavior:"instant"});
   saveCur();

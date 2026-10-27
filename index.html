@@ -372,6 +372,8 @@ a{color:var(--accent)}
 .ffoot .grow3 .btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;padding:8px 6px;text-align:center;line-height:1.2;white-space:normal}
 .ffoot .grow3 .gk{font-size:12px;opacity:.75;font-weight:500}
 .fund .fsrcin{margin-top:10px}
+.howhd{display:flex;gap:8px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.seg.mini button{padding:4px 10px;font-size:12.5px;min-height:0}
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -658,12 +660,11 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
             <button data-v="off" aria-pressed="false">No mostrar</button>
           </div>
           <div class="fund-legend">Recorte de la ley, norma o manual que justifica la respuesta correcta.</div></div>
-        <div class="field" id="fldCalc"><label>Calculadora</label><div class="seg" id="segCalc"></div></div>
         <div class="field" id="fldOrder"><label>Orden</label>
           <div class="seg" id="segOrder">
             <button data-v="mod" aria-pressed="true">Por módulo</button>
             <button data-v="rand" aria-pressed="false">Aleatorio</button>
-          </div></div>
+          </div><div class="fund-legend" id="ordLegend"></div></div>
       </div>
       <div class="field" style="flex:1 1 100%"><label>Módulos incluidos</label>
         <div class="modgrid" id="modGrid"></div>
@@ -694,7 +695,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 27/10/2026 12:15.</p>
+    <p class="note">Versión 27/10/2026 12:30.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -1408,7 +1409,10 @@ function refreshCfg(){
   [...$('segFund').children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===fundPref()));
   const lockCorr=p.lock||isStudy;
   $('fldCorr').style.opacity=lockCorr?.4:1; $('segCorr').style.pointerEvents=lockCorr?"none":"auto";
-  $('fldTime').style.opacity=isStudy?.4:1; $('segTime').style.pointerEvents=isStudy?"none":"auto";
+  $('fldTime').style.display=isStudy?"none":""; $('fldCorr').style.display=isStudy?"none":"";
+  $('ordLegend').textContent=p.lock?"":CFG.mode==="nuevas"
+    ? "Entran las preguntas que nunca viste, empezando por el módulo donde más fallás. Por módulo: las primeras en el orden de la guía. Aleatorio: salteadas dentro del módulo y mezcladas."
+    : "Qué preguntas entran lo decide el simulador: primero las que nunca viste y las que más fallás. El orden solo cambia cómo aparecen: agrupadas por módulo en el orden de la guía, o mezcladas.";
   $('fldOrder').style.opacity=p.lock?.4:1; $('segOrder').style.pointerEvents=p.lock?"none":"auto";
   [...$('modGrid').children].forEach(b=>{
     b.setAttribute('aria-pressed',CFG.mods.includes(+b.dataset.m));
@@ -1569,7 +1573,8 @@ function renderFeedback(){
   h.innerHTML=`<div class="fbk ${ok?'ok':'no'}">${ok?"Correcta.":"Incorrecta. La correcta es la "+cl+"."}<span class="ref">Fuente: ${esc(srcFor(it.q))} · <a href="${reportURL(it.q)}" target="_blank" rel="noopener">Reportar un error</a></span></div>`
     +(fp==="off"?"":fundHTML(it.q,fp==="all"||!ok));
   const ex=it.q.calc?exampleFor(it.q):null;
-  if(ex){ const f=h.querySelector('.fbk'); if(f) f.insertAdjacentHTML('beforeend',`<div class="howto"><b>${esc(ex.t)}</b><ol class="fsteps">${ex.steps.map((s,k)=>stepHTML(s,k+1)).join("")}</ol></div>`); }
+  if(ex){ const f=h.querySelector('.fbk'); if(f){ f.insertAdjacentHTML('beforeend',`<div class="howto"><div class="howhd"><b>${esc(ex.t)}</b><div class="seg mini" id="segCalcH"></div></div><ol class="fsteps">${ex.steps.map((s,k)=>stepHTML(s,k+1)).join("")}</ol></div>`);
+    buildSeg($('segCalcH'),[["simple","Simple"],["sci","Científica"]],calcMode(),setCalc); } }
 }
 function updateProg(){ $('progpill').textContent=`${EX.items.filter(i=>i.sel!==null).length}/${EX.items.length} respondidas`; }
 function buildSheet(){
@@ -1615,8 +1620,9 @@ let ST=null;
 function startStudy(){
   const pool=poolFor();
   let qs=pickWeighted(pool,Math.min(CFG.count,pool.length));
-  if(CFG.mode==="nuevas"){ const acc=m=>{const s=modStats(m);return s.acc==null?0.5:s.acc;}; qs=pool.slice().sort((a,b)=>acc(a.m)-acc(b.m)||a.m-b.m||a.id-b.id).slice(0,CFG.count); }
-  else if(CFG.order==="mod") qs.sort((a,b)=>a.m-b.m||a.id-b.id); else qs=shuffle(qs);
+  if(CFG.mode==="nuevas"){ const acc=m=>{const s=modStats(m);return s.acc==null?0.5:s.acc;};
+    qs=(CFG.order==="rand"?shuffle(pool.slice()).sort((a,b)=>acc(a.m)-acc(b.m)||a.m-b.m):pool.slice().sort((a,b)=>acc(a.m)-acc(b.m)||a.m-b.m||a.id-b.id)).slice(0,CFG.count); }
+  if(CFG.order==="mod") qs.sort((a,b)=>a.m-b.m||a.id-b.id); else qs=shuffle(qs);
   if(!qs.length){ alert("No hay preguntas disponibles."); return; }
   const planKey=PLAN_PENDING; PLAN_PENDING=null;
   ST={planKey,mode:CFG.mode,label:P[CFG.mode].label,idx:0,r:0,w:0,startedAt:Date.now(),

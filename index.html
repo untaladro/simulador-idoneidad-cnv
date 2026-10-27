@@ -264,7 +264,8 @@ a{color:var(--accent)}
 
 /* encabezados de sección en minúscula, sin rótulo en mayúsculas */
 .sect>h2{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.015em;text-transform:none;color:var(--ink);margin-bottom:12px}
-.sect>h2 em{font-family:var(--sans);font-size:13.5px;color:var(--ink3);font-weight:400}
+.sect>h2{flex-wrap:wrap}
+.sect>h2 em{font-family:var(--sans);font-size:13.5px;color:var(--ink3);font-weight:400;flex-basis:100%;max-width:80ch;line-height:1.5}
 
 /* mapa de módulos */
 .hero{padding-bottom:4px}
@@ -522,10 +523,10 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   <div class="hero">
     <h1 id="heroTitle">Simulador del examen de idoneidad CNV</h1>
     <div class="examdate"><label for="examDate">Fecha de tu examen</label><input type="date" id="examDate"><span id="examDateHint"></span></div>
-    <p>Ocho modos de práctica sobre el mismo banco, un plan día por día y la ficha de datos duros para el último repaso. Las estadísticas se comparten entre modos, así que lo que fallás en tarjetas vuelve en el repaso de errores.</p>
+    <p>El examen se arma con las 735 preguntas de la Guía de Estudio de la CNV. Acá las practicás de distintas formas, con un plan día por día y una ficha de datos para el último repaso. Todo lo que respondés queda registrado: lo que fallás en cualquier modo vuelve después en el repaso de errores.</p>
     <div class="statline" id="statline"></div>
     <div class="modmap" id="modMap"></div>
-    <div class="maplegend"><span><i></i>dominadas (2 aciertos seguidos)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para practicarlo.</span></div>
+    <div class="maplegend"><span><i></i>dominadas (2 aciertos seguidos)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para practicar solo ese módulo.</span></div>
   </div>
 
   <div id="resumeHost"></div>
@@ -535,42 +536,42 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   </div>
 
   <div class="sect">
-    <h2>Estudiar <em>sin opciones, que es lo único que la guía garantiza</em></h2>
+    <h2>Estudiar <em>La Guía de Estudio de la CNV publica cada pregunta con su respuesta correcta, pero no las opciones incorrectas. Por eso, salvo Ejercicios numéricos, estos modos te muestran la pregunta y la respuesta, sin opciones.</em></h2>
     <div class="modes">
       <button class="mode" data-mode="nuevas">
         <span class="mt">Lo que nunca viste</span>
-        <span class="md">Tarjetas solo con las preguntas de la guía que todavía no te salieron. El examen sale de la guía: cada pregunta nueva que leés es una que ya no vas a adivinar.</span>
+        <span class="md">Tarjetas con las preguntas de la guía que todavía no viste. Como el examen sale de la guía, cada pregunta que leés acá es una que el día del examen vas a reconocer en lugar de adivinar.</span>
         <span class="mspec" id="specNuevas"></span>
       </button>
       <button class="mode" data-mode="cards">
         <span class="mt">Tarjetas</span>
-        <span class="md">Enunciado y respuesta correcta sola. Te autocalificás. Es la forma honesta de estudiar el par que sí está en la guía oficial.</span>
+        <span class="md">Ves la pregunta, pensás la respuesta y la revelás. Después marcás si la sabías o no. Es la forma más rápida de recorrer la guía: unos 20 segundos por pregunta.</span>
         <span class="mspec" id="specCards"></span>
       </button>
       <button class="mode" data-mode="recall">
         <span class="mt">Recall escrito</span>
-        <span class="md">Escribís la respuesta de memoria y recién después se revela. Mucho más duro que reconocer entre cuatro, y mucho mejor predictor.</span>
+        <span class="md">Escribís la respuesta de memoria antes de verla. Cuesta más que elegir entre cuatro opciones, y por eso mismo fija mejor lo que estudiás.</span>
         <span class="mspec" id="specRecall"></span>
       </button>
       <button class="mode" data-mode="datos">
         <span class="mt">Datos duros</span>
-        <span class="md">Solo las preguntas cuya respuesta es un plazo, un porcentaje, un umbral o una norma. Memorización pura, sin razonamiento posible.</span>
+        <span class="md">Solo las preguntas cuya respuesta es un plazo, un porcentaje, un monto o el número de una norma. No se pueden deducir razonando: hay que saberlas de memoria.</span>
         <span class="mspec" id="specDatos"></span>
       </button>
       <button class="mode" data-mode="ejercicios">
         <span class="mt">Ejercicios numéricos</span>
-        <span class="md">Las preguntas de cálculo: bonos, cauciones, opciones, tasas y resultados de operaciones, con corrección inmediata.</span>
+        <span class="md">Las preguntas que piden hacer una cuenta: bonos, cauciones, opciones, tasas y suscripciones. Al responder ves si acertaste y cómo se resuelve.</span>
         <span class="mspec" id="specEjer"></span>
       </button>
     </div>
   </div>
 
   <div class="sect">
-    <h2>Rendir <em>con opciones, para entrenar el formato del examen</em></h2>
+    <h2>Rendir <em>Preguntas con cuatro opciones, como en el examen. Las opciones incorrectas no salen de la guía: están escritas para este simulador.</em></h2>
     <div class="modes">
       <button class="mode primary" data-mode="full">
         <span class="mt">Examen completo</span>
-        <span class="md">10 preguntas de cada módulo, en orden, sin corrección hasta entregar.</span>
+        <span class="md">Igual que el examen real: 60 preguntas, 10 de cada módulo, con reloj. Recién al entregar ves cuáles acertaste.</span>
         <span class="mspec">60 preguntas · 45 min · 70%</span>
       </button>
       <button class="mode" data-mode="partial">
@@ -580,48 +581,48 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       </button>
       <button class="mode" data-mode="diag">
         <span class="mt">Diagnóstico rápido</span>
-        <span class="md">Dos preguntas de la guía por módulo, sin reloj. En cinco minutos ves por dónde empezar.</span>
+        <span class="md">Dos preguntas de cada módulo, sin reloj. En cinco minutos te muestra qué módulo te conviene estudiar primero.</span>
         <span class="mspec">12 preguntas · sin reloj</span>
       </button>
       <button class="mode" data-mode="practice">
         <span class="mt">Práctica por módulo</span>
-        <span class="md">Elegís módulos, cantidad y si querés ver la respuesta al instante.</span>
+        <span class="md">Elegís los módulos y la cantidad de preguntas, y si querés ver la corrección después de cada respuesta o al final.</span>
         <span class="mspec">configurable</span>
       </button>
       <button class="mode" data-mode="wrong" id="wrongBtn">
         <span class="mt">Repaso de errores</span>
-        <span class="md">Solo lo que fallaste, en cualquier modo. Cada pregunta sale de la lista cuando la acertás dos veces seguidas.</span>
+        <span class="md">Solo las preguntas que fallaste en cualquier modo. Cada una sale de la lista cuando la acertás dos veces seguidas.</span>
         <span class="mspec" id="wrongCount">0 pendientes</span>
       </button>
     </div>
   </div>
 
   <div class="sect">
-    <h2>Consultar</h2>
+    <h2>Consultar <em>Material de apoyo para leer, sin responder preguntas.</em></h2>
     <div class="modes">
       <button class="mode" data-nav="guia">
         <span class="mt">Lectura guiada</span>
-        <span class="md">Qué leer de la fuente para cada módulo, con la práctica de ese módulo al lado para intercalar.</span>
+        <span class="md">Qué leer de la bibliografía oficial en cada módulo. Al lado de cada lectura hay un botón para practicar ese módulo apenas terminás de leer.</span>
         <span class="mspec">6 módulos</span>
       </button>
       <button class="mode" data-nav="form">
         <span class="mt">Fórmulas para ejercicios</span>
-        <span class="md">Las cuentas que hay que saber de memoria, con el paso a paso en calculadora simple y para tapar y autoevaluarte.</span>
+        <span class="md">Las cuentas que piden los ejercicios: cuándo usar cada una, qué significa cada dato y un ejercicio de la guía resuelto paso a paso, con calculadora simple o científica.</span>
         <span class="mspec" id="specForm"></span>
       </button>
       <button class="mode" data-nav="ficha">
         <span class="mt">Ficha de datos duros</span>
-        <span class="md">Todos los plazos, porcentajes, umbrales y normas del banco, agrupados. Se pueden tapar las respuestas.</span>
+        <span class="md">Todos los plazos, porcentajes, montos y números de norma que aparecen como respuesta en la guía, agrupados por tema. Podés tapar las respuestas para autoevaluarte.</span>
         <span class="mspec" id="specFicha"></span>
       </button>
       <button class="mode" data-nav="warn">
         <span class="mt">Banco vs. norma vigente</span>
-        <span class="md">Las preguntas cuya respuesta oficial quedó vieja o es discutible frente al texto vigente. Para tener en cuenta, no para memorizar.</span>
+        <span class="md">Preguntas en las que la respuesta de la guía no coincide con la ley o las Normas vigentes. En el examen se responde lo que dice la guía; esta lista explica la diferencia.</span>
         <span class="mspec" id="specWarn"></span>
       </button>
       <button class="mode" data-nav="plan">
         <span class="mt">Plan completo</span>
-        <span class="md">Nueve días de estudio hasta tu fecha de examen, con lo que toca cada día y el seguimiento de lo hecho.</span>
+        <span class="md">Nueve días de estudio que terminan el día de tu examen. Cada día tiene bloques con una actividad y un botón para hacerla; el bloque se marca solo al terminar.</span>
         <span class="mspec" id="specPlan"></span>
       </button>
     </div>
@@ -681,7 +682,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 27/10/2026 10:45.</p>
+    <p class="note">Versión 27/10/2026 11:00.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>

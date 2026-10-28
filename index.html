@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Simulador del examen de idoneidad CNV · guía v5, gratis</title>
+<title>Talastrat Idóneo · Simulador del examen de idoneidad CNV (guía v5, gratis)</title>
 <meta name="description" content="Simulador gratuito del examen de idoneidad de la CNV: las 735 preguntas de la Guía v5, simulacro de 60 preguntas en 45 minutos, parcial, fundamento legal de cada respuesta, fórmulas y plan de estudio. Sin registro.">
-<meta property="og:title" content="Simulador del examen de idoneidad CNV">
+<meta property="og:title" content="Talastrat Idóneo · Simulador del examen de idoneidad CNV">
 <meta property="og:description" content="Las 735 preguntas de la Guía v5 con el fundamento legal de cada respuesta. Gratis y sin registro.">
 <meta name="theme-color" content="#1f5f8b">
 <link rel="manifest" href="manifest.webmanifest">
@@ -519,6 +519,24 @@ body.hastabs{padding-bottom:84px}
   #scr-home .mode.primary .md{-webkit-line-clamp:unset;display:block}
   #scr-home .sect>h2 em{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 }
+
+/* ---- Talastrat · Taladrín ---- */
+.brand{display:flex;align-items:center;gap:10px}
+.brand .tlogo{width:34px;height:34px;border-radius:10px;background:#232b36;display:grid!important;place-items:center;flex:none;overflow:hidden}
+.brand .tlogo svg{width:30px;height:16px;overflow:hidden}
+.brand .tdot{display:inline!important;font-size:inherit}
+.tdot{color:var(--ink3);font-weight:400}
+.talguide{display:flex;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 16px;margin-top:18px}
+.talav{width:72px;height:60px;flex:none;border-radius:14px;background:#232b36;display:grid;place-items:center;color:#232b36}
+.talav svg{width:66px;height:52px;overflow:visible}
+.talbub{flex:1;min-width:0}
+.talbub p{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink)}
+.talbub .btn{margin-top:9px}
+.tg-tab{background:transparent;border:0;padding:4px 0;margin-top:14px}
+.tg-tab .talav{width:58px;height:48px}.tg-tab .talav svg{width:52px;height:42px}
+.tg-tab p{color:var(--ink2);font-size:14px}
+#talRes .talguide{margin-top:14px}
+
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -664,7 +682,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 
 <div class="top">
   <div class="top-in">
-    <div class="brand"><b>Simulador Idoneidad CNV</b><span id="brandsub" class="hide"></span></div>
+    <div class="brand"><span class="tlogo" id="tlogo" aria-hidden="true"></span><b>Talastrat <span class="tdot">·</span> Idóneo</b><span id="brandsub" class="hide"></span></div>
     <div id="progpill" class="progpill hide"></div>
     <div id="clock" class="clock hide">45:00</div>
     <button class="icon-btn" id="themeBtn" title="Cambiar tema">◐</button>
@@ -675,6 +693,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 <nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Estrategia</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button></nav>
 <!-- ============ HOME ============ -->
 <div id="scr-home" class="wrap">
+  <div id="talHome" data-tab="inicio"></div>
   <div class="hero" data-tab="inicio">
     <h1 id="heroTitle">Simulador del examen de idoneidad CNV</h1>
     <div class="examdate"><label for="examDate">Fecha de tu examen</label><input type="date" id="examDate"><span id="examDateHint"></span></div>
@@ -690,6 +709,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <div id="todayHost"></div>
   </div>
 
+  <div class="talguide tg-tab" data-tab="estudiar"><div class="talav" data-face="atento"></div><div class="talbub"><p>Acá no hay opciones: ves la pregunta y su respuesta, como en la guía. Es la forma más rápida de recorrerla. Si nunca la viste entera, empezá por <b>Lo que nunca viste</b>.</p></div></div>
   <div class="sect" data-tab="estudiar">
     <h2>Estudiar <em>La Guía de Estudio de la CNV publica cada pregunta con su respuesta correcta, pero no las opciones incorrectas. Por eso, salvo Ejercicios numéricos, estos modos te muestran la pregunta y la respuesta, sin opciones.</em></h2>
     <div class="modes">
@@ -721,6 +741,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
+  <div class="talguide tg-tab" data-tab="rendir"><div class="talav" data-face="seco"></div><div class="talbub"><p>Acá se practica como en el examen: con opciones y con reloj. Algunas respuestas vienen partidas en combinaciones («Todas», «A y C»), igual que en el examen real.</p></div></div>
   <div class="sect" data-tab="rendir">
     <h2>Rendir <em>Preguntas con opciones, como en el examen. Las opciones incorrectas no salen de la guía: están escritas para este simulador.</em></h2>
     <div class="modes">
@@ -757,6 +778,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
+  <div class="talguide tg-tab" data-tab="consultar"><div class="talav" data-face="ceja"></div><div class="talbub"><p>Esto es para entender, no para memorizar: tablas, mapa de organismos, fórmulas y cómo encarar el examen. Si una pregunta te confunde, buscala acá.</p></div></div>
   <div class="sect" data-tab="consultar">
     <h2>Estrategia <em>Material para entender y ordenar lo que estudiás: tablas comparativas, mapa de organismos, fórmulas y cómo encarar el examen.</em></h2>
     <div class="modes">
@@ -856,7 +878,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 28/10/2026 15:00.</p>
+    <p class="note">Versión 28/10/2026 15:30.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -1056,6 +1078,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   <div class="res">
     <div><button class="btn ghost sm" id="resHomeTop">← Volver al inicio</button></div>
     <div class="verdict" id="verdict"></div>
+    <div id="talRes"></div>
     <div class="card" id="cardMods"></div>
     <div class="card" id="cardTopics"></div>
     <div class="card">
@@ -1446,6 +1469,122 @@ document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
   const t=b.dataset.tabgo; if($('scr-home').classList.contains('hide')){ nav('home'); renderHome(); } setTab(t);
 }));
 
+/* ---------- Taladrín (mascota de Talastrat; mismo dibujo que en Talastrat) ---------- */
+const LN = '#0f1714';
+const ceja = (d, w) => `<path d="${d}" fill="none" stroke="${LN}" stroke-width="${w || 3.8}" stroke-linecap="round"/>`;
+const boca = (d, w) => `<path d="${d}" fill="none" stroke="${LN}" stroke-width="${w || 2.2}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const ojo = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r || 2.1}" fill="${LN}"/>`;
+const ojoCerrado = (x, y) => `<path d="M${x - 2.8} ${y + 1} q2.8 2.2 5.6 0" fill="none"
+  stroke="${LN}" stroke-width="1.8" stroke-linecap="round"/>`;
+/* El ojo tomado del modo aire: párpado bajo y la pupila reemplazada por luz plana.
+   Sin resplandor a propósito — ver el comentario de CARAS.avatar. */
+const OJO_AIRE = '#eafff6';
+const ojoTomado = (x, y) => `<path d="M${x - 3.4} ${y + .4} a3.4 3 0 0 1 6.8 0z" fill="${OJO_AIRE}"/>
+  <path d="M${x - 3.4} ${y + .6} h6.8" stroke="${LN}" stroke-width="1.4" stroke-linecap="round"/>`;
+
+const CARAS = {
+  dormido: ceja('M17 12 h11', 3.4) + ceja('M33 12 h11', 3.4) +
+    `<g class="ojos">${ojoCerrado(23, 19)}${ojoCerrado(38, 19)}</g>` + boca('M28 27 h6'),
+  atento:  ceja('M17 10.5 h11', 3.4) + ceja('M33 10.5 h11', 3.4) +
+    `<g class="ojos">${ojo(23, 19, 2.5)}${ojo(38, 19, 2.5)}</g>` + boca('M28 27 h6'),
+  seco:    ceja('M17 12 h11') + ceja('M33 12 h11') +
+    `<g class="ojos">${ojo(23, 19)}${ojo(38, 19)}</g>` + boca('M27 27.5 h8'),
+  ceja:    ceja('M16 8 l12 -2.6', 4) + ceja('M33 12.5 h11') +
+    `<g class="ojos">${ojo(23, 19)}${ojo(38, 19)}</g>` + boca('M27 28 q4 2 8 -3'),
+  guiño:   ceja('M16 9.5 l12 -2', 3.6) + ceja('M32 7.5 l12 2', 3.6) +
+    `<g class="ojos">${ojoCerrado(23, 19)}${ojo(38, 19)}</g>` + boca('M26 25 q5 5.5 10 0'),
+  furioso: ceja('M15 5 l13 6', 4.6) + ceja('M47 5 l-13 6', 4.6) +
+    `<g class="ojos"><path d="M19.5 20 h7" stroke="${LN}" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M34.5 20 h7" stroke="${LN}" stroke-width="3.4" stroke-linecap="round"/></g>` +
+    boca('M25 29 l4 -2.5 4 2.5 4 -2.5') +
+    `<path d="M44 2 l3 3 3-3 M50 5 l-3 3 3 3 M47 11 l-3-3-3 3 M41 5 l3-3-3-3"
+       stroke="#ffd0d0" stroke-width="1.9" fill="none" stroke-linecap="round"/>`,
+  alerta:  ceja('M16 6.5 l12 4', 4) + ceja('M45 6.5 l-12 4', 4) +
+    `<g class="ojos">${ojo(23, 20.5, 2.8)}${ojo(38, 20.5, 2.8)}</g>` + boca('M27 29 q4 -3 8 0'),
+  /* ===== avatar: la cara del modo aire =====
+     El tilt y el aire son el mismo estado contado por los dos lados, y acá se ve: en
+     los dos el personaje está tomado, uno tiembla y el otro está inmóvil. Los ojos sin
+     pupila son la señal, se reconoce de reojo y no se confunde con ningún otro estado.
+
+     Lo que deliberadamente NO tiene es aura, resplandor ni mecha encendida. La versión
+     con brillo se probó y decía "estás imparable", que es falso —la expectativa por
+     operación no cambia porque el modo se encienda— y además convertía el modo en un
+     trofeo a perseguir. Lo que el aire mide es desapego: `rTam` y `rEsp` comparan qué
+     hacés después de perder contra después de ganar. Se enciende cuando el resultado
+     anterior dejó de moverte, no cuando ganás.
+
+     Las cejas quedan horizontales y la boca recta: la expresión se va, que es el punto.
+     Y los ojos no van en `<g class="ojos">` porque ese grupo parpadea, y un ojo tomado
+     no parpadea. */
+  avatar:  ceja('M17 10.5 h11', 3.4) + ceja('M33 10.5 h11', 3.4) +
+    `<g class="ojosfijos">${ojoTomado(23, 19)}${ojoTomado(38, 19)}</g>` + boca('M28 27 h6')
+};
+/* Señalando: la carcasa es el cuerpo, la empuñadura la base, y el brazo apunta
+   a lo que estás mirando. */
+/* La mecha y las partes metálicas son casi blancas: sobre el globo oscuro se leen solas,
+   sobre el globo claro desaparecían y el taladro quedaba flotando sin punta. En claro
+   baja el valor de esas piezas y se aclara la empuñadura, que sobre blanco se veía como
+   un borrón negro. El personaje es el mismo, cambia el rango tonal. */
+const PALETA = {
+  normal: { cuerpo:'#54b391', sombra:'#358068', grip:'#2f4a41', gripS:'#1e332c', metal:'#8fbfae', mecha:'#e9f6f1', chispa:'#ffd0d0' },
+  tilt:   { cuerpo:'#c94f4f', sombra:'#8f3232', grip:'#4a2f2f', gripS:'#331e1e', metal:'#d9a3a3', mecha:'#f6e9e9', chispa:'#ffd0d0' }
+};
+const drillSvg = (cara, tilt) => {
+  const C = tilt ? PALETA.tilt : PALETA.normal;
+  // las chispas del enojo viven adentro de CARAS, que es constante; se tiñen acá
+  const cara_ = (CARAS[cara] || CARAS.seco).split('#ffd0d0').join(C.chispa);
+  return `<svg viewBox="-15 -4 99 73" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+  <g class="flota">
+  <path d="M21 31 L18 55 q-.6 4 4 4 h16 q4.6 0 4-4 L38 31z" fill="${C.grip}" stroke="#0f1714" stroke-width="2"/>
+  <path d="M30 31 L30 59 h8 q4.6 0 4-4 L38 31z" fill="${C.gripS}" stroke="none"/>
+  <rect x="15" y="53" width="30" height="10" rx="3.5" fill="${C.gripS}" stroke="#0f1714" stroke-width="2"/>
+  <path d="M22 38 h14 M21 43 h14 M21 48 h14" stroke="${C.gripS}" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <rect x="12" y="3" width="38" height="29" rx="12" fill="${C.cuerpo}" stroke="#0f1714" stroke-width="2.2"/>
+  <path d="M38 3 h0 a12 12 0 0 1 0 29 h-3 a12 12 0 0 0 0-29z" fill="${C.sombra}"/>
+  <path d="M50 10 l7 2.5 v10 L50 25z" fill="${C.metal}" stroke="#0f1714" stroke-width="1.6"/>
+  <path class="bit" d="M57 17.5 H71" stroke="${C.mecha}" stroke-width="3.6" stroke-linecap="butt"/>
+  <path d="M60 15 l3 5 M65 15 l3 5" stroke="${C.metal}" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+  <path d="M71 14.6 L77 17.5 L71 20.4z" fill="${C.mecha}" stroke="#0f1714" stroke-width="1.2"/>
+  <g class="brazo">
+    <path d="M12 23 q-10 4 -11 13" fill="none" stroke="#0f1714" stroke-width="3.6" stroke-linecap="round"/>
+    <circle cx="1.5" cy="38" r="4.4" fill="currentColor" stroke="#0f1714" stroke-width="1.8"/>
+  </g>
+  <g class="face">${cara_}</g>
+  </g>
+</svg>`; };
+
+function talHTML(face, html, btn){
+  return `<div class="talguide"><div class="talav">${drillSvg(face,false)}</div><div class="talbub"><p>${html}</p>${btn?`<button class="btn sm" id="${btn.id}">${esc(btn.t)}</button>`:""}</div></div>`;
+}
+function renderTalHome(){
+  const host=$('talHome'); if(!host) return;
+  const seen=BANK.filter(q=>q.o===1&&store.stats[q.id]).length;
+  const fulls=(store.history||[]).filter(x=>x.mode==="full");
+  const last=fulls.length?fulls[fulls.length-1]:null;
+  const ex=examDate(), d=ex?daysTo(ex):null;
+  const pre=d===null||d<0?"":d===0?"Hoy rendís. Nada nuevo: un repaso liviano y a descansar. ":d===1?"Mañana rendís. ":d<=7?`Faltan ${d} días. `:"";
+  let face="seco", txt, btn=null;
+  if(d===0){ face="guiño"; txt=pre+"Mirá Estrategia una vez y confiá en lo que practicaste."; btn={id:"talGo",t:"Ir a Estrategia",go:()=>setTab("consultar")}; }
+  else if(!seen){ face="atento"; txt=pre+"Soy Taladrín. El examen sale entero de las 735 preguntas de la guía, así que empecemos por las que nunca viste."; btn={id:"talGo",t:"Empezar con Lo que nunca viste",go:()=>{setTab("estudiar");applyMode("nuevas");}}; }
+  else if(seen<515){ face="ceja"; txt=pre+`Viste ${seen} de 735 preguntas de la guía. Lo que más rinde ahora es seguir con las que te faltan: cada una que leés es una que no vas a adivinar.`; btn={id:"talGo",t:"Seguir con Lo que nunca viste",go:()=>{setTab("estudiar");applyMode("nuevas");}}; }
+  else if(!last||last.pct<0.7){ face=last?"alerta":"seco"; txt=pre+(last?`Tu último examen completo dio ${Math.round(last.pct*100)}%. Ya recorriste casi toda la guía: probá otro con reloj y mirá qué módulo te baja.`:"Ya recorriste casi toda la guía. Es momento de un examen completo con reloj, como el real."); btn={id:"talGo",t:"Hacer un examen completo",go:()=>{setTab("rendir");applyMode("full");}}; }
+  else { face="guiño"; txt=pre+`Tu último examen completo dio ${Math.round(last.pct*100)}%. Vas bien: repasá los errores y llegá descansado.`; btn={id:"talGo",t:"Repasar errores",go:()=>{setTab("rendir");applyMode("wrong");}}; }
+  host.innerHTML=talHTML(face,esc(txt),btn);
+  const b=$('talGo'); if(b&&btn) b.addEventListener('click',btn.go);
+}
+function renderTalRes(pct){
+  const host=$('talRes'); if(!host||!EX) return;
+  const mods={}; EX.items.forEach(it=>{const b=mods[it.q.m]=mods[it.q.m]||{n:0,ok:0};b.n++;if(it.sel!==null&&it.opts[it.sel].ok)b.ok++;});
+  const worst=Object.entries(mods).filter(([m,b])=>b.n>=2).sort((a,b)=>a[1].ok/a[1].n-b[1].ok/b[1].n)[0];
+  const w=worst?` El módulo que más te costó fue el ${worst[0]} (${worst[1].ok} de ${worst[1].n}).`:"";
+  const pass=pct>=PASS;
+  host.innerHTML=talHTML(pass?"guiño":"alerta", esc(pass?`Aprobado.${w} Repasá las que fallaste para que no vuelvan a salir mal.`:`Todavía no.${w} Practicá ese módulo antes del próximo intento; el examen sale de la guía, así que cada pregunta que repasás cuenta.`));
+}
+function paintTal(){
+  const lg=$('tlogo'); if(lg&&!lg.innerHTML) lg.innerHTML=drillSvg("seco",false).replace('viewBox="-15 -4 99 73"','viewBox="9 -1 70 36"');
+  document.querySelectorAll('.talav[data-face]').forEach(el=>{ if(!el.innerHTML) el.innerHTML=drillSvg(el.dataset.face,false); });
+}
+
 /* ---------- diferencias entre opciones largas ---------- */
 const dvTok=s=>s.match(/\S+\s*/g)||[];
 const dvNorm=t=>t.trim().toLowerCase().replace(/[.,;:]+$/,"");
@@ -1596,7 +1735,7 @@ function renderHome(){
   $('todayDate').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
   $('specWarn').textContent=`${warnQs().length} preguntas`;
   renderModMap(); renderComp(); renderResume();
-  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); setTab(TAB,false);
+  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); setTab(TAB,false); paintTal(); renderTalHome();
 }
 const WCAT={"15": "a", "146": "a", "243": "a", "252": "a", "257": "a", "261": "a", "306": "a", "331": "a", "340": "a", "371": "a", "624": "a", "709": "a", "727": "a", "11": "d", "140": "d", "155": "d", "260": "d", "504": "d", "520": "d", "556": "d"};
 let warnF="all";
@@ -2038,7 +2177,7 @@ let REVFILTER="all";
 function renderResults(correct,pct){
   const n=EX.items.length, need=Math.ceil(n*PASS), pass=pct>=PASS;
   const secs=(EX.endedAt-EX.startedAt)/1000;
-  const v=$('verdict'); v.className="verdict "+(pass?"pass":"fail");
+  const v=$('verdict'); v.className="verdict "+(pass?"pass":"fail"); setTimeout(()=>renderTalRes(pct),0);
   v.innerHTML=`<div class="score">${Math.round(pct*100)}<span style="font-size:24px">%</span></div>
     <div class="vmeta">
       <div class="vt">${pass?"Aprobado":"Desaprobado"}</div>

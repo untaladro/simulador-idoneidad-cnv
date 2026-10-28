@@ -508,7 +508,7 @@ a{color:var(--accent)}
 body.hastabs{padding-bottom:84px}
 #scr-home .sect[data-tab]:first-of-type,#scr-home [data-tab]:not(.tabhide) ~ .sect{margin-top:22px}
 @media (min-width:900px){
-  .tabbar{position:sticky;top:56px;bottom:auto;display:flex;justify-content:center;gap:6px;border-top:0;border-bottom:1px solid var(--line);padding:8px}
+  .tabbar{position:fixed;top:0;left:50%;right:auto;bottom:auto;transform:translateX(-50%);height:51px;z-index:41;display:flex;align-items:center;gap:4px;border:0;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0}
   .tabbtn{flex-direction:row;gap:8px;font-size:14px;padding:8px 16px}
   .tabbtn svg{width:19px;height:19px}
   body.hastabs{padding-bottom:0}
@@ -664,7 +664,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 
 <div class="top">
   <div class="top-in">
-    <div class="brand"><b>Simulador Idoneidad CNV</b><span id="brandsub"></span></div>
+    <div class="brand"><b>Simulador Idoneidad CNV</b><span id="brandsub" class="hide"></span></div>
     <div id="progpill" class="progpill hide"></div>
     <div id="clock" class="clock hide">45:00</div>
     <button class="icon-btn" id="themeBtn" title="Cambiar tema">◐</button>
@@ -672,7 +672,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   </div>
 </div>
 
-<nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Consultar</span></button></nav>
+<nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Estrategia</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button></nav>
 <!-- ============ HOME ============ -->
 <div id="scr-home" class="wrap">
   <div class="hero" data-tab="inicio">
@@ -758,7 +758,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   </div>
 
   <div class="sect" data-tab="consultar">
-    <h2>Consultar <em>Material de apoyo para leer, sin responder preguntas.</em></h2>
+    <h2>Estrategia <em>Material para entender y ordenar lo que estudiás: tablas comparativas, mapa de organismos, fórmulas y cómo encarar el examen.</em></h2>
     <div class="modes">
       <button class="mode" data-nav="guia">
         <span class="mt">Lectura guiada</span>
@@ -856,7 +856,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 28/10/2026 14:30.</p>
+    <p class="note">Versión 28/10/2026 15:00.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>

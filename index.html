@@ -14,7 +14,7 @@
 :root{
   --bg:#f4f5f7; --panel:#ffffff; --panel2:#fafbfc; --ink:#16191d; --ink2:#5b6470; --ink3:#8b95a1;
   --line:#e2e5ea; --line2:#cfd5dd;
-  --accent:#1f5f8b; --accent-ink:#ffffff; --accent-soft:#e8f0f6;
+  --accent:#1f5f8b; --talbg:#232b36; --accent-ink:#ffffff; --accent-soft:#e8f0f6;
   --ok:#1a7f4b; --ok-soft:#e6f4ec; --bad:#b3261e; --bad-soft:#fce9e7;
   --warn:#a86413; --warn-soft:#fdf1de; --flag:#7b3fa0; --flag-soft:#f1e9f7;
   --radius:10px; --shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.05);
@@ -26,7 +26,7 @@
   :root:not([data-theme="light"]){
     --bg:#0f1216; --panel:#171b21; --panel2:#1c2129; --ink:#e8ebef; --ink2:#a2acb8; --ink3:#6e7884;
     --line:#262c35; --line2:#333b46;
-    --accent:#5aa3d6; --accent-ink:#0f1216; --accent-soft:#162733;
+    --accent:#5aa3d6; --talbg:#131820; --accent-ink:#0f1216; --accent-soft:#162733;
     --ok:#4ec98a; --ok-soft:#12261c; --bad:#f2837a; --bad-soft:#2b1614;
     --warn:#e0aa5c; --warn-soft:#2a2013; --flag:#b98ede; --flag-soft:#241a2e;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
@@ -35,7 +35,7 @@
 :root[data-theme="dark"]{
   --bg:#0f1216; --panel:#171b21; --panel2:#1c2129; --ink:#e8ebef; --ink2:#a2acb8; --ink3:#6e7884;
   --line:#262c35; --line2:#333b46;
-  --accent:#5aa3d6; --accent-ink:#0f1216; --accent-soft:#162733;
+  --accent:#5aa3d6; --talbg:#131820; --accent-ink:#0f1216; --accent-soft:#162733;
   --ok:#4ec98a; --ok-soft:#12261c; --bad:#f2837a; --bad-soft:#2b1614;
   --warn:#e0aa5c; --warn-soft:#2a2013; --flag:#b98ede; --flag-soft:#241a2e;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
@@ -520,22 +520,45 @@ body.hastabs{padding-bottom:84px}
   #scr-home .sect>h2 em{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 }
 
-/* ---- Talastrat · Taladrín ---- */
-.brand{display:flex;align-items:center;gap:10px}
-.brand .tlogo{width:34px;height:34px;border-radius:10px;background:#232b36;display:grid!important;place-items:center;flex:none;overflow:hidden}
-.brand .tlogo svg{width:30px;height:16px;overflow:hidden}
-.brand .tdot{display:inline!important;font-size:inherit}
-.tdot{color:var(--ink3);font-weight:400}
-.talguide{display:flex;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 16px;margin-top:18px}
-.talav{width:72px;height:60px;flex:none;border-radius:14px;background:#232b36;display:grid;place-items:center;color:#232b36}
-.talav svg{width:66px;height:52px;overflow:visible}
-.talbub{flex:1;min-width:0}
-.talbub p{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink)}
-.talbub .btn{margin-top:9px}
-.tg-tab{background:transparent;border:0;padding:4px 0;margin-top:14px}
-.tg-tab .talav{width:58px;height:48px}.tg-tab .talav svg{width:52px;height:42px}
-.tg-tab p{color:var(--ink2);font-size:14px}
-#talRes .talguide{margin-top:14px}
+/* ---- Talastrat · Taladrín flotante ---- */
+.brand .tdot{display:inline!important;color:var(--ink3);font-weight:400}
+.tal{position:fixed;right:20px;bottom:20px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:9px;max-width:min(370px,calc(100vw - 32px))}
+.tal .globo{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px 30px 13px 15px;font-size:14px;line-height:1.55;box-shadow:0 10px 34px rgba(0,0,0,.18);position:relative;display:none;color:var(--ink)}
+.tal.habla .globo{display:block;animation:talAparece .18s ease-out}
+@keyframes talAparece{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.tal .globo:after{content:"";position:absolute;right:36px;bottom:-7px;width:12px;height:12px;background:var(--panel);border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+.tal .globo .et{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);margin-bottom:5px;font-weight:700}
+.tal.ok .globo{border-color:var(--ok)} .tal.ok .globo .et{color:var(--ok)}
+.tal.alerta .globo{border-color:var(--bad)} .tal.alerta .globo .et{color:var(--bad)}
+.tal.info .globo .et{color:var(--accent)}
+.tal #talAcc .btn{margin-top:10px}
+.tal .cierra{position:absolute;top:5px;right:9px;color:var(--ink3);cursor:pointer;font-style:normal;font-size:17px;line-height:1}
+.tal .cierra:hover{color:var(--ink)}
+.tal .cuerpo{background:var(--talbg);border:1px solid var(--line);border-radius:20px;width:86px;height:66px;padding:0;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.25);transition:transform .22s cubic-bezier(.3,1.4,.5,1),border-color .3s}
+.tal .cuerpo svg{width:76px;height:56px;color:var(--ink3);overflow:visible}
+.tal.habla .cuerpo{transform:scale(1.1);border-color:var(--accent)}
+.tal.habla.ok .cuerpo{border-color:var(--ok)} .tal.habla.alerta .cuerpo{border-color:var(--bad)}
+.tal.vibra .cuerpo svg{animation:talVibra .11s linear infinite}
+@keyframes talVibra{0%,100%{transform:translate(0,0)}25%{transform:translate(.7px,-.7px)}75%{transform:translate(-.7px,.7px)}}
+.tal .brazo{transform-origin:12px 23px;transform:rotate(var(--ang,0deg));transition:transform .32s cubic-bezier(.25,1.2,.4,1)}
+.tal .flota{animation:talFlota 4s ease-in-out infinite}
+.tal .ojos{transform-origin:30.5px 19.5px;animation:talParpadeo 5.4s infinite}
+@keyframes talFlota{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.4px)}}
+@keyframes talParpadeo{0%,92%,100%{transform:scaleY(1)}94.5%,96.5%{transform:scaleY(.1)}}
+.tal .bit{stroke-dasharray:2.5 2.5}
+.tal.habla .bit{animation:talGira .45s linear 4}
+@keyframes talGira{to{stroke-dashoffset:-5}}
+@media (max-width:899px){
+  body.hastabs .tal{bottom:calc(84px + env(safe-area-inset-bottom))}
+  .tal{right:12px}
+  .tal .cuerpo{width:68px;height:54px;border-radius:16px}
+  .tal .cuerpo svg{width:60px;height:46px}
+}
+@media (prefers-reduced-motion: reduce){
+  .tal.vibra .cuerpo svg,.tal .ojos,.tal.habla .bit{animation:none}
+  .tal .flota{animation-duration:16s}
+  .tal.habla .globo{animation:none}
+}
 
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
@@ -682,7 +705,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 
 <div class="top">
   <div class="top-in">
-    <div class="brand"><span class="tlogo" id="tlogo" aria-hidden="true"></span><b>Talastrat <span class="tdot">·</span> Idóneo</b><span id="brandsub" class="hide"></span></div>
+    <div class="brand"><b>Talastrat <span class="tdot">·</span> Idóneo</b><span id="brandsub" class="hide"></span></div>
     <div id="progpill" class="progpill hide"></div>
     <div id="clock" class="clock hide">45:00</div>
     <button class="icon-btn" id="themeBtn" title="Cambiar tema">◐</button>
@@ -691,9 +714,12 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 </div>
 
 <nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Estrategia</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button></nav>
+<div id="tal" class="tal hide">
+  <div class="globo"><i class="cierra" id="talCierra" title="Cerrar">×</i><span class="et" id="talEt"></span><span id="talDice"></span><div id="talAcc"></div></div>
+  <button class="cuerpo" id="talCuerpo" title="Taladrín · tocalo para que te diga qué conviene hacer" aria-label="Taladrín, tu guía"></button>
+</div>
 <!-- ============ HOME ============ -->
 <div id="scr-home" class="wrap">
-  <div id="talHome" data-tab="inicio"></div>
   <div class="hero" data-tab="inicio">
     <h1 id="heroTitle">Simulador del examen de idoneidad CNV</h1>
     <div class="examdate"><label for="examDate">Fecha de tu examen</label><input type="date" id="examDate"><span id="examDateHint"></span></div>
@@ -709,7 +735,6 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <div id="todayHost"></div>
   </div>
 
-  <div class="talguide tg-tab" data-tab="estudiar"><div class="talav" data-face="atento"></div><div class="talbub"><p>Acá no hay opciones: ves la pregunta y su respuesta, como en la guía. Es la forma más rápida de recorrerla. Si nunca la viste entera, empezá por <b>Lo que nunca viste</b>.</p></div></div>
   <div class="sect" data-tab="estudiar">
     <h2>Estudiar <em>La Guía de Estudio de la CNV publica cada pregunta con su respuesta correcta, pero no las opciones incorrectas. Por eso, salvo Ejercicios numéricos, estos modos te muestran la pregunta y la respuesta, sin opciones.</em></h2>
     <div class="modes">
@@ -741,7 +766,6 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="talguide tg-tab" data-tab="rendir"><div class="talav" data-face="seco"></div><div class="talbub"><p>Acá se practica como en el examen: con opciones y con reloj. Algunas respuestas vienen partidas en combinaciones («Todas», «A y C»), igual que en el examen real.</p></div></div>
   <div class="sect" data-tab="rendir">
     <h2>Rendir <em>Preguntas con opciones, como en el examen. Las opciones incorrectas no salen de la guía: están escritas para este simulador.</em></h2>
     <div class="modes">
@@ -778,7 +802,6 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="talguide tg-tab" data-tab="consultar"><div class="talav" data-face="ceja"></div><div class="talbub"><p>Esto es para entender, no para memorizar: tablas, mapa de organismos, fórmulas y cómo encarar el examen. Si una pregunta te confunde, buscala acá.</p></div></div>
   <div class="sect" data-tab="consultar">
     <h2>Estrategia <em>Material para entender y ordenar lo que estudiás: tablas comparativas, mapa de organismos, fórmulas y cómo encarar el examen.</em></h2>
     <div class="modes">
@@ -1078,7 +1101,6 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   <div class="res">
     <div><button class="btn ghost sm" id="resHomeTop">← Volver al inicio</button></div>
     <div class="verdict" id="verdict"></div>
-    <div id="talRes"></div>
     <div class="card" id="cardMods"></div>
     <div class="card" id="cardTopics"></div>
     <div class="card">
@@ -1458,6 +1480,7 @@ function setTab(t, scrollTop=true){
   document.querySelectorAll('.tabbtn').forEach(b=>b.setAttribute('aria-current',b.dataset.tabgo===t?'page':'false'));
   if(t==="estudiar"||t==="rendir"){ const ms=modesOf(t); if(!ms.includes(CFG.mode)) applyMode(ms[0],false); }
   if(scrollTop) window.scrollTo({top:0,behavior:"instant"});
+  talOnTab(t);
 }
 function tabbarFor(s){
   const show = s==="home" || s in TAB_OF_SCREEN;
@@ -1469,7 +1492,7 @@ document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
   const t=b.dataset.tabgo; if($('scr-home').classList.contains('hide')){ nav('home'); renderHome(); } setTab(t);
 }));
 
-/* ---------- Taladrín (mascota de Talastrat; mismo dibujo que en Talastrat) ---------- */
+/* ---------- Taladrín (mascota de Talastrat; mismo dibujo y animaciones) ---------- */
 const LN = '#0f1714';
 const ceja = (d, w) => `<path d="${d}" fill="none" stroke="${LN}" stroke-width="${w || 3.8}" stroke-linecap="round"/>`;
 const boca = (d, w) => `<path d="${d}" fill="none" stroke="${LN}" stroke-width="${w || 2.2}" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -1553,36 +1576,74 @@ const drillSvg = (cara, tilt) => {
   </g>
 </svg>`; };
 
-function talHTML(face, html, btn){
-  return `<div class="talguide"><div class="talav">${drillSvg(face,false)}</div><div class="talbub"><p>${html}</p>${btn?`<button class="btn sm" id="${btn.id}">${esc(btn.t)}</button>`:""}</div></div>`;
+let TAL_MSG=null, TAL_SCREEN="home";
+const TAL_TONO={guia:"Taladrín", ok:"Bien", alerta:"Ojo", info:"Dato"};
+function talSeen(k){ try{ return sessionStorage.getItem('tal_'+k)==="1"; }catch(e){ return false; } }
+function talMark(k){ try{ sessionStorage.setItem('tal_'+k,"1"); }catch(e){} }
+function talPaint(face){ $('talCuerpo').innerHTML=drillSvg(face||"seco",false); }
+function talSay(m, force){
+  // m = {k, face, tono, html, btn:{t,go}}; k evita repetir el mismo consejo en la sesión
+  TAL_MSG=m; talPaint(m.face);
+  const t=$('tal'); t.className="tal "+(m.tono||"guia")+(talVisible(TAL_SCREEN)?"":" hide");
+  if(!force && m.k && talSeen(m.k)){ return; }
+  $('talEt').textContent=TAL_TONO[m.tono||"guia"]||"Taladrín";
+  $('talDice').innerHTML=m.html;
+  const acc=$('talAcc'); acc.innerHTML="";
+  if(m.btn){ const b=el('button','btn sm',esc(m.btn.t)); b.addEventListener('click',()=>{ talCalla(true); m.btn.go(); }); acc.appendChild(b); }
+  t.classList.add('habla','vibra'); setTimeout(()=>t.classList.remove('vibra'),1100);
 }
-function renderTalHome(){
-  const host=$('talHome'); if(!host) return;
+function talCalla(mark){ const t=$('tal'); t.classList.remove('habla','vibra'); if(mark&&TAL_MSG&&TAL_MSG.k) talMark(TAL_MSG.k); }
+$('talCierra').addEventListener('click',()=>talCalla(true));
+$('talCuerpo').addEventListener('click',()=>{ if($('tal').classList.contains('habla')) talCalla(true); else if(TAL_MSG) talSay(TAL_MSG,true); });
+/* el brazo apunta a lo que estás mirando (ángulo del hombro al elemento) */
+function talApunta(elx){
+  try{ const r=elx.getBoundingClientRect(), b=$('talCuerpo').getBoundingClientRect(); if(!r.width||!b.width) return;
+    const hx=b.left+b.width*0.26, hy=b.top+b.height*0.42;
+    let ang=Math.atan2((r.top+r.height/2)-hy,(r.left+r.width/2)-hx)*180/Math.PI-125;
+    while(ang<-180) ang+=360; while(ang>180) ang-=360;
+    $('tal').style.setProperty('--ang',Math.max(-15,Math.min(125,ang)).toFixed(1)+'deg'); }catch(e){}
+}
+document.addEventListener('pointerover',e=>{ const x=e.target.closest&&e.target.closest('.mode,.tabbtn,.btn,.tcard,.org'); if(x&&!$('tal').classList.contains('hide')) talApunta(x); });
+document.addEventListener('focusin',e=>{ const x=e.target.closest&&e.target.closest('.mode,.tabbtn,.btn'); if(x&&!$('tal').classList.contains('hide')) talApunta(x); });
+
+function talHomeMsg(){
   const seen=BANK.filter(q=>q.o===1&&store.stats[q.id]).length;
-  const fulls=(store.history||[]).filter(x=>x.mode==="full");
-  const last=fulls.length?fulls[fulls.length-1]:null;
+  const fulls=(store.history||[]).filter(x=>x.mode==="full"), last=fulls.length?fulls[fulls.length-1]:null;
   const ex=examDate(), d=ex?daysTo(ex):null;
-  const pre=d===null||d<0?"":d===0?"Hoy rendís. Nada nuevo: un repaso liviano y a descansar. ":d===1?"Mañana rendís. ":d<=7?`Faltan ${d} días. `:"";
-  let face="seco", txt, btn=null;
-  if(d===0){ face="guiño"; txt=pre+"Mirá Estrategia una vez y confiá en lo que practicaste."; btn={id:"talGo",t:"Ir a Estrategia",go:()=>setTab("consultar")}; }
-  else if(!seen){ face="atento"; txt=pre+"Soy Taladrín. El examen sale entero de las 735 preguntas de la guía, así que empecemos por las que nunca viste."; btn={id:"talGo",t:"Empezar con Lo que nunca viste",go:()=>{setTab("estudiar");applyMode("nuevas");}}; }
-  else if(seen<515){ face="ceja"; txt=pre+`Viste ${seen} de 735 preguntas de la guía. Lo que más rinde ahora es seguir con las que te faltan: cada una que leés es una que no vas a adivinar.`; btn={id:"talGo",t:"Seguir con Lo que nunca viste",go:()=>{setTab("estudiar");applyMode("nuevas");}}; }
-  else if(!last||last.pct<0.7){ face=last?"alerta":"seco"; txt=pre+(last?`Tu último examen completo dio ${Math.round(last.pct*100)}%. Ya recorriste casi toda la guía: probá otro con reloj y mirá qué módulo te baja.`:"Ya recorriste casi toda la guía. Es momento de un examen completo con reloj, como el real."); btn={id:"talGo",t:"Hacer un examen completo",go:()=>{setTab("rendir");applyMode("full");}}; }
-  else { face="guiño"; txt=pre+`Tu último examen completo dio ${Math.round(last.pct*100)}%. Vas bien: repasá los errores y llegá descansado.`; btn={id:"talGo",t:"Repasar errores",go:()=>{setTab("rendir");applyMode("wrong");}}; }
-  host.innerHTML=talHTML(face,esc(txt),btn);
-  const b=$('talGo'); if(b&&btn) b.addEventListener('click',btn.go);
+  const pre=d===null||d<0?"":d===0?"Hoy rendís. ":d===1?"Mañana rendís. ":d<=7?`Faltan ${d} días. `:"";
+  if(d===0) return {k:"h0",face:"guiño",tono:"ok",html:esc("Hoy rendís. Nada nuevo: un repaso liviano y a descansar. Mirá Estrategia una vez y confiá en lo que practicaste."),btn:{t:"Ir a Estrategia",go:()=>setTab("consultar")}};
+  if(!seen) return {k:"h1",face:"atento",html:esc(pre+"Soy Taladrín. El examen sale entero de las 735 preguntas de la guía, así que empecemos por las que nunca viste."),btn:{t:"Empezar",go:()=>{setTab("estudiar");applyMode("nuevas");}}};
+  if(seen<515) return {k:"h2"+Math.floor(seen/100),face:"ceja",html:esc(pre+`Viste ${seen} de 735 preguntas de la guía. Lo que más rinde ahora es seguir con las que te faltan: cada una que leés es una que no vas a adivinar.`),btn:{t:"Seguir con las que faltan",go:()=>{setTab("estudiar");applyMode("nuevas");}}};
+  if(!last||last.pct<0.7) return {k:"h3"+(last?last.ts:""),face:last?"alerta":"seco",tono:last?"alerta":"guia",html:esc(pre+(last?`Tu último examen completo dio ${Math.round(last.pct*100)}%. Ya recorriste casi toda la guía: probá otro con reloj y mirá qué módulo te baja.`:"Ya recorriste casi toda la guía. Es momento de un examen completo con reloj, como el real.")),btn:{t:"Examen completo",go:()=>{setTab("rendir");applyMode("full");}}};
+  return {k:"h4"+last.ts,face:"guiño",tono:"ok",html:esc(pre+`Tu último examen completo dio ${Math.round(last.pct*100)}%. Vas bien: repasá los errores y llegá descansado.`),btn:{t:"Repasar errores",go:()=>{setTab("rendir");applyMode("wrong");}}};
 }
-function renderTalRes(pct){
-  const host=$('talRes'); if(!host||!EX) return;
+const TAL_TAB={
+  estudiar:{k:"t_est",face:"atento",tono:"info",html:"Acá no hay opciones: ves la pregunta y su respuesta, como en la guía. Es la forma más rápida de recorrerla."},
+  consultar:{k:"t_con",face:"ceja",tono:"info",html:"Esto es para entender, no para memorizar. Si una pregunta te confunde, buscala en las tablas o en el mapa de organismos."},
+  rendir:{k:"t_ren",face:"seco",tono:"info",html:"Acá se practica como en el examen, con opciones y reloj. Algunas respuestas vienen partidas en combinaciones («Todas», «A y C»), igual que en el examen real.",btn:{t:"Cómo razonarlas",go:()=>nav('tips')}},
+};
+const TAL_SCR={
+  tablas:{k:"s_tab",face:"atento",tono:"info",html:"Cada fila dice qué preguntas de la guía responde. Abajo de cada tabla podés practicar justo esas."},
+  mapa:{k:"s_map",face:"guiño",tono:"info",html:"Tocá un edificio: te cuento qué le toca y te dejo practicar sus preguntas."},
+  tips:{k:"s_tip",face:"ceja",tono:"info",html:"Nada de esto reemplaza saber la respuesta, pero te evita perder puntos que sabés."},
+  form:{k:"s_for",face:"atento",tono:"info",html:"Elegí arriba si usás calculadora simple o científica: los pasos cambian."},
+};
+function talOnTab(t){ if(TAL_SCREEN!=="home") return; if(t==="inicio") talSay(talHomeMsg()); else if(TAL_TAB[t]) talSay(TAL_TAB[t]); }
+function talVisible(s){ return s==="home"||s in TAB_OF_SCREEN; }
+function talOnScreen(s){
+  TAL_SCREEN=s; const show=talVisible(s);
+  $('tal').classList.toggle('hide',!show);
+  if(!show) return;
+  if(s==="home") talOnTab(TAB); else if(TAL_SCR[s]) talSay(TAL_SCR[s]); else talCalla(false);
+}
+function talOnResult(pct){
+  if(!EX) return;
   const mods={}; EX.items.forEach(it=>{const b=mods[it.q.m]=mods[it.q.m]||{n:0,ok:0};b.n++;if(it.sel!==null&&it.opts[it.sel].ok)b.ok++;});
   const worst=Object.entries(mods).filter(([m,b])=>b.n>=2).sort((a,b)=>a[1].ok/a[1].n-b[1].ok/b[1].n)[0];
   const w=worst?` El módulo que más te costó fue el ${worst[0]} (${worst[1].ok} de ${worst[1].n}).`:"";
-  const pass=pct>=PASS;
-  host.innerHTML=talHTML(pass?"guiño":"alerta", esc(pass?`Aprobado.${w} Repasá las que fallaste para que no vuelvan a salir mal.`:`Todavía no.${w} Practicá ese módulo antes del próximo intento; el examen sale de la guía, así que cada pregunta que repasás cuenta.`));
-}
-function paintTal(){
-  const lg=$('tlogo'); if(lg&&!lg.innerHTML) lg.innerHTML=drillSvg("seco",false).replace('viewBox="-15 -4 99 73"','viewBox="9 -1 70 36"');
-  document.querySelectorAll('.talav[data-face]').forEach(el=>{ if(!el.innerHTML) el.innerHTML=drillSvg(el.dataset.face,false); });
+  const pass=pct>=PASS, m=worst?+worst[0]:null;
+  talSay({face:pass?"guiño":"alerta",tono:pass?"ok":"alerta",html:esc(pass?`Aprobado.${w} Repasá las que fallaste para que no vuelvan a salir mal.`:`Todavía no.${w} Practicá ese módulo antes del próximo intento.`),
+    btn:m?{t:`Practicar el módulo ${m}`,go:()=>{nav('home');renderHome();setTab('rendir');applyMode('practice');CFG.mods=[m];refreshCfg();}}:null},true);
 }
 
 /* ---------- diferencias entre opciones largas ---------- */
@@ -1735,7 +1796,7 @@ function renderHome(){
   $('todayDate').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
   $('specWarn').textContent=`${warnQs().length} preguntas`;
   renderModMap(); renderComp(); renderResume();
-  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); setTab(TAB,false); paintTal(); renderTalHome();
+  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); setTab(TAB,false); if(!$('scr-home').classList.contains('hide')){ tabbarFor('home'); talOnScreen('home'); }
 }
 const WCAT={"15": "a", "146": "a", "243": "a", "252": "a", "257": "a", "261": "a", "306": "a", "331": "a", "340": "a", "371": "a", "624": "a", "709": "a", "727": "a", "11": "d", "140": "d", "155": "d", "260": "d", "504": "d", "520": "d", "556": "d"};
 let warnF="all";
@@ -2177,7 +2238,7 @@ let REVFILTER="all";
 function renderResults(correct,pct){
   const n=EX.items.length, need=Math.ceil(n*PASS), pass=pct>=PASS;
   const secs=(EX.endedAt-EX.startedAt)/1000;
-  const v=$('verdict'); v.className="verdict "+(pass?"pass":"fail"); setTimeout(()=>renderTalRes(pct),0);
+  const v=$('verdict'); v.className="verdict "+(pass?"pass":"fail"); setTimeout(()=>talOnResult(pct),300);
   v.innerHTML=`<div class="score">${Math.round(pct*100)}<span style="font-size:24px">%</span></div>
     <div class="vmeta">
       <div class="vt">${pass?"Aprobado":"Desaprobado"}</div>
@@ -2352,7 +2413,7 @@ function renderPlan(sel){
 /* ============================================================ UI */
 function nav(s){
   ['home','exam','study','guia','ficha','plan','res','form','warn','tablas','tips','mapa'].forEach(x=>$('scr-'+x).classList.toggle('hide',x!==s));
-  tabbarFor(s);
+  tabbarFor(s); talOnScreen(s);
   if(s==='home'||s==='guia'||s==='ficha'||s==='plan'||s==='form'||s==='warn'||s==='res'||s==='tablas'||s==='tips'||s==='mapa'){
     $('clock').classList.add('hide'); $('progpill').classList.add('hide'); $('abortBtn').classList.add('hide');
   }

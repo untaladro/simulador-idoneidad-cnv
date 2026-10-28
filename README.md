@@ -2,7 +2,7 @@
 
 Simulador no oficial del examen de idoneidad de la Comisión Nacional de Valores (Argentina). Es una sola página HTML, sin servidor ni base de datos: el progreso se guarda en el navegador de cada usuario y se puede pasar a otro dispositivo con una copia descargable.
 
-**En línea:** https://untaladro.github.io/simulador-idoneidad-cnv/ (se puede instalar en el celular y funciona sin conexión).
+**En línea:** https://untaladro.github.io/talastrat-idoneo/ (se puede instalar en el celular y funciona sin conexión).
 
 ## Qué incluye
 

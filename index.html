@@ -1197,7 +1197,7 @@ function srcFor(q){
 function reportURL(q){
   const t=encodeURIComponent("Pregunta "+(q.src||("#"+q.id))+": ");
   const b=encodeURIComponent("Pregunta: "+q.q+"\n\nRespuesta marcada: "+q.a+"\n\nQué está mal y fuente:\n");
-  return "https://github.com/untaladro/simulador-idoneidad-cnv/issues/new?title="+t+"&body="+b;
+  return "https://github.com/untaladro/talastrat-idoneo/issues/new?title="+t+"&body="+b;
 }
 
 
@@ -2572,6 +2572,34 @@ $('examDate').addEventListener('change',e=>setExamDate(e.target.value));
 applyExamDate();
 renderCalcSeg();
 renderHome();
+
+/* ---------- métricas (Umami): uso anónimo, sin cookies ---------- */
+(function(){
+  const ID="b2f4e1f1-3d0a-46bb-bd5b-a1b021d62d61", HOST="untaladro.github.io";
+  try{ const y=new URLSearchParams(location.search).get('yo'); if(y==="1") localStorage.setItem('umami.disabled','1'); if(y==="0") localStorage.removeItem('umami.disabled'); }catch(e){}
+  if(!ID||location.hostname!==HOST) return;
+  const sc=document.createElement('script'); sc.defer=true; sc.src="https://cloud.umami.is/script.js";
+  sc.setAttribute('data-website-id',ID); sc.setAttribute('data-domains',HOST); document.head.appendChild(sc);
+})();
+const _q=[]; function track(n,d){ try{ if(window.umami&&umami.track){ while(_q.length){const x=_q.shift();umami.track(x[0],x[1]);} umami.track(n,d||{}); } else if(_q.length<30) _q.push([n,d||{}]); }catch(e){} }
+setTimeout(()=>track('app_abierta',{pwa:matchMedia('(display-mode: standalone)').matches,fecha_examen:!!examDate()}),2500);
+const _wrap=(name,fn)=>{ const o=window[name]; if(typeof o!=="function") return; window[name]=function(){ const r=o.apply(this,arguments); try{ fn.apply(this,arguments); }catch(e){} return r; }; };
+_wrap('nav',s=>{ if(["tablas","mapa","tips","form","guia","ficha","warn","plan"].includes(s)) track('pantalla',{s}); });
+_wrap('buildExam',()=>{ if(EX) track('examen_inicio',{modo:EX.mode,n:EX.items.length,correccion:EX.corr,reloj:!!EX.timeLimit}); });
+_wrap('finishExam',()=>{ if(!EX) return; const c=EX.items.filter(it=>it.sel!==null&&it.opts[it.sel].ok).length, p=c/EX.items.length;
+  track('examen_fin',{modo:EX.mode,n:EX.items.length,pct:Math.round(p*10)*10,aprobado:p>=PASS,minutos:Math.round((EX.endedAt-EX.startedAt)/60000)}); });
+_wrap('startStudy',()=>{ if(typeof ST!=="undefined"&&ST) track('estudio_inicio',{modo:ST.mode}); });
+_wrap('finishStudy',()=>{ if(typeof ST!=="undefined"&&ST) track('estudio_fin',{modo:ST.mode,n:ST.r+ST.w+(ST.i||0)}); });
+_wrap('talTiltCheck',()=>{ if(EX&&EX.tilted&&!EX._tt){ EX._tt=1; track('taladrin_tilt',{modo:EX.mode}); } });
+_wrap('blobSave',name=>track('exportar',{tipo:String(name).split('-').slice(-2,-1)[0]||"archivo"}));
+document.addEventListener('click',e=>{
+  const a=e.target.closest&&e.target.closest('a,button'); if(!a) return;
+  if(a.classList.contains('tabbtn')) track('pestaña',{t:a.dataset.tabgo});
+  else if(a.closest('#talAcc')) track('taladrin_boton',{t:a.textContent.trim().slice(0,40)});
+  else if(a.id==="talCuerpo") track('taladrin_toque');
+  else if(a.tagName==="A"&&/Reportar un error/.test(a.textContent)) track('reportar_error');
+  else if(a.id==="comboPractice") track('practica_combinacion');
+},true);
 </script>
 
 </body></html>

@@ -497,6 +497,28 @@ a{color:var(--accent)}
 .mapcard .mfoot{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:8px}
 
 .combonote{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--accent-soft);color:var(--ink);font-size:13.5px;line-height:1.5}
+
+/* ---- pestañas ---- */
+.tabhide{display:none!important}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabbtn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border:0;background:transparent;color:var(--ink3);font:600 11.5px var(--sans);border-radius:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tabbtn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabbtn[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+.tabbtn:active{transform:scale(.96)}
+body.hastabs{padding-bottom:84px}
+#scr-home .sect[data-tab]:first-of-type,#scr-home [data-tab]:not(.tabhide) ~ .sect{margin-top:22px}
+@media (min-width:900px){
+  .tabbar{position:sticky;top:56px;bottom:auto;display:flex;justify-content:center;gap:6px;border-top:0;border-bottom:1px solid var(--line);padding:8px}
+  .tabbtn{flex-direction:row;gap:8px;font-size:14px;padding:8px 16px}
+  .tabbtn svg{width:19px;height:19px}
+  body.hastabs{padding-bottom:0}
+}
+
+@media (max-width:640px){
+  #scr-home .mode .md{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  #scr-home .mode.primary .md{-webkit-line-clamp:unset;display:block}
+  #scr-home .sect>h2 em{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -650,9 +672,10 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   </div>
 </div>
 
+<nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Consultar</span></button></nav>
 <!-- ============ HOME ============ -->
 <div id="scr-home" class="wrap">
-  <div class="hero">
+  <div class="hero" data-tab="inicio">
     <h1 id="heroTitle">Simulador del examen de idoneidad CNV</h1>
     <div class="examdate"><label for="examDate">Fecha de tu examen</label><input type="date" id="examDate"><span id="examDateHint"></span></div>
     <p>El examen se arma con las 735 preguntas de la Guía de Estudio de la CNV. Acá las practicás de distintas formas, con un plan día por día y una ficha de datos para el último repaso. Todo lo que respondés queda registrado: lo que fallás en cualquier modo vuelve después en el repaso de errores.</p>
@@ -661,13 +684,13 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <div class="maplegend"><span><i></i>dominadas (2 aciertos seguidos)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para practicar solo ese módulo.</span></div>
   </div>
 
-  <div id="resumeHost"></div>
-  <div class="sect">
+  <div id="resumeHost" data-tab="inicio"></div>
+  <div class="sect" data-tab="inicio">
     <h2>Hoy <em id="todayDate"></em></h2>
     <div id="todayHost"></div>
   </div>
 
-  <div class="sect">
+  <div class="sect" data-tab="estudiar">
     <h2>Estudiar <em>La Guía de Estudio de la CNV publica cada pregunta con su respuesta correcta, pero no las opciones incorrectas. Por eso, salvo Ejercicios numéricos, estos modos te muestran la pregunta y la respuesta, sin opciones.</em></h2>
     <div class="modes">
       <button class="mode" data-mode="nuevas">
@@ -698,8 +721,8 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="sect">
-    <h2>Rendir <em>Preguntas con cuatro opciones, como en el examen. Las opciones incorrectas no salen de la guía: están escritas para este simulador.</em></h2>
+  <div class="sect" data-tab="rendir">
+    <h2>Rendir <em>Preguntas con opciones, como en el examen. Las opciones incorrectas no salen de la guía: están escritas para este simulador.</em></h2>
     <div class="modes">
       <button class="mode primary" data-mode="full">
         <span class="mt">Examen completo</span>
@@ -734,7 +757,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="sect">
+  <div class="sect" data-tab="consultar">
     <h2>Consultar <em>Material de apoyo para leer, sin responder preguntas.</em></h2>
     <div class="modes">
       <button class="mode" data-nav="guia">
@@ -780,7 +803,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="sect" id="cfgSect">
+  <div class="sect" id="cfgSect" data-tab="estudiar rendir">
     <h2>Configuración <em id="cfgFor"></em></h2>
     <div class="cfg">
       <div class="row" style="margin-bottom:16px">
@@ -815,7 +838,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="sect"><h2>Historial</h2><div class="card"><div id="histBody"></div></div></div>
+  <div class="sect" data-tab="inicio"><h2>Historial</h2><div class="card"><div id="histBody"></div></div></div>
 
   <div class="foot wrap" style="padding-left:0;padding-right:0">
     <h4>Fuentes</h4>
@@ -833,7 +856,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <button class="btn ghost xs" id="expBtn">Descargar copia</button>
       <button class="btn ghost xs" id="impBtn">Cargar copia</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 28/10/2026 14:00.</p>
+    <p class="note">Versión 28/10/2026 14:30.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
   </div>
 </div>
@@ -1303,7 +1326,7 @@ function renderModMap(){
        <span class="mbar"><i class="d" style="width:${pd}%"></i><i class="s" style="width:${ps}%"></i></span>
        <span class="mst"><b>${s.dom}</b> de ${s.n} dominadas${s.acc!=null?` · <b>${Math.round(s.acc*100)}%</b> acierto`:""}</span>`);
     b.type="button"; b.title=`Practicar el módulo ${m}`;
-    b.addEventListener('click',()=>{applyMode('practice'); CFG.mods=[m]; refreshCfg();});
+    b.addEventListener('click',()=>{setTab('rendir'); applyMode('practice'); CFG.mods=[m]; refreshCfg();});
     host.appendChild(b);
   }
 }
@@ -1400,6 +1423,28 @@ function comboNote(q){
   return `<div class="combonote"><b>Formato combinación.</b> La respuesta de la guía es una lista: «${esc(q.a)}». En el examen real, este tipo de respuesta viene partida en opciones y hay que elegir la combinación. Evaluá cada opción sola, como verdadera o falsa; ${COMBO[q.src].e.length===2?'si las dos son verdaderas, «Ambas»; si una no, marcá la verdadera':'la dudosa decide entre «A y C» y «Todas»'}.</div>`;
 }
 function comboIds(){ return Object.keys(COMBO).map(s=>SRC2ID[s]).filter(Boolean); }
+
+
+/* ---------- pestañas ---------- */
+let TAB = (()=>{ try{ return localStorage.getItem('cnv_tab')||"inicio"; }catch(e){ return "inicio"; } })();
+const TAB_OF_SCREEN = {guia:"consultar",ficha:"consultar",form:"consultar",warn:"consultar",tablas:"consultar",tips:"consultar",mapa:"consultar",plan:"inicio",res:"inicio"};
+function modesOf(t){ return [...document.querySelectorAll(`#scr-home .sect[data-tab="${t}"] .mode[data-mode]`)].map(b=>b.dataset.mode); }
+function setTab(t, scrollTop=true){
+  TAB=t; try{ localStorage.setItem('cnv_tab',t); }catch(e){}
+  document.querySelectorAll('#scr-home [data-tab]').forEach(el=>el.classList.toggle('tabhide',!el.dataset.tab.split(' ').includes(t)));
+  document.querySelectorAll('.tabbtn').forEach(b=>b.setAttribute('aria-current',b.dataset.tabgo===t?'page':'false'));
+  if(t==="estudiar"||t==="rendir"){ const ms=modesOf(t); if(!ms.includes(CFG.mode)) applyMode(ms[0],false); }
+  if(scrollTop) window.scrollTo({top:0,behavior:"instant"});
+}
+function tabbarFor(s){
+  const show = s==="home" || s in TAB_OF_SCREEN;
+  $('tabbar').classList.toggle('hide',!show); document.body.classList.toggle('hastabs',show);
+  if(s in TAB_OF_SCREEN) document.querySelectorAll('.tabbtn').forEach(b=>b.setAttribute('aria-current',b.dataset.tabgo===TAB_OF_SCREEN[s]?'page':'false'));
+  else if(s==="home") document.querySelectorAll('.tabbtn').forEach(b=>b.setAttribute('aria-current',b.dataset.tabgo===TAB?'page':'false'));
+}
+document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
+  const t=b.dataset.tabgo; if($('scr-home').classList.contains('hide')){ nav('home'); renderHome(); } setTab(t);
+}));
 
 /* ---------- diferencias entre opciones largas ---------- */
 const dvTok=s=>s.match(/\S+\s*/g)||[];
@@ -1551,7 +1596,7 @@ function renderHome(){
   $('todayDate').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
   $('specWarn').textContent=`${warnQs().length} preguntas`;
   renderModMap(); renderComp(); renderResume();
-  renderToday(); renderModGrid(); applyMode("full",false); renderHistory();
+  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); setTab(TAB,false);
 }
 const WCAT={"15": "a", "146": "a", "243": "a", "252": "a", "257": "a", "261": "a", "306": "a", "331": "a", "340": "a", "371": "a", "624": "a", "709": "a", "727": "a", "11": "d", "140": "d", "155": "d", "260": "d", "504": "d", "520": "d", "556": "d"};
 let warnF="all";
@@ -2168,6 +2213,7 @@ function renderPlan(sel){
 /* ============================================================ UI */
 function nav(s){
   ['home','exam','study','guia','ficha','plan','res','form','warn','tablas','tips','mapa'].forEach(x=>$('scr-'+x).classList.toggle('hide',x!==s));
+  tabbarFor(s);
   if(s==='home'||s==='guia'||s==='ficha'||s==='plan'||s==='form'||s==='warn'||s==='res'||s==='tablas'||s==='tips'||s==='mapa'){
     $('clock').classList.add('hide'); $('progpill').classList.add('hide'); $('abortBtn').classList.add('hide');
   }

@@ -599,6 +599,28 @@ body.hastabs{padding-bottom:84px}
 .go .arr svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-reduced-motion:reduce){.go::after{display:none}.go,.go .arr{transition:none}}
 
+
+/* ---- configuración en panel ---- */
+.gearbtn{display:grid;place-items:center;padding:6px 8px}
+.gearbtn svg,.startbar .btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.startbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:18px;position:sticky;bottom:calc(84px + env(safe-area-inset-bottom));z-index:15;box-shadow:var(--shadow)}
+@media (max-width:899px){.startbar{position:static}}
+@media (min-width:900px){.startbar{bottom:16px}}
+.startbar .sbtxt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 200px}
+.startbar .sbtxt b{font-size:15px}
+.startbar .sbtxt span{font:500 12.5px var(--mono);color:var(--ink3)}
+.startbar .btn.ghost{display:inline-flex;align-items:center;gap:6px}
+.cfgov{position:fixed;inset:0;background:rgba(10,13,17,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s}
+body.cfgopen .cfgov{opacity:1;pointer-events:auto}
+#cfgSect.cfgdrawer{position:fixed;z-index:71;margin:0;background:var(--bg);overflow:auto;transition:transform .25s cubic-bezier(.2,.9,.3,1);right:0;bottom:0;left:0;max-height:86vh;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));transform:translateY(105%);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+@media (min-width:900px){#cfgSect.cfgdrawer{left:auto;top:0;width:min(560px,92vw);max-height:none;border-radius:0;transform:translateX(105%);padding:22px 22px 30px;box-shadow:-10px 0 40px rgba(0,0,0,.25)}}
+body.cfgopen #cfgSect.cfgdrawer{transform:none}
+#cfgSect.cfgdrawer h2{display:flex;align-items:baseline;gap:10px;margin-top:0}
+#cfgSect .cfgx{position:absolute;top:14px;right:14px;font-size:18px;line-height:1;padding:4px 10px}
+#cfgSect.cfgdrawer.tabhide{display:block!important;visibility:hidden}
+body.cfgopen #cfgSect.cfgdrawer{visibility:visible}
+@media (prefers-reduced-motion:reduce){#cfgSect.cfgdrawer,.cfgov{transition:none}}
+
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -747,6 +769,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <div class="brand"><b>Talastrat <span class="tdot">·</span> Idóneo</b><span id="brandsub" class="hide"></span></div>
     <div id="progpill" class="progpill hide"></div>
     <div id="clock" class="clock hide">45:00</div>
+    <button class="icon-btn gearbtn hide" id="cfgBtn" title="Configuración" aria-label="Configuración" aria-expanded="false" aria-controls="cfgSect"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     <button class="icon-btn" id="themeBtn" title="Cambiar tema">◐</button>
     <button class="icon-btn hide" id="abortBtn">Salir</button>
   </div>
@@ -893,8 +916,14 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="sect" id="cfgSect" data-tab="estudiar rendir">
-    <h2>Configuración <em id="cfgFor"></em></h2>
+  <div class="sect startbar" id="startBar" data-tab="estudiar rendir">
+    <div class="sbtxt"><b id="sbMode"></b><span id="sbSum"></span></div>
+    <button class="btn ghost sm" id="sbAdj" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustar</button>
+    <button class="btn" id="sbGo" type="button">Comenzar →</button>
+  </div>
+  <div class="cfgov" id="cfgOv"></div>
+  <div class="sect cfgdrawer" id="cfgSect" data-tab="estudiar rendir" role="dialog" aria-modal="true" aria-labelledby="cfgTitle">
+    <h2 id="cfgTitle">Configuración <em id="cfgFor"></em><button class="icon-btn cfgx" id="cfgClose" type="button" aria-label="Cerrar">×</button></h2>
     <div class="cfg">
       <div class="row" style="margin-bottom:16px">
         <div class="field" id="fldCount"><label>Cantidad</label><div class="seg" id="segCount"></div></div>
@@ -1743,7 +1772,7 @@ function renderGo(){
 $('goBtn').addEventListener('click',()=>{
   if(!REC) return; const tab=STMODES.includes(REC.mode)?'estudiar':'rendir';
   setTab(tab,false); applyMode(REC.mode,false); CFG.mods=REC.mods.slice(); refreshCfg();
-  if(!$('startBtn').disabled) $('startBtn').click(); else $('cfgSect').scrollIntoView({behavior:'smooth'});
+  if(!$('startBtn').disabled) $('startBtn').click(); else cfgOpen(true);
 });
 
 /* ---------- gráfico vivo del hero ---------- */
@@ -2096,7 +2125,7 @@ function applyMode(mode,scroll=true){
   CFG.count=p.count; CFG.time=p.time; CFG.corr=p.corr; CFG.order=p.order; CFG.mods=p.mods.slice();
   document.querySelectorAll('.mode[data-mode]').forEach(b=>b.classList.toggle('primary',b.dataset.mode===mode));
   refreshCfg();
-  if(scroll) $('cfgSect').scrollIntoView({behavior:'smooth',block:'nearest'});
+  if(scroll) $('startBar').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function refreshCfg(){
   const p=P[CFG.mode], isStudy=STMODES.includes(CFG.mode);
@@ -2728,6 +2757,28 @@ $('examDate').addEventListener('change',e=>setExamDate(e.target.value));
 applyExamDate();
 renderCalcSeg();
 renderHome();
+
+/* ---------- configuración en panel ---------- */
+function cfgOpen(on){ document.body.classList.toggle('cfgopen',on); $('cfgBtn').setAttribute('aria-expanded',on?'true':'false'); if(on) setTimeout(()=>$('cfgClose').focus(),30); }
+function updateStartBar(){
+  const p=P[CFG.mode]; if(!p) return; const st=STMODES.includes(CFG.mode);
+  const mods=CFG.mods.length===6?'todos los módulos':(CFG.mods.length===1?'módulo ':'módulos ')+CFG.mods.slice().sort().join(', ');
+  const parts=[]; if(!p.lock||st) parts.push((st?CFG.count:CFG.count)+(st?' tarjetas':' preguntas')); else parts.push(p.count+' preguntas');
+  parts.push(mods); if(CFG.time) parts.push(Math.round(CFG.time/60)+' min'); if(!st) parts.push(CFG.corr==='now'?'corrección al toque':'corrección al final');
+  $('sbMode').textContent=p.label; $('sbSum').textContent=parts.join(' · ');
+  const dis=$('startBtn').disabled; $('sbGo').disabled=dis; $('sbGo').title=dis?($('startHint').textContent||'No hay preguntas con esta configuración'):'';
+}
+$('cfgBtn').addEventListener('click',()=>cfgOpen(!document.body.classList.contains('cfgopen')));
+$('sbAdj').addEventListener('click',()=>cfgOpen(true));
+$('cfgClose').addEventListener('click',()=>cfgOpen(false));
+$('cfgOv').addEventListener('click',()=>cfgOpen(false));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.body.classList.contains('cfgopen')) cfgOpen(false); });
+$('sbGo').addEventListener('click',()=>{ if(!$('startBtn').disabled){ cfgOpen(false); $('startBtn').click(); } else cfgOpen(true); });
+$('startBtn').addEventListener('click',()=>cfgOpen(false));
+{ const _rc=refreshCfg; refreshCfg=function(){ const r=_rc.apply(this,arguments); try{ updateStartBar(); }catch(e){} return r; }; }
+{ const _st=setTab; setTab=function(t){ const r=_st.apply(this,arguments); $('cfgBtn').classList.toggle('hide',!(t==='estudiar'||t==='rendir')); if(!(t==='estudiar'||t==='rendir')) cfgOpen(false); return r; }; }
+{ const _nv=nav; nav=function(s){ const r=_nv.apply(this,arguments); if(s!=='home'){ $('cfgBtn').classList.add('hide'); cfgOpen(false); } else $('cfgBtn').classList.toggle('hide',!(TAB==='estudiar'||TAB==='rendir')); return r; }; }
+updateStartBar(); $("cfgBtn").classList.toggle("hide",!(TAB==="estudiar"||TAB==="rendir"));
 
 /* ---------- métricas (Umami): uso anónimo, sin cookies ---------- */
 (function(){

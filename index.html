@@ -621,6 +621,20 @@ body.cfgopen #cfgSect.cfgdrawer{transform:none}
 body.cfgopen #cfgSect.cfgdrawer{visibility:visible}
 @media (prefers-reduced-motion:reduce){#cfgSect.cfgdrawer,.cfgov{transition:none}}
 
+
+/* ---- panel de ayuda ---- */
+.helpbtn{font-weight:700;min-width:32px}
+.linkbtn{border:0;background:transparent;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+body.helpopen #helpOv{opacity:1;pointer-events:auto}
+#helpSect.helpdrawer{position:fixed;z-index:71;margin:0;border-top:0;background:var(--bg);overflow:auto;transition:transform .25s cubic-bezier(.2,.9,.3,1);right:0;bottom:0;left:0;max-height:86vh;border-radius:18px 18px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));transform:translateY(105%);box-shadow:0 -10px 40px rgba(0,0,0,.25);visibility:hidden;font-size:13.5px}
+@media (min-width:900px){#helpSect.helpdrawer{left:auto;top:0;width:min(560px,92vw);max-height:none;border-radius:0;transform:translateX(105%);padding:22px 22px 30px;box-shadow:-10px 0 40px rgba(0,0,0,.25)}}
+body.helpopen #helpSect.helpdrawer{transform:none;visibility:visible}
+#helpSect h2{margin:0 0 6px;font-family:var(--serif);font-size:22px;color:var(--ink)}
+#helpSect h4{margin:20px 0 7px}
+#helpSect .note{margin-top:8px}
+#helpSect .cfgx{position:absolute;top:14px;right:14px;font-size:18px;line-height:1;padding:4px 10px}
+@media (prefers-reduced-motion:reduce){#helpSect.helpdrawer{transition:none}}
+
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -770,6 +784,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <div id="progpill" class="progpill hide"></div>
     <div id="clock" class="clock hide">45:00</div>
     <button class="icon-btn gearbtn hide" id="cfgBtn" title="Configuración" aria-label="Configuración" aria-expanded="false" aria-controls="cfgSect"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <button class="icon-btn helpbtn" id="helpBtn" title="Ayuda y fuentes" aria-label="Ayuda y fuentes" aria-expanded="false" aria-controls="helpSect">?</button>
     <button class="icon-btn" id="themeBtn" title="Cambiar tema">◐</button>
     <button class="icon-btn hide" id="abortBtn">Salir</button>
   </div>
@@ -779,6 +794,29 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 <div id="tal" class="tal hide">
   <div class="globo"><i class="cierra" id="talCierra" title="Cerrar">×</i><span id="talDice"></span><div id="talAcc"></div></div>
   <button class="cuerpo" id="talCuerpo" title="Taladrín · tocalo y te tira un consejo" aria-label="Taladrín, tu tutor"></button>
+</div>
+<div class="cfgov" id="helpOv"></div>
+<div class="helpdrawer foot" id="helpSect" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <h2 id="helpTitle">Ayuda y fuentes</h2><button class="icon-btn cfgx" id="helpClose" type="button" aria-label="Cerrar">×</button>
+  <h4>Tu progreso</h4>
+    <p class="note" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">Se guarda solo en este navegador. Para pasarlo a otro dispositivo:
+      <button class="btn ghost xs" id="expBtn">Descargar copia</button>
+      <button class="btn ghost xs" id="impBtn">Cargar copia</button>
+      <input type="file" id="impFile" accept="application/json,.json" hidden></p>
+  <h4>Atajos de teclado</h4>
+    <p class="note"><kbd>1</kbd>–<kbd>4</kbd> o <kbd>A</kbd>–<kbd>D</kbd> para responder, <kbd>←</kbd> <kbd>→</kbd> para navegar, <kbd>F</kbd> para marcar. En tarjetas: <kbd>espacio</kbd> revela, <kbd>1</kbd> para repasar, <kbd>2</kbd> tenía una idea, <kbd>3</kbd> la reconocería.</p>
+    <h4>Fuentes</h4>
+    <ul>
+      <li><a href="https://www.cnv.gov.ar/SitioWeb/Profesionales?columna=1" target="_blank" rel="noopener">CNV — Profesionales, examen de idoneidad y bibliografía oficial</a></li>
+      <li><a href="https://www.argentina.gob.ar/servicio/rendir-el-examen-de-idoneidad" target="_blank" rel="noopener">argentina.gob.ar — Rendir el examen de idoneidad</a></li>
+      <li><a href="https://www.argentina.gob.ar/sites/default/files/guia_de_estudio_v2.pdf" target="_blank" rel="noopener">CNV — Guía de Estudio del Examen de Idoneidad (PDF)</a></li>
+      <li>Preguntas de la guía: enunciados y respuestas de la Guía de Estudio v5 de la CNV (25/06/2026), con opciones incorrectas tomadas de <a href="https://github.com/valentin-fabre/simulador-idoneidad-cnv" target="_blank" rel="noopener">valentin-fabre/simulador-idoneidad-cnv</a> (licencia MIT, © 2026 Valentin Fabre)</li>
+      <li>Preguntas complementarias: banco de <a href="https://github.com/octavioes/cnv-idoneo-v2" target="_blank" rel="noopener">octavioes/cnv-idoneo-v2</a> (licencia MIT), con opciones reescritas</li>
+      <li>Material propio: bibliografía oficial del examen, Manual de Idoneidad CAFCI, Manual IAMC, presentaciones MATBA ROFEX y unidades del curso de Mercado de Capitales de UTN</li>
+    </ul>
+    <p class="note" id="sourceNote"></p>
+    <p class="note">Versión 28/10/2026 16:00.</p>
+    <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
 </div>
 <!-- ============ HOME ============ -->
 <div id="scr-home" class="wrap">
@@ -959,24 +997,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 
   <div class="sect" data-tab="rendir"><h2>Historial</h2><div class="statline" id="statline"></div><div class="card"><div id="histBody"></div></div></div>
 
-  <div class="foot wrap" style="padding-left:0;padding-right:0">
-    <h4>Fuentes</h4>
-    <ul>
-      <li><a href="https://www.cnv.gov.ar/SitioWeb/Profesionales?columna=1" target="_blank" rel="noopener">CNV — Profesionales, examen de idoneidad y bibliografía oficial</a></li>
-      <li><a href="https://www.argentina.gob.ar/servicio/rendir-el-examen-de-idoneidad" target="_blank" rel="noopener">argentina.gob.ar — Rendir el examen de idoneidad</a></li>
-      <li><a href="https://www.argentina.gob.ar/sites/default/files/guia_de_estudio_v2.pdf" target="_blank" rel="noopener">CNV — Guía de Estudio del Examen de Idoneidad (PDF)</a></li>
-      <li>Preguntas de la guía: enunciados y respuestas de la Guía de Estudio v5 de la CNV (25/06/2026), con opciones incorrectas tomadas de <a href="https://github.com/valentin-fabre/simulador-idoneidad-cnv" target="_blank" rel="noopener">valentin-fabre/simulador-idoneidad-cnv</a> (licencia MIT, © 2026 Valentin Fabre)</li>
-      <li>Preguntas complementarias: banco de <a href="https://github.com/octavioes/cnv-idoneo-v2" target="_blank" rel="noopener">octavioes/cnv-idoneo-v2</a> (licencia MIT), con opciones reescritas</li>
-      <li>Material propio: bibliografía oficial del examen, Manual de Idoneidad CAFCI, Manual IAMC, presentaciones MATBA ROFEX y unidades del curso de Mercado de Capitales de UTN</li>
-    </ul>
-    <p class="note" id="sourceNote"></p>
-    <p class="note">Atajos: <kbd>1</kbd>–<kbd>4</kbd> o <kbd>A</kbd>–<kbd>D</kbd> para responder, <kbd>←</kbd> <kbd>→</kbd> para navegar, <kbd>F</kbd> para marcar. En tarjetas: <kbd>espacio</kbd> revela, <kbd>1</kbd> para repasar, <kbd>2</kbd> tenía una idea, <kbd>3</kbd> la reconocería.</p>
-    <p class="note" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">Para pasar tu progreso a otro dispositivo o navegador:
-      <button class="btn ghost xs" id="expBtn">Descargar copia</button>
-      <button class="btn ghost xs" id="impBtn">Cargar copia</button>
-      <input type="file" id="impFile" accept="application/json,.json" hidden></p>
-    <p class="note">Versión 28/10/2026 16:00.</p>
-    <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
+  <div class="foot wrap" style="padding-left:0;padding-right:0"><p class="note" style="margin:0">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. <button class="linkbtn" type="button" data-help>Fuentes y ayuda</button></p>
   </div>
 </div>
 
@@ -2757,6 +2778,14 @@ $('examDate').addEventListener('change',e=>setExamDate(e.target.value));
 applyExamDate();
 renderCalcSeg();
 renderHome();
+
+/* ---------- panel de ayuda ---------- */
+function helpOpen(on){ document.body.classList.toggle('helpopen',on); $('helpBtn').setAttribute('aria-expanded',on?'true':'false'); if(on) setTimeout(()=>$('helpClose').focus(),30); }
+$('helpBtn').addEventListener('click',()=>helpOpen(!document.body.classList.contains('helpopen')));
+$('helpClose').addEventListener('click',()=>helpOpen(false));
+$('helpOv').addEventListener('click',()=>helpOpen(false));
+document.querySelectorAll('[data-help]').forEach(b=>b.addEventListener('click',()=>helpOpen(true)));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.body.classList.contains('helpopen')) helpOpen(false); });
 
 /* ---------- configuración en panel ---------- */
 function cfgOpen(on){ document.body.classList.toggle('cfgopen',on); $('cfgBtn').setAttribute('aria-expanded',on?'true':'false'); if(on) setTimeout(()=>$('cfgClose').focus(),30); }

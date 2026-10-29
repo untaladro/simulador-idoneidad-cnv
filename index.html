@@ -574,6 +574,7 @@ body.hastabs{padding-bottom:84px}
 #tape{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
 .tapero{position:absolute;right:12px;top:12px;font:500 11px var(--mono);color:var(--ink3);background:color-mix(in srgb,var(--panel) 85%,transparent);border:1px solid var(--line);border-radius:8px;padding:4px 7px;pointer-events:none;opacity:0;transition:opacity .2s}
 .tapero.on{opacity:1}
+@media (max-width:699px){.tapero{top:auto;bottom:8px;right:10px;max-width:calc(100% - 20px)}}
 .hero.hv .hcopy{position:absolute;left:16px;right:16px;top:22px;pointer-events:none}
 @media (min-width:900px){.hero.hv .hcopy{left:max(28px,calc(50vw - 520px));top:40px}}
 .hero.hv h1{margin:0;font-family:var(--serif);font-weight:700;font-size:clamp(32px,8.6vw,52px)!important;line-height:1;letter-spacing:-.015em;max-width:11ch}
@@ -1750,70 +1751,80 @@ const TAPE={bars:[],real:false,reveal:0,done:false,prog:0,hover:null,run:true};
 /* una vela cada 10 tarjetas o preguntas: abre con las primeras, cierra con las últimas */
 function tapeData(){
   const from=store.tapeFrom||0, log=(store.log||[]).filter(x=>x[0]>=from), first=log.length?log[0][0]:Infinity;
-  // antes de que existiera el registro: cada pregunta vista, en el orden en que la viste por última vez, con su acierto
-  const old=Object.values(store.stats).filter(s=>s.l>=from&&s.l<first&&(s.r+s.w)>0).sort((a,b)=>a.l-b.l).map(s=>[s.l,s.r/(s.r+s.w)]);
-  const seq=old.concat(log.map(x=>[x[0],x[1]])), out=[], N=10;
+  // antes del registro: cada pregunta vista, en el orden en que la viste por última vez, con su acierto
+  const old=Object.entries(store.stats).filter(([k,s])=>s.l>=from&&s.l<first&&(s.r+s.w)>0).sort((a,b)=>a[1].l-b[1].l)
+    .map(([k,s])=>({t:s.l,v:s.r/(s.r+s.w),id:+k,nu:(s.s||1)<=1}));
+  const seen=new Set(old.map(x=>x.id)), seq=old.slice();
+  log.forEach(x=>{ const id=x[2]; seq.push({t:x[0],v:x[1],id,nu:id!=null&&!seen.has(id)}); if(id!=null) seen.add(id); });
+  const out=[], N=10;
   // el "precio" es tu acierto promedio móvil (como una media exponencial de ~20 respuestas)
-  let e=seq.length?seq.slice(0,20).reduce((x,y)=>x+y[1],0)/Math.min(20,seq.length):null; const px=seq.map(x=>{ e=e===null?x[1]:x[1]*0.1+e*0.9; return e*100; });
-  for(let i=0;i+N<=seq.length;i+=N){ const g=px.slice(i,i+N), o=i?px[i-1]:g[0], c=g[N-1];
-    const raw=seq.slice(i,i+N).reduce((a,x)=>a+x[1],0)/N;
-    out.push({o,c,h:Math.max(o,c,...g)+raw*1.5,l:Math.min(o,c,...g)-(1-raw)*1.5,v:30+raw*70,d:seq[i+N-1][0]}); }
+  let e=seq.length?seq.slice(0,20).reduce((a,x)=>a+x.v,0)/Math.min(20,seq.length):null; const px=seq.map(x=>{ e=x.v*0.1+e*0.9; return e*100; });
+  for(let i=0;i+N<=seq.length;i+=N){ const g=px.slice(i,i+N), o=i?px[i-1]:g[0], c=g[N-1], blk=seq.slice(i,i+N);
+    const ok=blk.reduce((a,x)=>a+(x.v>=.5?1:0),0), nu=blk.filter(x=>x.nu).length;
+    out.push({o,c,h:Math.max(o,c,...g)+ok/N*1.5,l:Math.min(o,c,...g)-(1-ok/N)*1.5,v:nu,ok,nu,ids:blk.map(x=>x.id).filter(x=>x!=null),d:blk[N-1].t}); }
   return out;
 }
 (function(){
   const cv=$('tape'); if(!cv) return; const ctx=cv.getContext('2d'), ro=$('tapeRo');
   const RM=matchMedia('(prefers-reduced-motion: reduce)').matches; let SP=16, BW=9;
-  const spacing=()=>{ const base=W>700?22:18; SP=TAPE.real&&W? Math.max(base,Math.min(64,(W*(W>700?0.62:0.8))/Math.max(1,TAPE.bars.length))):base; BW=Math.round(Math.min(TAPE.real?18:16,SP*(TAPE.real?0.45:0.58))); };
+  let W=0,H=0,sd=7,lvl=44,day=0,lo=40,hi=95; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+  // el gráfico real se alinea con la columna de contenido; la animación de fantasía ocupa todo el ancho
+  const edges=()=>{ const wide=W>700, R=TAPE.real&&wide? Math.min(W-16,W/2+540):W-8, L=wide? Math.max(16,W/2-540):0; return [L,R]; };
+  const spacing=()=>{ const base=W>700?22:18; if(TAPE.real&&W){ const [L,R]=edges(); SP=Math.max(base,Math.min(56,((R-L)*(W>700?0.6:0.85))/Math.max(1,TAPE.bars.length))); } else SP=base; BW=Math.round(Math.min(TAPE.real?18:16,SP*(TAPE.real?0.45:0.58))); };
   const rgba=(c,a)=>{ c=c.replace('#',''); if(c.length===3) c=c.split('').map(x=>x+x).join(''); const n=parseInt(c,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  let W=0,H=0,sd=7,lvl=44,day=0,lo=40,hi=95; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
   let climbed=false;
   const ghost=()=>{ if(lvl>=74) climbed=true; const tgt=climbed? 74+8*Math.sin(day/9)+4*Math.sin(day/3.3) : lvl+2; const drift=(tgt-lvl)*(climbed?.25:.75), o=lvl+(rnd()-.5)*2.5, c=Math.max(40,Math.min(94,o+drift+(rnd()-.45)*6));
     TAPE.bars.push({o,c,h:Math.max(o,c)+1+rnd()*4,l:Math.min(o,c)-1-rnd()*5,v:40+rnd()*60,d:++day}); lvl=c; };
-  function load(){ const real=tapeData(); TAPE.real=real.length>=8; TAPE.bars=[]; lvl=44; sd=7; day=0; climbed=false;
-    if(TAPE.real){ const vmax=Math.max(...real.map(b=>b.v),1); TAPE.bars=real.map(b=>({...b,v:b.v/vmax*100})); } lo=Math.min(45,...TAPE.bars.map(b=>b.l||70))-3; hi=Math.max(95,...TAPE.bars.map(b=>b.h||70))+3; if(!TAPE.real){ lo=40; hi=92; } spacing(); fill(); TAPE.reveal=RM?1e9:0; TAPE.done=RM; }
+  let vmax=10;
+  function load(){ const real=tapeData(); TAPE.real=real.length>=8; TAPE.bars=[]; lvl=44; sd=7; day=0; climbed=false; vmax=10;
+    if(TAPE.real){ TAPE.bars=real; lo=Math.min(45,...real.map(b=>b.l))-3; hi=Math.max(95,...real.map(b=>b.h))+3; } else { lo=40; hi=92; vmax=100; }
+    spacing(); fill(); TAPE.reveal=RM?1e9:0; TAPE.done=RM; cv.style.cursor=TAPE.real?'pointer':''; }
   function fill(){ if(!TAPE.real){ const need=Math.ceil(W/SP)+4; while(TAPE.bars.length<need) ghost(); } }
   function size(){ const r=cv.getBoundingClientRect(), dpr=Math.min(2,devicePixelRatio||1); W=r.width; H=r.height; if(!W) return; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); spacing(); fill(); draw(); }
-  const band=()=> W>700? [H*0.12,H*0.78] : [H*0.24,H*0.68];
+  const band=()=> W>700? [H*0.12,H*0.74] : [H*0.24,H*0.66];
   const yOf=v=>{ const [a,b]=band(); return a+(1-(v-lo)/Math.max(8,hi-lo))*(b-a); };
-  function rescale(snap){ const B=TAPE.bars, n=B.length, vis=B.filter((b,i)=>i<TAPE.reveal&&(W-SP*1.5-(n-1-i)*SP)>-SP); if(!vis.length) return;
-    let mn=Math.min(TAPE.real?45:70,...vis.map(b=>b.l))-3, mx=Math.max(TAPE.real?95:70,...vis.map(b=>b.h))+3; if(snap){ lo=mn; hi=mx; } else { lo+=(mn-lo)*.04; hi+=(mx-hi)*.04; } }
+  const X0=()=>edges()[1]-SP*1.5-TAPE.prog*SP;
+  function rescale(){ const B=TAPE.bars, n=B.length, x0=X0(), vis=B.filter((b,i)=>i<TAPE.reveal&&(x0-(n-1-i)*SP)>-SP); if(!vis.length) return;
+    const mn=Math.min(TAPE.real?45:70,...vis.map(b=>b.l))-3, mx=Math.max(TAPE.real?95:70,...vis.map(b=>b.h))+3; lo+=(mn-lo)*.04; hi+=(mx-hi)*.04; }
   function draw(){
-    if(!W) return; rescale(false); const up=css('--ok'), dn=css('--bad'), ink=css('--ink'); ctx.clearRect(0,0,W,H);
-    const y70=yOf(70); ctx.setLineDash([4,5]); ctx.strokeStyle=rgba(ink,.28); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,y70); ctx.lineTo(W,y70); ctx.stroke(); ctx.setLineDash([]);
+    if(!W) return; rescale(); const up=css('--ok'), dn=css('--bad'), ink=css('--ink'), acc=css('--accent'); ctx.clearRect(0,0,W,H);
+    const [L,R]=edges(), y70=yOf(70); ctx.setLineDash([4,5]); ctx.strokeStyle=rgba(ink,.28); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,y70); ctx.lineTo(W,y70); ctx.stroke(); ctx.setLineDash([]);
     ctx.font='500 10px ui-monospace, monospace'; ctx.fillStyle=rgba(ink,.45); ctx.textAlign='right'; ctx.fillText('70% · aprobación',W>700?Math.min(W-28,W/2+540):W-14,y70-6);
-    const B=TAPE.bars, n=B.length, x0=W-SP*1.5-TAPE.prog*SP;
+    const B=TAPE.bars, n=B.length, x0=X0();
     if(!TAPE.real){ for(let k=1;k<=6;k++){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const off=6*Math.sin((b.d||i)/(5+k*1.3)+k*1.9)+3*Math.sin((b.d||i)/(2.1+k*.4)+k); const v=b.c+off; e=e===null?v:v*.3+e*.7; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--m'+k)||'#888',.34); ctx.lineWidth=1.4; ctx.stroke(); } }
-    if(TAPE.real){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; e=e===null?b.c:b.c*.35+e*.65; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--accent'),.6); ctx.lineWidth=2; ctx.stroke(); }
-    B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const x=x0-(n-1-i)*SP; if(x<-SP) return; const col=b.c>=b.o?up:dn, a=TAPE.hover===i?1:(TAPE.real?.8:.55);
-      ctx.fillStyle=rgba(col,.14); const vh=b.v/100*H*0.12; ctx.fillRect(x-BW/2,H-vh,BW,vh);
-      ctx.strokeStyle=rgba(col,a); ctx.beginPath(); ctx.moveTo(x,yOf(b.h)); ctx.lineTo(x,yOf(b.l)); ctx.stroke();
-      ctx.fillStyle=rgba(col,a); const y1=yOf(Math.max(b.o,b.c)), y2=yOf(Math.min(b.o,b.c)); ctx.fillRect(x-BW/2,y1,BW,Math.max(1.5,y2-y1)); });
+    else { let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; e=e===null?b.c:b.c*.35+e*.65; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(acc,.6); ctx.lineWidth=2; ctx.stroke(); }
+    B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const x=x0-(n-1-i)*SP; if(x<-SP) return; const col=b.c>=b.o?up:dn, hov=TAPE.hover===i, a=hov?1:(TAPE.real?.8:.55);
+      // volumen: tarjetas nuevas que viste en esas 10 (tu exposición)
+      const vh=(TAPE.real? (b.v/10)*H*0.16+2 : b.v/100*H*0.12); ctx.fillStyle=TAPE.real? rgba(acc,hov?.55:.22) : rgba(col,.14); ctx.fillRect(x-BW/2,H-vh,BW,vh);
+      ctx.strokeStyle=rgba(col,a); ctx.lineWidth=hov?1.6:1; ctx.beginPath(); ctx.moveTo(x,yOf(b.h)); ctx.lineTo(x,yOf(b.l)); ctx.stroke();
+      ctx.fillStyle=rgba(col,a); const y1=yOf(Math.max(b.o,b.c)), y2=yOf(Math.min(b.o,b.c)); ctx.fillRect(x-BW/2-(hov?1:0),y1,BW+(hov?2:0),Math.max(1.5,y2-y1)); });
     ctx.globalCompositeOperation='destination-out';
-    const g= W>700? ctx.createLinearGradient(0,0,W*0.55,0) : ctx.createLinearGradient(0,0,0,H*0.5);
-    g.addColorStop(0,'rgba(0,0,0,.9)'); g.addColorStop(.55,'rgba(0,0,0,.6)'); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); ctx.globalCompositeOperation='source-over';
-    if(TAPE.hover!=null){ const x=x0-(n-1-TAPE.hover)*SP; ctx.strokeStyle=rgba(ink,.35); ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); ctx.setLineDash([]); }
+    const g= W>700? ctx.createLinearGradient(L,0,L+(R-L)*0.5,0) : ctx.createLinearGradient(0,0,0,H*0.5);
+    g.addColorStop(0,'rgba(0,0,0,.9)'); g.addColorStop(.55,'rgba(0,0,0,.6)'); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; if(W>700){ ctx.fillRect(0,0,L,H); } ctx.fillRect(W>700?L:0,0,W,H); ctx.globalCompositeOperation='source-over';
+    if(TAPE.hover!=null){ const x=x0-(n-1-TAPE.hover)*SP; ctx.strokeStyle=rgba(ink,.3); ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); ctx.setLineDash([]); }
   }
   let last=performance.now();
   function loop(now){
     if(!TAPE.run||document.hidden||$('scr-home').classList.contains('hide')) { TAPE.loop=false; return; } TAPE.loop=true;
     const dt=Math.min(.05,(now-last)/1000); last=now;
-    if(!TAPE.done){ TAPE.reveal+=dt*14; 
-      if(TAPE.reveal>=TAPE.bars.length){ TAPE.done=true; TAPE.reveal=1e9; setTimeout(()=>{ if(TAPE.hover==null) ro.classList.remove('on'); },1800); } }
+    if(!TAPE.done){ TAPE.reveal+=dt*14; if(TAPE.reveal>=TAPE.bars.length){ TAPE.done=true; TAPE.reveal=1e9; } }
     else if(!RM&&!TAPE.real){ TAPE.prog+=dt/1.6; if(TAPE.prog>=1){ TAPE.prog=0; ghost(); if(TAPE.bars.length>Math.ceil(W/SP)+6) TAPE.bars.shift(); if(TAPE.hover!=null) TAPE.hover=Math.max(0,TAPE.hover-1); } }
-    else if(TAPE.real){ draw(); TAPE.loop=false; return; }
+    else { draw(); TAPE.loop=false; return; }
     draw(); requestAnimationFrame(loop);
   }
   window.tapeStart=()=>{ load(); size(); last=performance.now(); if(!TAPE.loop) requestAnimationFrame(loop); };
   new ResizeObserver(size).observe(cv);
   new IntersectionObserver(es=>{ TAPE.run=es[0].isIntersecting; if(TAPE.run&&!TAPE.loop){ last=performance.now(); requestAnimationFrame(loop); } }).observe(cv);
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&!TAPE.loop){ last=performance.now(); requestAnimationFrame(loop); } });
-  const pick=e=>{ const r=cv.getBoundingClientRect(), x=(e.touches?e.touches[0].clientX:e.clientX)-r.left, n=TAPE.bars.length, x0=W-SP*1.5-TAPE.prog*SP, i=Math.round(n-1-(x0-x)/SP);
-    if(i<0||i>=n){ TAPE.hover=null; ro.classList.remove('on'); draw(); return; } TAPE.hover=i; const b=TAPE.bars[i];
-    const lab=TAPE.real? new Date(b.d).toLocaleDateString('es-AR',{day:'numeric',month:'short'})+' · 10 tarjetas' : '';
-    if(TAPE.real){ ro.textContent=lab; ro.classList.add('on'); } draw(); };
+  const idx=e=>{ const r=cv.getBoundingClientRect(), x=(e.touches?e.touches[0].clientX:e.clientX)-r.left, n=TAPE.bars.length, i=Math.round(n-1-(X0()-x)/SP); return i>=0&&i<n&&i<TAPE.reveal?i:null; };
+  const pick=e=>{ const i=idx(e); TAPE.hover=i; if(i==null||!TAPE.real){ ro.classList.remove('on'); draw(); return; } const b=TAPE.bars[i];
+    ro.innerHTML=`${new Date(b.d).toLocaleDateString('es-AR',{day:'numeric',month:'short'})} · <b>${b.ok}</b>/10 bien · ${b.nu} nuevas · ${W>700?'clic':'tocá de nuevo'} para repasarlas`; ro.classList.add('on'); draw(); };
   cv.addEventListener('pointermove',pick); cv.addEventListener('pointerleave',()=>{ TAPE.hover=null; ro.classList.remove('on'); draw(); });
-  cv.addEventListener('touchstart',pick,{passive:true}); cv.addEventListener('touchmove',pick,{passive:true});
+  cv.addEventListener('touchstart',pick,{passive:true});
+  // tocar una vela: repasar esas 10 tarjetas
+  let armed=null;
+  cv.addEventListener('click',e=>{ if(!TAPE.real) return; const i=idx(e); if(i==null) return; if(e.pointerType==='touch'&&armed!==i){ armed=i; return; } armed=null; const ids=TAPE.bars[i].ids.filter(id=>BANK.some(q=>q.id===id)); if(ids.length) practiceIds(ids); });
   new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 })();
 
@@ -1899,7 +1910,7 @@ function isDom(s){ return s.w===0 ? s.r>=2 : (s.c||0)>=2; }
 function recordStat(id,ok){
   const s=store.stats[id]||(store.stats[id]={s:0,w:0,r:0,l:0});
   s.s++; s.l=Date.now(); if(ok){ s.r++; s.c=(s.c||0)+1; } else { s.w++; s.c=0; }
-  (store.log=store.log||[]).push([s.l,ok?1:0]); if(store.log.length>4000) store.log.splice(0,store.log.length-4000);
+  (store.log=store.log||[]).push([s.l,ok?1:0,id]); if(store.log.length>4000) store.log.splice(0,store.log.length-4000);
 }
 function wrongPool(){
   return BANK.filter(q=>{const s=store.stats[q.id];return s&&s.w>0&&(s.c||0)<2;})
@@ -2378,7 +2389,7 @@ function grade(v){
   const it=ST.items[ST.idx];
   if(it.graded===null){
     const s=store.stats[it.q.id]||(store.stats[it.q.id]={s:0,w:0,r:0,l:0});
-    s.s++; s.l=Date.now(); s.g=v; if(v==='ok'||v==='rep'){ (store.log=store.log||[]).push([s.l,v==='ok'?1:0]); if(store.log.length>4000) store.log.splice(0,store.log.length-4000); }
+    s.s++; s.l=Date.now(); s.g=v; if(v==='ok'||v==='rep'){ (store.log=store.log||[]).push([s.l,v==='ok'?1:0,it.q.id]); if(store.log.length>4000) store.log.splice(0,store.log.length-4000); }
     if(v==='ok') ST.r++; else if(v==='rep') ST.w++; else ST.i=(ST.i||0)+1;
   }
   it.graded=v; saveStore(); nextCard();

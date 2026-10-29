@@ -570,16 +570,16 @@ body.hastabs{padding-bottom:84px}
 
 /* ---- Inicio nuevo: gráfico vivo y botón Seguir ---- */
 .hero.hv{position:relative;height:300px;padding:0;margin:0 calc(50% - 50vw);overflow:hidden;border-bottom:1px solid var(--line)}
-@media (min-width:900px){.hero.hv{margin:18px 0 0;height:320px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}}
+@media (min-width:900px){.hero.hv{height:340px;background:color-mix(in srgb,var(--panel) 60%,var(--bg))}}
 #tape{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
 .tapero{position:absolute;right:12px;top:12px;font:500 11px var(--mono);color:var(--ink3);background:color-mix(in srgb,var(--panel) 85%,transparent);border:1px solid var(--line);border-radius:8px;padding:4px 7px;pointer-events:none;opacity:0;transition:opacity .2s}
 .tapero.on{opacity:1}
 .hero.hv .hcopy{position:absolute;left:16px;right:16px;top:22px;pointer-events:none}
-@media (min-width:900px){.hero.hv .hcopy{left:28px;top:30px}}
+@media (min-width:900px){.hero.hv .hcopy{left:max(28px,calc(50vw - 520px));top:40px}}
 .hero.hv h1{margin:0;font-family:var(--serif);font-weight:700;font-size:clamp(32px,8.6vw,52px)!important;line-height:1;letter-spacing:-.015em;max-width:11ch}
 .hero.hv h1 b{color:var(--accent)}
 .hero.hv .hcta{position:absolute;left:16px;right:16px;bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-@media (min-width:900px){.hero.hv .hcta{left:28px;right:auto;bottom:24px}}
+@media (min-width:900px){.hero.hv .hcta{left:max(28px,calc(50vw - 520px));right:auto;bottom:34px}}
 .hero.hv .examdate{margin:0;gap:6px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:999px;padding:3px 4px 3px 12px;font:500 12.5px var(--mono)}
 .hero.hv .examdate label{font-weight:500;color:var(--ink2)}
 .hero.hv .examdate input{border:0;background:transparent;padding:4px 6px;font:600 12.5px var(--mono);box-shadow:none}
@@ -768,9 +768,9 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
   <div class="sect" data-tab="inicio">
-    <h2>Módulos <em>tocá uno para practicar solo ese</em></h2>
+    <h2>Módulos <em>tocá uno para estudiarlo</em></h2>
     <div class="modmap" id="modMap"></div>
-    <div class="maplegend"><span><i></i>dominadas (2 aciertos seguidos)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para practicar solo ese módulo.</span></div>
+    <div class="maplegend"><span><i></i>dominadas (2 aciertos seguidos)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para ver sus tarjetas.</span></div>
   </div>
 
   <div id="resumeHost" data-tab="inicio"></div>
@@ -1415,7 +1415,7 @@ function renderModMap(){
        <span class="mbar"><i class="d" style="width:${pd}%"></i><i class="s" style="width:${ps}%"></i></span>
        <span class="mst"><b>${s.dom}</b> de ${s.n} dominadas${s.acc!=null?` · <b>${Math.round(s.acc*100)}%</b> acierto`:""}</span>`);
     b.type="button"; b.title=`Practicar el módulo ${m}`;
-    b.addEventListener('click',()=>{setTab('rendir'); applyMode('practice'); CFG.mods=[m]; refreshCfg();});
+    b.addEventListener('click',()=>{ const nv=BANK.some(q=>q.m===m&&q.o===1&&!store.stats[q.id]); setTab('estudiar'); applyMode(nv?'nuevas':'cards'); CFG.mods=[m]; refreshCfg(); });
     host.appendChild(b);
   }
 }
@@ -1716,8 +1716,8 @@ let REC=null;
 function recommend(){
   const S={}; for(let m=1;m<=6;m++) S[m]=modStats(m);
   const all=[1,2,3,4,5,6], wp=wrongPool().length, short=m=>MODSHORT[m].split(' / ')[0];
-  if(!Object.keys(store.stats).length) return {mode:'nuevas',mods:all,t:'Empezar',sub:'Tarjetas con su respuesta · ~15 min',ring:null,
-    why:"¡Hola! Soy Taladrín. Todo el examen sale de las 735 preguntas de la guía. Arranquemos viendo tarjetas con su respuesta correcta: así se graba la buena."};
+  if(!Object.keys(store.stats).length) return {mode:'diag',mods:all,t:'Hacer el diagnóstico',sub:'12 preguntas · 5 min',ring:null,
+    why:"¡Hola! Soy Taladrín. Empecemos con un diagnóstico corto: 2 preguntas por módulo, sin reloj. Con eso te digo por dónde arrancar."};
   const bySeen=all.slice().sort((a,b)=>S[a].seen/S[a].n-S[b].seen/S[b].n), low=bySeen[0];
   if(S[low].seen/S[low].n<0.6) return {mode:'nuevas',mods:[low],t:`Ver tarjetas de ${short(low)}`,sub:`${S[low].n-S[low].seen} sin ver · ~15 min`,ring:{m:low,p:S[low].seen/S[low].n},
     why:`El ${low} es el que menos viste: ${S[low].seen} de ${S[low].n}. Primero exposición, con la respuesta correcta a la vista; las opciones vienen después.`};
@@ -1761,23 +1761,27 @@ function tapeData(){
 (function(){
   const cv=$('tape'); if(!cv) return; const ctx=cv.getContext('2d'), ro=$('tapeRo');
   const RM=matchMedia('(prefers-reduced-motion: reduce)').matches; let SP=16, BW=9;
-  const spacing=()=>{ SP=TAPE.real&&W? Math.max(16,Math.min(34,(W*0.62)/Math.max(1,TAPE.bars.length))):16; BW=Math.round(Math.min(14,SP*0.56)); };
+  const spacing=()=>{ const base=W>700?22:18; SP=TAPE.real&&W? Math.max(base,Math.min(40,(W*0.7)/Math.max(1,TAPE.bars.length))):base; BW=Math.round(Math.min(16,SP*0.58)); };
   const rgba=(c,a)=>{ c=c.replace('#',''); if(c.length===3) c=c.split('').map(x=>x+x).join(''); const n=parseInt(c,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  let W=0,H=0,sd=7,lvl=44,day=0; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
-  const ghost=()=>{ const drift=lvl<76?1.5:(rnd()-.45)*1.2, o=lvl+(rnd()-.5)*2.5, c=Math.max(38,Math.min(96,o+drift+(rnd()-.45)*6));
+  let W=0,H=0,sd=7,lvl=44,day=0,lo=40,hi=95; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+  let climbed=false;
+  const ghost=()=>{ if(lvl>=74) climbed=true; const tgt=climbed? 74+8*Math.sin(day/9)+4*Math.sin(day/3.3) : lvl+2; const drift=(tgt-lvl)*(climbed?.25:.75), o=lvl+(rnd()-.5)*2.5, c=Math.max(40,Math.min(94,o+drift+(rnd()-.45)*6));
     TAPE.bars.push({o,c,h:Math.max(o,c)+1+rnd()*4,l:Math.min(o,c)-1-rnd()*5,v:40+rnd()*60,d:++day}); lvl=c; };
-  function load(){ const real=tapeData(); TAPE.real=real.length>=3; TAPE.bars=[]; lvl=44; sd=7; day=0;
-    if(TAPE.real){ const vmax=Math.max(...real.map(b=>b.v),1); TAPE.bars=real.map(b=>({...b,v:b.v/vmax*100})); } spacing(); fill(); TAPE.reveal=RM?1e9:0; TAPE.done=RM; }
+  function load(){ const real=tapeData(); TAPE.real=real.length>=3; TAPE.bars=[]; lvl=44; sd=7; day=0; climbed=false;
+    if(TAPE.real){ const vmax=Math.max(...real.map(b=>b.v),1); TAPE.bars=real.map(b=>({...b,v:b.v/vmax*100})); } lo=Math.min(70,...TAPE.bars.map(b=>b.l||70))-3; hi=Math.max(70,...TAPE.bars.map(b=>b.h||70))+3; if(!TAPE.real){ lo=40; hi=92; } spacing(); fill(); TAPE.reveal=RM?1e9:0; TAPE.done=RM; }
   function fill(){ if(!TAPE.real){ const need=Math.ceil(W/SP)+4; while(TAPE.bars.length<need) ghost(); } }
   function size(){ const r=cv.getBoundingClientRect(), dpr=Math.min(2,devicePixelRatio||1); W=r.width; H=r.height; if(!W) return; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); spacing(); fill(); draw(); }
-  const yOf=v=> W>700? H*0.12+(1-(v-35)/65)*H*0.66 : H*0.26+(1-(v-35)/65)*H*0.44;
+  const band=()=> W>700? [H*0.12,H*0.78] : [H*0.24,H*0.68];
+  const yOf=v=>{ const [a,b]=band(); return a+(1-(v-lo)/Math.max(8,hi-lo))*(b-a); };
+  function rescale(snap){ const B=TAPE.bars, n=B.length, vis=B.filter((b,i)=>i<TAPE.reveal&&(W-SP*1.5-(n-1-i)*SP)>-SP); if(!vis.length) return;
+    let mn=Math.min(70,...vis.map(b=>b.l))-3, mx=Math.max(70,...vis.map(b=>b.h))+3; if(snap){ lo=mn; hi=mx; } else { lo+=(mn-lo)*.04; hi+=(mx-hi)*.04; } }
   function draw(){
-    if(!W) return; const up=css('--ok'), dn=css('--bad'), ink=css('--ink'); ctx.clearRect(0,0,W,H);
+    if(!W) return; rescale(false); const up=css('--ok'), dn=css('--bad'), ink=css('--ink'); ctx.clearRect(0,0,W,H);
     const y70=yOf(70); ctx.setLineDash([4,5]); ctx.strokeStyle=rgba(ink,.28); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,y70); ctx.lineTo(W,y70); ctx.stroke(); ctx.setLineDash([]);
     ctx.font='500 10px ui-monospace, monospace'; ctx.fillStyle=rgba(ink,.45); ctx.textAlign='right'; ctx.fillText('70% · aprobación',W-10,y70-6);
     const B=TAPE.bars, n=B.length, x0=W-SP*1.5-TAPE.prog*SP;
-    if(!TAPE.real){ for(let k=1;k<=6;k++){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const v=b.c+(k-3.5)*3.2*(1-i/n); e=e===null?v:v/3+e*2/3; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--m'+k)||'#888',.38); ctx.lineWidth=1.4; ctx.stroke(); } }
+    if(!TAPE.real){ for(let k=1;k<=6;k++){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const off=6*Math.sin((b.d||i)/(5+k*1.3)+k*1.9)+3*Math.sin((b.d||i)/(2.1+k*.4)+k); const v=b.c+off; e=e===null?v:v*.3+e*.7; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--m'+k)||'#888',.34); ctx.lineWidth=1.4; ctx.stroke(); } }
     B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const x=x0-(n-1-i)*SP; if(x<-SP) return; const col=b.c>=b.o?up:dn, a=TAPE.hover===i?1:(TAPE.real?.8:.55);
       ctx.fillStyle=rgba(col,.14); const vh=b.v/100*H*0.12; ctx.fillRect(x-BW/2,H-vh,BW,vh);
       ctx.strokeStyle=rgba(col,a); ctx.beginPath(); ctx.moveTo(x,yOf(b.h)); ctx.lineTo(x,yOf(b.l)); ctx.stroke();
@@ -1804,7 +1808,7 @@ function tapeData(){
   const pick=e=>{ const r=cv.getBoundingClientRect(), x=(e.touches?e.touches[0].clientX:e.clientX)-r.left, n=TAPE.bars.length, x0=W-SP*1.5-TAPE.prog*SP, i=Math.round(n-1-(x0-x)/SP);
     if(i<0||i>=n){ TAPE.hover=null; ro.classList.remove('on'); draw(); return; } TAPE.hover=i; const b=TAPE.bars[i];
     const lab=TAPE.real? new Date(b.d+'T12:00:00').toLocaleDateString('es-AR',{day:'numeric',month:'short'}) : 'así puede ser';
-    ro.innerHTML=`${lab} · abre ${b.o.toFixed(0)}% · cierra <b style="color:${b.c>=b.o?'var(--ok)':'var(--bad)'}">${b.c.toFixed(0)}%</b>`; ro.classList.add('on'); draw(); };
+    if(TAPE.real){ ro.textContent=lab; ro.classList.add('on'); } draw(); };
   cv.addEventListener('pointermove',pick); cv.addEventListener('pointerleave',()=>{ TAPE.hover=null; ro.classList.remove('on'); draw(); });
   cv.addEventListener('touchstart',pick,{passive:true}); cv.addEventListener('touchmove',pick,{passive:true});
   new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});

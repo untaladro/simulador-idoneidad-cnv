@@ -567,6 +567,37 @@ body.hastabs{padding-bottom:84px}
   .tal.habla .globo{animation:none}
 }
 
+
+/* ---- Inicio nuevo: gráfico vivo y botón Seguir ---- */
+.hero.hv{position:relative;height:300px;padding:0;margin:0 calc(50% - 50vw);overflow:hidden;border-bottom:1px solid var(--line)}
+@media (min-width:900px){.hero.hv{margin:18px 0 0;height:320px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}}
+#tape{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+.tapero{position:absolute;right:12px;top:12px;font:500 11px var(--mono);color:var(--ink3);background:color-mix(in srgb,var(--panel) 85%,transparent);border:1px solid var(--line);border-radius:8px;padding:4px 7px;pointer-events:none;opacity:0;transition:opacity .2s}
+.tapero.on{opacity:1}
+.hero.hv .hcopy{position:absolute;left:16px;right:16px;top:22px;pointer-events:none}
+@media (min-width:900px){.hero.hv .hcopy{left:28px;top:30px}}
+.hero.hv h1{margin:0;font-family:var(--serif);font-weight:700;font-size:clamp(32px,8.6vw,52px)!important;line-height:1;letter-spacing:-.015em;max-width:11ch}
+.hero.hv h1 b{color:var(--accent)}
+.hero.hv .hcta{position:absolute;left:16px;right:16px;bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+@media (min-width:900px){.hero.hv .hcta{left:28px;right:auto;bottom:24px}}
+.hero.hv .examdate{margin:0;gap:6px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:999px;padding:3px 4px 3px 12px;font:500 12.5px var(--mono)}
+.hero.hv .examdate label{font-weight:500;color:var(--ink2)}
+.hero.hv .examdate input{border:0;background:transparent;padding:4px 6px;font:600 12.5px var(--mono);box-shadow:none}
+.hero.hv .examdate.empty{border-color:var(--accent)}
+.go{position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;border:0;background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:10px;font:700 15.5px var(--sans);cursor:pointer;text-align:left;box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 34%,transparent),inset 0 1px 0 rgba(255,255,255,.18);transition:transform .18s cubic-bezier(.3,1.4,.5,1),box-shadow .2s;max-width:100%}
+.go:hover{transform:translateY(-2px)} .go:active{transform:scale(.98)}
+.go::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-18deg);animation:goSheen 4.5s ease-in-out 1.2s infinite;pointer-events:none}
+@keyframes goSheen{0%,70%{left:-60%}100%{left:130%}}
+.go .ring{position:relative;width:44px;height:44px;flex-shrink:0}
+.go .ring svg{width:44px;height:44px;transform:rotate(-90deg)}
+.go .ring b{position:absolute;inset:0;display:grid;place-items:center;font:700 18px var(--serif)}
+.go .txt{display:flex;flex-direction:column;min-width:0;padding-right:4px}
+.go small{display:block;font:500 12px var(--mono);opacity:.85;margin-top:3px}
+.go .arr{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex-shrink:0;margin-left:auto;transition:transform .2s}
+.go:hover .arr{transform:translateX(3px)}
+.go .arr svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:reduce){.go::after{display:none}.go,.go .arr{transition:none}}
+
 /* ---- fundamento ---- */
 .fund{margin-top:14px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);overflow:hidden;color:var(--ink);text-align:left}
 .fund>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:10px 13px;background:var(--panel2);border-bottom:1px solid transparent}
@@ -720,18 +751,24 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
   </div>
 </div>
 
-<nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>Estrategia</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button></nav>
+<nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2 13 13l-3.8 1.8L11 11z"/></svg><span>Estrategia</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button></nav>
 <div id="tal" class="tal hide">
   <div class="globo"><i class="cierra" id="talCierra" title="Cerrar">×</i><span id="talDice"></span><div id="talAcc"></div></div>
   <button class="cuerpo" id="talCuerpo" title="Taladrín · tocalo y te tira un consejo" aria-label="Taladrín, tu tutor"></button>
 </div>
 <!-- ============ HOME ============ -->
 <div id="scr-home" class="wrap">
-  <div class="hero" data-tab="inicio">
-    <h1 id="heroTitle">Simulador del examen de idoneidad CNV</h1>
-    <div class="examdate"><label for="examDate">Fecha de tu examen</label><input type="date" id="examDate"><span id="examDateHint"></span></div>
-    <p>El examen se arma con las 735 preguntas de la Guía de Estudio de la CNV. Acá las practicás de distintas formas, con un plan día por día y una ficha de datos para el último repaso. Todo lo que respondés queda registrado: lo que fallás en cualquier modo vuelve después en el repaso de errores.</p>
-    <div class="statline" id="statline"></div>
+  <div class="hero hv" data-tab="inicio">
+    <canvas id="tape" aria-hidden="true"></canvas>
+    <div class="tapero" id="tapeRo" aria-hidden="true"></div>
+    <div class="hcopy"><h1 id="heroTitle">Tu camino al <b>idóneo</b>.</h1></div>
+    <div class="hcta">
+      <button class="go" id="goBtn" type="button"></button>
+      <div class="examdate"><label for="examDate">examen</label><input type="date" id="examDate"><span id="examDateHint" hidden></span></div>
+    </div>
+  </div>
+  <div class="sect" data-tab="inicio">
+    <h2>Módulos <em>tocá uno para practicar solo ese</em></h2>
     <div class="modmap" id="modMap"></div>
     <div class="maplegend"><span><i></i>dominadas (2 aciertos seguidos)</span><span><i class="s"></i>vistas</span><span>Tocá un módulo para practicar solo ese módulo.</span></div>
   </div>
@@ -890,7 +927,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     </div>
   </div>
 
-  <div class="sect" data-tab="inicio"><h2>Historial</h2><div class="card"><div id="histBody"></div></div></div>
+  <div class="sect" data-tab="rendir"><h2>Historial</h2><div class="statline" id="statline"></div><div class="card"><div id="histBody"></div></div></div>
 
   <div class="foot wrap" style="padding-left:0;padding-right:0">
     <h4>Fuentes</h4>
@@ -1356,7 +1393,7 @@ function renderExamHeader(){
     t= dd>1?`Faltan ${dd} días para tu examen`: dd===1?"Mañana rendís": dd===0?"Hoy rendís":`Tu examen fue el ${f}`;
     hint= dd<0?"Si tenés una fecha nueva, cambiala acá.":"Se guarda en este navegador. La podés cambiar cuando quieras.";
   }
-  $('heroTitle').textContent=t; $('examDateHint').textContent=hint;
+  $('examDateHint').textContent=hint;
 }
 
 
@@ -1619,18 +1656,11 @@ document.addEventListener('focusin',e=>{ const x=e.target.closest&&e.target.clos
 
 function talHoy(){ const d0=new Date(); d0.setHours(0,0,0,0); return (store.history||[]).filter(x=>x.ts>=d0.getTime()).reduce((a,x)=>a+(x.n||0),0); }
 function talHomeMsg(){
-  const seen=BANK.filter(q=>q.o===1&&store.stats[q.id]).length;
-  const fulls=(store.history||[]).filter(x=>x.mode==="full"), last=fulls.length?fulls[fulls.length-1]:null;
   const ex=examDate(), d=ex?daysTo(ex):null, hoy=talHoy();
-  const go=(t,m)=>()=>{ setTab(t); applyMode(m); };
-  if(d===0) return {k:"h0",face:"guiño",tono:"ok",txt:"¡Hoy rendís! Nada nuevo: un repaso liviano y a descansar. Mirá Estrategia una vez y confiá en lo que practicaste.",btns:[{t:"Ir a Estrategia",go:()=>setTab("consultar")}]};
-  if(hoy>=120) return {k:"hx"+Math.floor(hoy/60),face:"calma",txt:`Hoy ya van ${hoy} preguntas. ¡Bien ahí! A esta altura rinde más descansar que seguir: lo que viste se fija durmiendo.`};
-  if(d===1) return {k:"h1d",face:"sonrisa",txt:"Mañana es el día. Para hoy: un examen completo con reloj, repasar los errores y cortar temprano. Nada de temas nuevos.",btns:[{t:"Examen completo",go:go("rendir","full")}]};
-  if(!seen) return {k:"h1",face:"sonrisa",txt:"¡Hola! Soy Taladrín. Todo el examen sale de las 735 preguntas de la guía, así que arranquemos por las que nunca viste.",btns:[{t:"Arrancar",go:go("estudiar","nuevas")}]};
-  if(seen<515) return {k:"h2"+Math.floor(seen/100),face:"sonrisa",txt:`Llevás ${seen} de 735. ¡Buen ritmo! Cada pregunta que leés es una menos para adivinar.`,btns:[{t:"Seguir",go:go("estudiar","nuevas")}]};
-  if(!last) return {k:"h3",face:"guiño",txt:"Ya recorriste casi toda la guía. ¿Probamos un examen completo con reloj, como el real?",btns:[{t:"Dale",go:go("rendir","full")}]};
-  if(last.pct<PASS) return {k:"h3"+last.ts,face:"atento",txt:`El último dio ${Math.round(last.pct*100)}%. Es normal en esta etapa: repasá los errores y después probamos otro.`,btns:[{t:"Repasar errores",go:go("rendir","wrong")}]};
-  return {k:"h4"+last.ts,face:"guiño",tono:"ok",txt:`¡${Math.round(last.pct*100)}% en el último! Vas muy bien. Repasá los errores y llegá descansado.`,btns:[{t:"Repasar errores",go:go("rendir","wrong")}]};
+  if(d===0) return {k:"h0",face:"guiño",tono:"ok",txt:"¡Hoy rendís! Nada nuevo: un repaso liviano. Puede pasar cualquier cosa ese día y está bien: lo que practicaste ya está.",btns:[{t:"Ir a Estrategia",go:()=>setTab("consultar")}]};
+  if(hoy>=120) return {k:"hx"+Math.floor(hoy/60),face:"calma",txt:`Hoy ya van ${hoy} preguntas. A esta altura rinde más descansar que seguir: lo que viste se fija durmiendo.`};
+  const r=REC||recommend();
+  return {k:"rec_"+r.mode+"_"+r.mods.join(""),face:r.ring&&r.mode==="practice"?"atento":"sonrisa",txt:r.why};
 }
 const TAL_TAB={
   estudiar:{k:"t_est",face:"sonrisa",txt:"Acá ves pregunta y respuesta directo, como en la guía. Es la forma más rápida de recorrerla."},
@@ -1680,6 +1710,106 @@ function sessionOHLC(items){
   const mods={}; items.forEach(it=>{ const b=mods[it.q.m]=mods[it.q.m]||[0,0]; b[1]++; if(it.sel!==null&&it.opts[it.sel].ok) b[0]++; });
   return {o:acc(seq.slice(0,w)),c:acc(seq.slice(-w)),h:hi,l:lo,mods};
 }
+
+/* ---------- Seguir: recomendación adaptativa ---------- */
+let REC=null;
+function recommend(){
+  const S={}; for(let m=1;m<=6;m++) S[m]=modStats(m);
+  const all=[1,2,3,4,5,6], wp=wrongPool().length, short=m=>MODSHORT[m].split(' / ')[0];
+  if(!Object.keys(store.stats).length) return {mode:'nuevas',mods:all,t:'Empezar',sub:'Tarjetas con su respuesta · ~15 min',ring:null,
+    why:"¡Hola! Soy Taladrín. Todo el examen sale de las 735 preguntas de la guía. Arranquemos viendo tarjetas con su respuesta correcta: así se graba la buena."};
+  const bySeen=all.slice().sort((a,b)=>S[a].seen/S[a].n-S[b].seen/S[b].n), low=bySeen[0];
+  if(S[low].seen/S[low].n<0.6) return {mode:'nuevas',mods:[low],t:`Ver tarjetas de ${short(low)}`,sub:`${S[low].n-S[low].seen} sin ver · ~15 min`,ring:{m:low,p:S[low].seen/S[low].n},
+    why:`El ${low} es el que menos viste: ${S[low].seen} de ${S[low].n}. Primero exposición, con la respuesta correcta a la vista; las opciones vienen después.`};
+  if(wp>=15) return {mode:'wrong',mods:all,t:`Repasar tus ${wp} errores`,sub:'Corrección al toque · ~15 min',ring:null,
+    why:`Tenés ${wp} preguntas para corregir. Repasarlas ahora rinde más que sumar nuevas.`};
+  const byAcc=all.filter(m=>S[m].r+S[m].w>=8).sort((a,b)=>S[a].acc-S[b].acc), wk=byAcc[0];
+  if(wk&&S[wk].acc<0.8) return {mode:'practice',mods:[wk],t:`Practicar ${short(wk)}`,sub:`20 preguntas · hoy ${Math.round(S[wk].acc*100)}% de acierto`,ring:{m:wk,p:S[wk].acc},
+    why:`El ${wk} es tu módulo más flojo (${Math.round(S[wk].acc*100)}%). Una práctica con opciones y corrección al toque para reforzarlo.`};
+  const calc=BANK.filter(q=>q.calc===1), cs=calc.filter(q=>store.stats[q.id]).length;
+  if(cs/calc.length<0.7) return {mode:'ejercicios',mods:all,t:'Ejercicios numéricos',sub:`${calc.length-cs} sin resolver · con calculadora`,ring:null,
+    why:"Los ejercicios numéricos son puntos que se ganan con método. Te faltan varios: resolvelos con la calculadora al lado."};
+  const lastFull=(store.history||[]).filter(x=>x.mode==='full').pop();
+  if(!lastFull||Date.now()-lastFull.ts>3*864e5) return {mode:'full',mods:all,t:'Examen completo',sub:'60 preguntas · 45 minutos',ring:null,
+    why:"Un examen con reloj entrena lo que el estudio no: la agilidad. 45 minutos para 60 preguntas es poco."};
+  const second=byAcc[1]||wk||low;
+  return {mode:'practice',mods:[second],t:`Practicar ${short(second)}`,sub:'20 preguntas · corrección al toque',ring:{m:second,p:S[second].acc||0},
+    why:`Siempre hay algo para reforzar. Hoy le damos al ${second}.`};
+}
+function renderGo(){
+  REC=recommend(); const b=$('goBtn'); if(!b) return;
+  const ring=REC.ring?`<span class="ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="4"/><circle cx="22" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(REC.ring.p*113.1).toFixed(1)} 113.1"/></svg><b>${REC.ring.m}</b></span>`
+    :`<span class="ring" aria-hidden="true"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="4"/></svg><b>▸</b></span>`;
+  b.innerHTML=`${ring}<span class="txt">${esc(REC.t)}<small>${esc(REC.sub)}</small></span><span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>`;
+  b.setAttribute('aria-label',`${REC.t}: ${REC.sub}`);
+}
+$('goBtn').addEventListener('click',()=>{
+  if(!REC) return; const tab=STMODES.includes(REC.mode)?'estudiar':'rendir';
+  setTab(tab,false); applyMode(REC.mode,false); CFG.mods=REC.mods.slice(); refreshCfg();
+  if(!$('startBtn').disabled) $('startBtn').click(); else $('cfgSect').scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- gráfico vivo del hero ---------- */
+const TAPE={bars:[],real:false,reveal:0,done:false,prog:0,hover:null,run:true};
+function tapeData(){
+  const H=(store.history||[]).slice().sort((a,b)=>a.ts-b.ts), days={}, key=ts=>{const d=new Date(ts);return d.toISOString().slice(0,10);};
+  H.forEach(r=>{ if(r.self||STMODES.includes(r.mode)) return; const d=days[key(r.ts)]=days[key(r.ts)]||[]; d.push(r); });
+  return Object.keys(days).sort().map(k=>{ const s=days[k], O=x=>(x.o!=null?x.o:x.pct)*100, C=x=>(x.c!=null?x.c:x.pct)*100;
+    const o=O(s[0]), c=C(s[s.length-1]), hs=s.map(x=>(x.h!=null?x.h:x.pct)*100).concat([o,c]), ls=s.map(x=>(x.l!=null?x.l:x.pct)*100).concat([o,c]);
+    return {o,c,h:Math.max(...hs),l:Math.min(...ls),v:s.reduce((a,x)=>a+(x.n||0),0),d:k}; });
+}
+(function(){
+  const cv=$('tape'); if(!cv) return; const ctx=cv.getContext('2d'), ro=$('tapeRo');
+  const RM=matchMedia('(prefers-reduced-motion: reduce)').matches; let SP=16, BW=9;
+  const spacing=()=>{ SP=TAPE.real&&W? Math.max(16,Math.min(34,(W*0.62)/Math.max(1,TAPE.bars.length))):16; BW=Math.round(Math.min(14,SP*0.56)); };
+  const rgba=(c,a)=>{ c=c.replace('#',''); if(c.length===3) c=c.split('').map(x=>x+x).join(''); const n=parseInt(c,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  let W=0,H=0,sd=7,lvl=44,day=0; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+  const ghost=()=>{ const drift=lvl<76?1.5:(rnd()-.45)*1.2, o=lvl+(rnd()-.5)*2.5, c=Math.max(38,Math.min(96,o+drift+(rnd()-.45)*6));
+    TAPE.bars.push({o,c,h:Math.max(o,c)+1+rnd()*4,l:Math.min(o,c)-1-rnd()*5,v:40+rnd()*60,d:++day}); lvl=c; };
+  function load(){ const real=tapeData(); TAPE.real=real.length>=3; TAPE.bars=[]; lvl=44; sd=7; day=0;
+    if(TAPE.real){ const vmax=Math.max(...real.map(b=>b.v),1); TAPE.bars=real.map(b=>({...b,v:b.v/vmax*100})); } spacing(); fill(); TAPE.reveal=RM?1e9:0; TAPE.done=RM; }
+  function fill(){ if(!TAPE.real){ const need=Math.ceil(W/SP)+4; while(TAPE.bars.length<need) ghost(); } }
+  function size(){ const r=cv.getBoundingClientRect(), dpr=Math.min(2,devicePixelRatio||1); W=r.width; H=r.height; if(!W) return; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); spacing(); fill(); draw(); }
+  const yOf=v=> W>700? H*0.12+(1-(v-35)/65)*H*0.66 : H*0.26+(1-(v-35)/65)*H*0.44;
+  function draw(){
+    if(!W) return; const up=css('--ok'), dn=css('--bad'), ink=css('--ink'); ctx.clearRect(0,0,W,H);
+    const y70=yOf(70); ctx.setLineDash([4,5]); ctx.strokeStyle=rgba(ink,.28); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,y70); ctx.lineTo(W,y70); ctx.stroke(); ctx.setLineDash([]);
+    ctx.font='500 10px ui-monospace, monospace'; ctx.fillStyle=rgba(ink,.45); ctx.textAlign='right'; ctx.fillText('70% · aprobación',W-10,y70-6);
+    const B=TAPE.bars, n=B.length, x0=W-SP*1.5-TAPE.prog*SP;
+    if(!TAPE.real){ for(let k=1;k<=6;k++){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const v=b.c+(k-3.5)*3.2*(1-i/n); e=e===null?v:v/3+e*2/3; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--m'+k)||'#888',.38); ctx.lineWidth=1.4; ctx.stroke(); } }
+    B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const x=x0-(n-1-i)*SP; if(x<-SP) return; const col=b.c>=b.o?up:dn, a=TAPE.hover===i?1:(TAPE.real?.8:.55);
+      ctx.fillStyle=rgba(col,.14); const vh=b.v/100*H*0.12; ctx.fillRect(x-BW/2,H-vh,BW,vh);
+      ctx.strokeStyle=rgba(col,a); ctx.beginPath(); ctx.moveTo(x,yOf(b.h)); ctx.lineTo(x,yOf(b.l)); ctx.stroke();
+      ctx.fillStyle=rgba(col,a); const y1=yOf(Math.max(b.o,b.c)), y2=yOf(Math.min(b.o,b.c)); ctx.fillRect(x-BW/2,y1,BW,Math.max(1.5,y2-y1)); });
+    ctx.globalCompositeOperation='destination-out';
+    const g= W>700? ctx.createLinearGradient(0,0,W*0.55,0) : ctx.createLinearGradient(0,0,0,H*0.5);
+    g.addColorStop(0,'rgba(0,0,0,.9)'); g.addColorStop(.55,'rgba(0,0,0,.6)'); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); ctx.globalCompositeOperation='source-over';
+    if(TAPE.hover!=null){ const x=x0-(n-1-TAPE.hover)*SP; ctx.strokeStyle=rgba(ink,.35); ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); ctx.setLineDash([]); }
+  }
+  let last=performance.now();
+  function loop(now){
+    if(!TAPE.run||document.hidden||$('scr-home').classList.contains('hide')) { TAPE.loop=false; return; } TAPE.loop=true;
+    const dt=Math.min(.05,(now-last)/1000); last=now;
+    if(!TAPE.done){ TAPE.reveal+=dt*14; if(!TAPE.real){ ro.textContent='así puede ser tu camino'; ro.classList.add('on'); }
+      if(TAPE.reveal>=TAPE.bars.length){ TAPE.done=true; TAPE.reveal=1e9; setTimeout(()=>{ if(TAPE.hover==null) ro.classList.remove('on'); },1800); } }
+    else if(!RM&&!TAPE.real){ TAPE.prog+=dt/1.6; if(TAPE.prog>=1){ TAPE.prog=0; ghost(); if(TAPE.bars.length>Math.ceil(W/SP)+6) TAPE.bars.shift(); if(TAPE.hover!=null) TAPE.hover=Math.max(0,TAPE.hover-1); } }
+    else if(TAPE.real){ draw(); TAPE.loop=false; return; }
+    draw(); requestAnimationFrame(loop);
+  }
+  window.tapeStart=()=>{ load(); size(); last=performance.now(); if(!TAPE.loop) requestAnimationFrame(loop); };
+  new ResizeObserver(size).observe(cv);
+  new IntersectionObserver(es=>{ TAPE.run=es[0].isIntersecting; if(TAPE.run&&!TAPE.loop){ last=performance.now(); requestAnimationFrame(loop); } }).observe(cv);
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&!TAPE.loop){ last=performance.now(); requestAnimationFrame(loop); } });
+  const pick=e=>{ const r=cv.getBoundingClientRect(), x=(e.touches?e.touches[0].clientX:e.clientX)-r.left, n=TAPE.bars.length, x0=W-SP*1.5-TAPE.prog*SP, i=Math.round(n-1-(x0-x)/SP);
+    if(i<0||i>=n){ TAPE.hover=null; ro.classList.remove('on'); draw(); return; } TAPE.hover=i; const b=TAPE.bars[i];
+    const lab=TAPE.real? new Date(b.d+'T12:00:00').toLocaleDateString('es-AR',{day:'numeric',month:'short'}) : 'así puede ser';
+    ro.innerHTML=`${lab} · abre ${b.o.toFixed(0)}% · cierra <b style="color:${b.c>=b.o?'var(--ok)':'var(--bad)'}">${b.c.toFixed(0)}%</b>`; ro.classList.add('on'); draw(); };
+  cv.addEventListener('pointermove',pick); cv.addEventListener('pointerleave',()=>{ TAPE.hover=null; ro.classList.remove('on'); draw(); });
+  cv.addEventListener('touchstart',pick,{passive:true}); cv.addEventListener('touchmove',pick,{passive:true});
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+
 /* ---------- diferencias entre opciones largas ---------- */
 const dvTok=s=>s.match(/\S+\s*/g)||[];
 const dvNorm=t=>t.trim().toLowerCase().replace(/[.,;:]+$/,"");
@@ -1803,7 +1933,7 @@ function renderHome(){
   const dd=PLAN.examen?daysTo(PLAN.examen):-1;
   renderExamHeader();
   $('statline').innerHTML=
-    (dd>0?`<span class="chip hot">faltan <b>${dd}</b> días</span>`:dd===0?`<span class="chip hot"><b>es hoy</b></span>`:"")+
+
     `<span class="chip"><b>${nq}</b> preguntas</span>`+
     `<span class="chip"><b>${BANK.filter(q=>q.hard===1).length}</b> datos duros</span>`+
     `<span class="chip"><b>${BANK.filter(q=>q.calc===1).length}</b> ejercicios</span>`+
@@ -1830,7 +1960,7 @@ function renderHome(){
   $('todayDate').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
   $('specWarn').textContent=`${warnQs().length} preguntas`;
   renderModMap(); renderComp(); renderResume();
-  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); setTab(TAB,false); if(!$('scr-home').classList.contains('hide')){ tabbarFor('home'); talOnScreen('home'); }
+  renderToday(); renderModGrid(); applyMode("full",false); renderHistory(); renderGo(); if(window.tapeStart) tapeStart(); setTab(TAB,false); if(!$('scr-home').classList.contains('hide')){ tabbarFor('home'); talOnScreen('home'); }
 }
 const WCAT={"15": "a", "146": "a", "243": "a", "252": "a", "257": "a", "261": "a", "306": "a", "331": "a", "340": "a", "371": "a", "624": "a", "709": "a", "727": "a", "11": "d", "140": "d", "155": "d", "260": "d", "504": "d", "520": "d", "556": "d"};
 let warnF="all";

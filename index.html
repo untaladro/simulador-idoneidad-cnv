@@ -1,4 +1,60 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+/* ---- tarjetas de modo: elegir, ajustar (popup) y play ---- */
+#cfgBtn,#startBar,#cfgOv{display:none!important}
+#cfgSect{display:none!important}
+#scr-home .sect[data-tab="estudiar"]>h2>em,#scr-home .sect[data-tab="rendir"]>h2>em{display:none}
+.mwrap{position:relative;display:flex;flex-direction:column;min-width:0}
+.mwrap>.mode{flex:1;position:relative;overflow:hidden;padding:16px;gap:6px;border-color:color-mix(in srgb,var(--mk) 24%,var(--line));min-width:0}
+.mwrap>.mode::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--mk) 12%,transparent),transparent 60%);pointer-events:none}
+.mwrap>.mode>*{position:relative;min-width:0}
+.mwrap>.mode:hover:not(:disabled){border-color:color-mix(in srgb,var(--mk) 70%,var(--line));transform:translateY(-1px)}
+.mwrap>.mode.primary{background:var(--panel);border-width:1px}
+.mwrap>.mode.primary .mt{color:inherit}
+.mwrap.sel>.mode{border-color:var(--mk);box-shadow:0 0 0 1px var(--mk),0 12px 30px -14px color-mix(in srgb,var(--mk) 70%,transparent);transform:translateY(-2px)}
+.mwrap.sel>.mode::before{background:radial-gradient(130% 100% at 0% 0%,color-mix(in srgb,var(--mk) 22%,transparent),transparent 65%)}
+.mode .mhead{display:flex;align-items:center;gap:11px}
+.mode .mico{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--mk) 17%,var(--panel2));color:var(--mk);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--mk) 30%,transparent)}
+.mode .mico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.mode .mbg{position:absolute!important;right:-16px;top:-14px;width:104px;height:104px;color:var(--mk);opacity:.07;transform:rotate(-12deg);pointer-events:none;transition:transform .35s cubic-bezier(.2,.9,.3,1),opacity .2s}
+.mode .mbg svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.mwrap.sel>.mode .mbg,.mwrap>.mode:hover:not(:disabled) .mbg{transform:rotate(-4deg) scale(1.06);opacity:.12}
+.mode .md{display:none!important}
+.mode .mtag{font-size:14px;color:var(--ink2);line-height:1.4}
+.mode .mgo{display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;margin-top:2px}
+.mode .mgo .mspec{margin-top:0;color:var(--mk);background:color-mix(in srgb,var(--mk) 13%,transparent);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.mode .msum{font:500 11.5px var(--mono);color:var(--ink3);overflow-wrap:anywhere}
+.mode .mfoot{margin-top:auto;padding-top:10px;display:flex;align-items:center;gap:10px;min-height:48px}
+.mode .mfoot .mcomp{flex:1;margin:0;min-width:0}
+.mode .mfoot .mspace{flex:none;width:92px}
+.mact{position:absolute;right:16px;bottom:16px;display:flex;gap:8px;z-index:2}
+.mgear,.mplay{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s,border-color .2s,color .2s,box-shadow .2s,opacity .2s}
+.mgear{border:1px solid var(--line);background:var(--panel);color:var(--ink3)}
+.mgear:hover:not(:disabled){color:var(--mk);border-color:var(--mk)}
+.mgear svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .5s}
+.mgear:hover:not(:disabled) svg{transform:rotate(60deg)}
+.mplay{border:1.5px solid color-mix(in srgb,var(--mk) 45%,var(--line));background:color-mix(in srgb,var(--mk) 8%,var(--panel));color:color-mix(in srgb,var(--mk) 70%,var(--ink3));opacity:.75}
+.mplay svg{width:16px;height:16px;fill:currentColor;margin-left:2px}
+.mwrap.sel .mplay{opacity:1;border-color:var(--mk);background:var(--mk);color:#0b0d12;box-shadow:0 0 0 0 color-mix(in srgb,var(--mk) 60%,transparent),0 8px 20px -8px var(--mk);animation:mpPulse 1.8s ease-out infinite}
+.mwrap.sel .mplay:hover{transform:scale(1.08)}
+.mwrap.sel .mplay:active{transform:scale(.95)}
+@keyframes mpPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mk) 55%,transparent),0 8px 20px -8px var(--mk)}70%{box-shadow:0 0 0 12px transparent,0 8px 20px -8px var(--mk)}100%{box-shadow:0 0 0 0 transparent,0 8px 20px -8px var(--mk)}}
+.mgear:disabled,.mplay:disabled{opacity:.35;cursor:not-allowed;animation:none}
+.mmodal{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(6,9,14,.55);backdrop-filter:blur(3px)}
+body.mmopen .mmodal{display:flex}
+body.mmopen{overflow:hidden}
+.mdlg{position:relative;width:min(680px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--bg);border:1px solid var(--line);border-top:4px solid var(--mk);border-radius:16px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6);padding:18px 20px 20px;animation:mdIn .2s cubic-bezier(.2,.9,.3,1)}
+@keyframes mdIn{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+.mdlg .mdh{display:flex;align-items:center;gap:11px;margin-bottom:6px;padding-right:36px}
+.mdlg .mdh .mico{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--mk) 17%,var(--panel2));color:var(--mk)}
+.mdlg .mdh .mico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.mdlg .mdh b{font-family:var(--serif);font-size:19px;font-weight:600}
+.mdlg .mdh small{display:block;font-size:12.5px;color:var(--ink3)}
+.mdlg .mdx{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink2);font-size:20px;line-height:1;cursor:pointer}
+.mdlg .cfg{background:none;border:none;box-shadow:none;padding:10px 0 0}
+.mdlg #startBtn{background:var(--mk);border-color:var(--mk);color:#0b0d12}
+@media (max-width:560px){.mdlg{padding:16px 14px 16px}.mdlg .modgrid{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){.mode .mbg,.mgear svg{transition:none}.mwrap.sel .mplay,.mdlg{animation:none}}
+</style></head><body>
 <title>Talastrat Idóneo · Simulador del examen de idoneidad CNV (guía v5, gratis)</title>
 <meta name="description" content="Simulador gratuito del examen de idoneidad de la CNV: las 735 preguntas de la Guía v5, simulacro de 60 preguntas en 45 minutos, parcial, fundamento legal de cada respuesta, fórmulas y plan de estudio. Sin registro.">
 <meta property="og:title" content="Talastrat Idóneo · Simulador del examen de idoneidad CNV">
@@ -883,7 +939,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       </button>
       <button class="mode" data-mode="partial">
         <span class="mt">Examen parcial</span>
-        <span class="md">Para quienes tienen exención de algunos módulos. Elegís abajo los módulos que te toca rendir.</span>
+        <span class="md">Para quienes tienen exención de algunos módulos. En el engranaje de la tarjeta elegís los módulos que te toca rendir.</span>
         <span class="mspec">30 preguntas · 23 min · 70%</span>
       </button>
       <button class="mode" data-mode="diag">
@@ -2837,6 +2893,96 @@ document.addEventListener('click',e=>{
   else if(a.tagName==="A"&&/Reportar un error/.test(a.textContent)) track('reportar_error');
   else if(a.id==="comboPractice") track('practica_combinacion');
 },true);
+
+/* ---------- tarjetas de modo: tocar = elegir; play = empezar; engranaje = ajustes en popup ---------- */
+const MID={
+ nuevas:{c:"#7aa2ff",t:"Lo que todavía no leíste de la guía.",i:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.6 2.6M15.1 15.1l2.6 2.6M6.3 17.7l2.6-2.6M15.1 8.9l2.6-2.6"/>'},
+ cards:{c:"#f2a65a",t:"Pregunta, pensás, revelás. Rápido.",i:'<rect x="4" y="7.5" width="12" height="13.5" rx="2"/><path d="M8 3.5h10a2 2 0 0 1 2 2v12"/>'},
+ recall:{c:"#c792ea",t:"Escribís antes de ver. Fija más.",i:'<path d="M4 20h4L19.5 8.5l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'},
+ datos:{c:"#4fd1c5",t:"Plazos, porcentajes, montos y normas.",i:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.6"/><circle cx="17" cy="17" r="2.6"/>'},
+ ejercicios:{c:"#f78c6c",t:"Cuentas de la guía, resueltas paso a paso.",i:'<rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>'},
+ full:{c:"#ff6b6b",t:"60 preguntas, 45 minutos, como el real.",i:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 10v3.5l2.5 1.7M9.5 2.5h5M12 2.5V6"/>'},
+ partial:{c:"#ffb86b",t:"Solo los módulos que te toca rendir.",i:'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor" fill-opacity=".3" stroke="none"/>'},
+ diag:{c:"#63d297",t:"Cinco minutos para saber por dónde arrancar.",i:'<path d="M3 12h4l2.2-6 4.6 12 2.2-6H21"/>'},
+ practice:{c:"#6cb6ff",t:"Vos elegís módulos, cantidad y corrección.",i:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.3"/>'},
+ verif:{c:"#e6c84f",t:"Lo que leíste en tarjetas, ahora con opciones.",i:'<path d="M2.5 13l4 4L15 8.5M10.5 15.5l1.5 1.5L21.5 7.5"/>'},
+ wrong:{c:"#ff7eb6",t:"Lo que fallaste, hasta que salga dos veces.",i:'<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.6"/><path d="M4 3.5v5.1h5.1"/>'}
+};
+const GEAR_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+const PLAY_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l11.6-7.2a1 1 0 0 0 0-1.72L8.5 3.94A1 1 0 0 0 7 4.8z"/></svg>';
+let MCFG={}; try{ MCFG=JSON.parse(localStorage.getItem('cnv_mcfg')||'{}')||{}; }catch(e){ MCFG={}; }
+function saveMcfg(){ const p=P[CFG.mode]; if(!p||p.lock) return; MCFG[CFG.mode]={count:CFG.count,time:CFG.time,corr:CFG.corr,order:CFG.order,mods:CFG.mods.slice()}; try{ localStorage.setItem('cnv_mcfg',JSON.stringify(MCFG)); }catch(e){} updateCardSums(); }
+function cardSum(md){
+  const p=P[md]; if(!p||p.lock) return ""; const s=MCFG[md]||{}, st=STMODES.includes(md)||md==="ejercicios";
+  const n=s.count??p.count, mods=s.mods||p.mods, t=s.time??p.time;
+  const parts=[n+(st?" por tanda":" preguntas"), mods.length===6?"todos los módulos":(mods.length===1?"módulo ":"módulos ")+mods.slice().sort().join(", ")];
+  if(t) parts.push(Math.round(t/60)+" min"); return parts.join(" · ");
+}
+function updateCardSums(){ document.querySelectorAll('.mwrap .msum').forEach(x=>{ x.textContent=cardSum(x.dataset.m); }); }
+function talExplica(b){ if(!b||$('tal').classList.contains('hide')) return; const d=b.querySelector('.md'); if(d) talSay({face:"sonrisa",txt:d.textContent},true); }
+function selectCard(md){
+  const w=document.querySelector(`.mwrap[data-m="${md}"]`); if(!w) return;
+  w.parentNode.querySelectorAll(':scope>.mwrap.sel').forEach(x=>{ if(x!==w){ x.classList.remove('sel'); x.querySelector('.mplay').setAttribute('aria-label','Elegí la tarjeta para empezar'); } });
+  w.classList.add('sel'); w.querySelector('.mplay').setAttribute('aria-label','Empezar: '+w.querySelector('.mt').textContent);
+}
+/* popup de ajustes */
+const CFGNODE=document.querySelector('#cfgSect .cfg');
+CFGNODE.addEventListener('click',()=>setTimeout(saveMcfg,0));
+const MMODAL=el('div','mmodal'); MMODAL.innerHTML='<div class="mdlg" role="dialog" aria-modal="true" aria-labelledby="mdTitle"><button class="mdx" type="button" aria-label="Cerrar">×</button><div class="mdh"><span class="mico"></span><div><b id="mdTitle"></b><small>Se guarda para este modo. Los otros modos tienen sus propios ajustes.</small></div></div><div class="mdbody"></div></div>';
+document.body.appendChild(MMODAL);
+let MM_MODE=null, MM_RET=null;
+function openModal(md){
+  const w=document.querySelector(`.mwrap[data-m="${md}"]`); if(!w) return;
+  MM_MODE=md; MM_RET=document.activeElement; const dlg=MMODAL.querySelector('.mdlg'); dlg.style.setProperty('--mk',MID[md].c);
+  MMODAL.querySelector('.mdh .mico').innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${MID[md].i}</svg>`;
+  $('mdTitle').textContent='Ajustes · '+w.querySelector('.mt').textContent;
+  MMODAL.querySelector('.mdbody').appendChild(CFGNODE); document.body.classList.add('mmopen');
+  setTimeout(()=>{ try{ MMODAL.querySelector('.mdx').focus(); }catch(e){} },30);
+}
+function closeModal(){ if(!MM_MODE) return; $('cfgSect').appendChild(CFGNODE); document.body.classList.remove('mmopen'); MM_MODE=null; try{ MM_RET&&MM_RET.focus&&MM_RET.focus({preventScroll:true}); }catch(e){} }
+MMODAL.addEventListener('click',e=>{ if(e.target===MMODAL) closeModal(); });
+MMODAL.querySelector('.mdx').addEventListener('click',closeModal);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&MM_MODE) closeModal(); });
+function playMode(md){
+  applyMode(md,false); selectCard(md);
+  if((md==="partial"&&!MCFG.partial)||$('startBtn').disabled){ openModal(md); return; }
+  $('startBtn').click();
+}
+document.querySelectorAll('#scr-home .mode[data-mode]').forEach(b=>{
+  const md=b.dataset.mode, id=MID[md]; if(!id) return;
+  const w=el('div','mwrap'); w.dataset.m=md; w.style.setProperty('--mk',id.c);
+  b.parentNode.insertBefore(w,b); w.appendChild(b);
+  const mt=b.querySelector('.mt'), sp=b.querySelector('.mspec'), cp=b.querySelector('.mcomp');
+  const head=el('span','mhead'); head.innerHTML=`<span class="mico"><svg viewBox="0 0 24 24" aria-hidden="true">${id.i}</svg></span>`; b.insertBefore(head,mt); head.appendChild(mt);
+  const bg=el('span','mbg'); bg.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${id.i}</svg>`; b.appendChild(bg);
+  const tag=el('span','mtag'); tag.textContent=id.t; head.after(tag);
+  const go=el('span','mgo'); if(sp) go.appendChild(sp); const sm=el('span','msum'); sm.dataset.m=md; go.appendChild(sm); tag.after(go);
+  const ft=el('span','mfoot'); const cpx=cp||el('span','mcomp'); ft.appendChild(cpx); ft.appendChild(el('span','mspace')); b.appendChild(ft);
+  const act=el('div','mact');
+  const g=el('button','mgear'); g.type='button'; g.innerHTML=GEAR_SVG; g.setAttribute('aria-label','Ajustes de '+mt.textContent); g.title='Ajustes de este modo';
+  const pl=el('button','mplay'); pl.type='button'; pl.innerHTML=PLAY_SVG; pl.setAttribute('aria-label','Elegí la tarjeta para empezar'); pl.title='Empezar';
+  act.appendChild(g); act.appendChild(pl); w.appendChild(act);
+  g.addEventListener('click',e=>{ e.stopPropagation(); if(b.disabled) return; applyMode(md,false); selectCard(md); openModal(md); });
+  pl.addEventListener('click',e=>{ e.stopPropagation(); if(b.disabled) return; if(!w.classList.contains('sel')){ applyMode(md,false); selectCard(md); talExplica(b); return; } playMode(md); });
+  b.setAttribute('aria-label','Elegir: '+mt.textContent);
+  b.addEventListener('click',e=>{ e.stopImmediatePropagation(); if(b.disabled) return; applyMode(md,false); selectCard(md); talExplica(b); },true);
+  b.addEventListener('dblclick',e=>{ if(!b.disabled) playMode(md); });
+  let hv=null;
+  b.addEventListener('pointerenter',e=>{ if(e.pointerType!=='mouse') return; clearTimeout(hv); hv=setTimeout(()=>talExplica(b),600); });
+  b.addEventListener('pointerleave',()=>clearTimeout(hv));
+  const syncDis=()=>{ g.disabled=b.disabled; pl.disabled=b.disabled; if(b.disabled) w.classList.remove('sel'); }; syncDis(); new MutationObserver(syncDis).observe(b,{attributes:true,attributeFilter:['disabled']});
+});
+applyMode=function(mode,scroll=true){
+  CFG.mode=mode; const p=P[mode], s=p.lock?{}:(MCFG[mode]||{});
+  CFG.count=s.count??p.count; CFG.time=s.time??p.time; CFG.corr=s.corr??p.corr; CFG.order=s.order??p.order; CFG.mods=(s.mods||p.mods).slice();
+  refreshCfg(); if(scroll){ selectCard(mode); openModal(mode); }
+};
+cfgOpen=function(on){ if(on){ selectCard(CFG.mode); openModal(CFG.mode); } else closeModal(); };
+updateStartBar=function(){};
+{ const _st2=setTab; setTab=function(t){ closeModal(); return _st2.apply(this,arguments); }; }
+TAL_TAB.estudiar={k:"t_est3",face:"sonrisa",txt:"La guía de la CNV trae cada pregunta con su respuesta, pero no las opciones incorrectas. Por eso acá ves pregunta y respuesta directo, salvo en Ejercicios. Tocá una tarjeta para elegirla y dale play; el engranaje ajusta ese modo."};
+TAL_TAB.rendir={k:"t_ren3",face:"guiño",txt:"Acá es con opciones, como en el examen. Las incorrectas no son de la guía: las escribimos para practicar. Tocá una tarjeta para elegirla y dale play; el engranaje ajusta ese modo."};
+updateCardSums();
 </script>
 
 </body></html>

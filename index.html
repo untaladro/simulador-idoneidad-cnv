@@ -69,6 +69,20 @@ body.mmopen{overflow:hidden}
 .mwrap.nav .mfoot .mspace{width:48px}
 .mwrap.nav .mfoot{min-height:40px;padding-top:2px}
 .sgroup .modes{grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+
+.tal .cuerpo{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.tal.aprieta .cuerpo{transform:scale(.9)!important;transition:transform .5s ease}
+.tal.chau{animation:talChau .35s ease-in forwards}
+@keyframes talChau{to{opacity:0;transform:translateY(40px) scale(.7)}}
+.talpeek{position:fixed;right:0;bottom:calc(20px + env(safe-area-inset-bottom));z-index:55;width:30px;height:46px;border-radius:14px 0 0 14px;border:2px solid var(--line);border-right:none;background:var(--talbg);display:none;place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22);padding:0 0 0 4px;transition:width .2s}
+.talpeek:hover{width:38px}
+.talpeek svg{width:18px;height:18px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+body.taloff .talpeek.on{display:grid;animation:talPeekIn .3s ease}
+@keyframes talPeekIn{from{transform:translateX(100%)}to{transform:none}}
+@media (max-width:899px){body.hastabs .talpeek{bottom:calc(92px + env(safe-area-inset-bottom))}}
+.taltoast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:95;background:var(--ink);color:var(--bg);font-size:14px;padding:10px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .25s;max-width:calc(100vw - 32px);text-align:center}
+.taltoast.on{opacity:1}
+@media (max-width:899px){body.hastabs .taltoast{bottom:calc(96px + env(safe-area-inset-bottom))}}
 </style></head><body>
 <title>Talastrat Idóneo · Simulador del examen de idoneidad CNV (guía v5, gratis)</title>
 <meta name="description" content="Simulador gratuito del examen de idoneidad de la CNV: las 735 preguntas de la Guía v5, simulacro de 60 preguntas en 45 minutos, parcial, fundamento legal de cada respuesta, fórmulas y plan de estudio. Sin registro.">
@@ -866,7 +880,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 <nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2 13 13l-3.8 1.8L11 11z"/></svg><span>Estrategia</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button></nav>
 <div id="tal" class="tal hide">
   <div class="globo"><i class="cierra" id="talCierra" title="Cerrar">×</i><span id="talDice"></span><div id="talAcc"></div></div>
-  <button class="cuerpo" id="talCuerpo" title="Taladrín · tocalo y te tira un consejo" aria-label="Taladrín, tu tutor"></button>
+  <button class="cuerpo" id="talCuerpo" title="Taladrín · tocalo y te tira un consejo · mantené apretado o clic derecho para esconderlo" aria-label="Taladrín, tu tutor"></button>
 </div>
 <div class="cfgov" id="helpOv"></div>
 <div class="helpdrawer foot" id="helpSect" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -3037,6 +3051,34 @@ const SGROUPS=[["Para entender","cómo encaja cada tema",["guia","tablas","mapa"
   old.remove();
 })();
 TAL_TAB.consultar={k:"t_con2",face:"atento",txt:"Acá está lo que ordena el estudio: qué leer, tablas, el mapa de organismos, los datos duros y cómo encarar el examen. Tocá una tarjeta para abrirla."};
+
+/* ---------- esconder a Taladrín ---------- */
+let TAL_OFF=false; try{ TAL_OFF=localStorage.getItem('cnv_taloff')==='1'; }catch(e){}
+const TPEEK=el('button','talpeek'); TPEEK.type='button'; TPEEK.title='Mostrar a Taladrín'; TPEEK.setAttribute('aria-label','Mostrar a Taladrín');
+TPEEK.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>'; document.body.appendChild(TPEEK);
+const TTOAST=el('div','taltoast'); TTOAST.setAttribute('role','status'); document.body.appendChild(TTOAST);
+function talToast(t){ TTOAST.textContent=t; TTOAST.classList.add('on'); clearTimeout(TTOAST._t); TTOAST._t=setTimeout(()=>TTOAST.classList.remove('on'),3200); }
+{ const _tv=talVisible; talVisible=function(s){ TPEEK.classList.toggle('on',_tv(s)); return !TAL_OFF && _tv(s); }; }
+function talSetOff(off){
+  TAL_OFF=off; try{ localStorage.setItem('cnv_taloff',off?'1':'0'); }catch(e){}
+  document.body.classList.toggle('taloff',off);
+  const t=$('tal');
+  if(off){ t.classList.remove('habla'); t.classList.add('chau'); setTimeout(()=>{ t.classList.remove('chau'); talOnScreen(TAL_SCREEN); },340); talToast('Taladrín se fue a descansar. Tocá la pestañita de la derecha para traerlo.'); }
+  else { talOnScreen(TAL_SCREEN); talSay({face:"guiño",txt:"¡Volví! Si te molesto, mantené apretado o hacé clic derecho y me voy."},true); }
+}
+TPEEK.addEventListener('click',()=>talSetOff(false));
+(()=>{
+  const c=$('talCuerpo'); let tm=null, fired=false, x0=0, y0=0;
+  c.addEventListener('contextmenu',e=>{ e.preventDefault(); clearTimeout(tm); $('tal').classList.remove('aprieta'); talSetOff(true); });
+  c.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse') return; fired=false; x0=e.clientX; y0=e.clientY; $('tal').classList.add('aprieta');
+    tm=setTimeout(()=>{ fired=true; $('tal').classList.remove('aprieta'); try{ navigator.vibrate&&navigator.vibrate(15); }catch(_){} talSetOff(true); },600); });
+  const cancel=()=>{ clearTimeout(tm); $('tal').classList.remove('aprieta'); };
+  c.addEventListener('pointerup',cancel); c.addEventListener('pointercancel',cancel); c.addEventListener('pointerleave',cancel);
+  c.addEventListener('pointermove',e=>{ if(Math.hypot(e.clientX-x0,e.clientY-y0)>10) cancel(); });
+  c.addEventListener('click',e=>{ if(fired){ e.stopImmediatePropagation(); e.preventDefault(); fired=false; } },true);
+})();
+document.body.classList.toggle('taloff',TAL_OFF);
+talOnScreen(TAL_SCREEN);
 </script>
 
 </body></html>

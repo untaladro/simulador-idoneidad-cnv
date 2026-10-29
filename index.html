@@ -1673,6 +1673,13 @@ function talOnResult(pct){
   else talSay({face:"alerta",tono:"tilt",txt:`Uf, día difícil. Pasa. No fuerces ahora: cortá acá, descansá, y mañana arrancamos${m?` por el módulo ${m}`:""} con la cabeza fresca.`,btns:[{t:"Dejarlo para mañana",go:()=>{}}]},true);
 }
 
+function sessionOHLC(items){
+  const seq=items.filter(it=>it.sel!==null).map(it=>it.opts[it.sel].ok?1:0); if(seq.length<4) return {};
+  const w=Math.min(10,Math.max(3,Math.floor(seq.length/3))), acc=a=>a.reduce((x,y)=>x+y,0)/a.length;
+  let hi=0, lo=1; for(let i=0;i+w<=seq.length;i++){ const v=acc(seq.slice(i,i+w)); hi=Math.max(hi,v); lo=Math.min(lo,v); }
+  const mods={}; items.forEach(it=>{ const b=mods[it.q.m]=mods[it.q.m]||[0,0]; b[1]++; if(it.sel!==null&&it.opts[it.sel].ok) b[0]++; });
+  return {o:acc(seq.slice(0,w)),c:acc(seq.slice(-w)),h:hi,l:lo,mods};
+}
 /* ---------- diferencias entre opciones largas ---------- */
 const dvTok=s=>s.match(/\S+\s*/g)||[];
 const dvNorm=t=>t.trim().toLowerCase().replace(/[.,;:]+$/,"");
@@ -2154,8 +2161,8 @@ function finishExam(byTime){
   EX.items.forEach(it=>recordStat(it.q.id,it.sel!==null&&it.opts[it.sel].ok));
   const correct=EX.items.filter(it=>it.sel!==null&&it.opts[it.sel].ok).length;
   const pct=correct/EX.items.length;
-  store.history.push({ts:Date.now(),mode:EX.mode,label:EX.label,n:EX.items.length,correct,pct,pass:pct>=PASS,
-    secs:(EX.endedAt-EX.startedAt)/1000});
+  store.history.push(Object.assign({ts:Date.now(),mode:EX.mode,label:EX.label,n:EX.items.length,correct,pct,pass:pct>=PASS,
+    secs:(EX.endedAt-EX.startedAt)/1000}, sessionOHLC(EX.items)));
   EX.planMarked=planDone(EX.planKey);
   saveStore(); renderResults(correct,pct); nav('res');
   if(EX.planMarked) $('verdict').insertAdjacentHTML('beforeend','<div class="planok">✓ Bloque del plan de hoy marcado como hecho.</div>');

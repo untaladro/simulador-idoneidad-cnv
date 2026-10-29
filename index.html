@@ -174,7 +174,7 @@ a{color:var(--accent)}
 .cell{aspect-ratio:1;border:1.5px solid var(--line2);background:var(--panel2);border-radius:6px;font-size:11.5px;font-family:var(--mono);color:var(--ink2);display:grid;place-items:center;padding:0;transition:.1s;position:relative}
 .cell:hover{border-color:var(--accent)}
 .cell.done{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
-.cell.flag{border-color:var(--flag);background:var(--flag-soft);color:var(--flag)}
+.cell.flag::after{content:"";position:absolute;top:-6px;right:-5px;width:14px;height:14px;background:var(--flag);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 21V4h1.5v1H19l-3 4.5 3 4.5H6.5v7z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 21V4h1.5v1H19l-3 4.5 3 4.5H6.5v7z'/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 0 1px var(--panel))}
 .cell.cur{outline:2px solid var(--ink);outline-offset:1px}
 .cell.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:700}
 .cell.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);font-weight:700}
@@ -975,11 +975,6 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
     <aside class="sheet">
       <h3>Hoja de respuestas</h3>
       <div class="grid" id="sheetGrid"></div>
-      <div class="legend">
-        <span><i class="d"></i>respondida</span>
-        <span><i class="f"></i>marcada para revisar</span>
-        <span><i></i>sin responder</span>
-      </div>
       <div class="modbreak" id="sheetMods"></div>
       <button class="btn" id="submitBtn">Entregar</button>
     </aside>

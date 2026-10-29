@@ -901,7 +901,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
       <li>Material propio: bibliografía oficial del examen, Manual de Idoneidad CAFCI, Manual IAMC, presentaciones MATBA ROFEX y unidades del curso de Mercado de Capitales de UTN</li>
     </ul>
     <p class="note" id="sourceNote"></p>
-    <p class="note">Versión 28/10/2026 16:00.</p>
+    <p class="note">Versión 29/10/2026 16:50.</p>
     <p class="note">Simulador no oficial, sin vínculo ni aval de la Comisión Nacional de Valores. Tu progreso se guarda solamente en este navegador.</p>
 </div>
 <!-- ============ HOME ============ -->
@@ -2327,6 +2327,14 @@ function buildExam(){
   if(EX.timeLimit) $('clock').classList.remove('hide');
   buildSheet(); goTo(0); startTicker();
 }
+/* Tiempo activo: suma los intervalos entre interacciones con un tope de 3 min por intervalo,
+   para que una pestaña olvidada abierta no infle la duración (había exámenes de 1.671 min). */
+const IDLE_CAP=180000;
+function actTouch(o){ if(!o) return; const now=Date.now(); const last=o.lastAct||o.startedAt||now; o.act=(o.act||0)+Math.max(0,Math.min(now-last,IDLE_CAP)); o.lastAct=now; }
+function actSecs(o){ actTouch(o); return (o.act||0)/1000; }
+/* Examen con reloj: vale el reloj (pared, con tope en el límite). Sin reloj: tiempo activo. */
+function exSecs(){ const wall=(EX.endedAt-EX.startedAt)/1000; return EX.timeLimit?Math.min(wall,EX.timeLimit):actSecs(EX); }
+['pointerdown','keydown'].forEach(t=>document.addEventListener(t,()=>{ if(typeof EX!=="undefined"&&EX&&!EX.finished) actTouch(EX); if(typeof ST!=="undefined"&&ST&&!ST.done) actTouch(ST); },true));
 function startTicker(){
   stopTicker(); if(!EX.timeLimit) return;
   const tick=()=>{
@@ -2341,7 +2349,7 @@ function startTicker(){
 function stopTicker(){ if(ticker){clearInterval(ticker);ticker=null;} }
 function saveCur(){
   if(!EX||EX.finished){ return; }
-  store.cur={mode:EX.mode,label:EX.label,corr:EX.corr,timeLimit:EX.timeLimit,startedAt:EX.startedAt,endsAt:EX.endsAt,idx:EX.idx,planKey:EX.planKey||null,
+  store.cur={mode:EX.mode,label:EX.label,corr:EX.corr,timeLimit:EX.timeLimit,startedAt:EX.startedAt,endsAt:EX.endsAt,idx:EX.idx,planKey:EX.planKey||null,act:(actTouch(EX),EX.act||0),
     items:EX.items.map(it=>({id:it.q.id,o:it.opts.map(o=>o.t),k:it.opts.map(o=>o.ok?1:0),c:it.combo?1:0,sel:it.sel,flag:it.flag,rev:it.revealed,spent:it.spent}))};
   try{ localStorage.setItem(LS,JSON.stringify(memStore)); }catch(e){}
 }
@@ -2350,7 +2358,7 @@ function resumeCur(){
   const c=store.cur; if(!c) return;
   const items=c.items.map(x=>{ const q=BANK.find(b=>b.id===x.id); if(!q) return null;
     return {q,combo:!!x.c,opts:x.o.map((t,i)=>({t,ok:x.k?!!x.k[i]:t===q.a})),sel:x.sel,flag:x.flag,revealed:x.rev,t0:0,spent:x.spent||0}; }).filter(Boolean);
-  EX={planKey:c.planKey,mode:c.mode,label:c.label,corr:c.corr,timeLimit:c.timeLimit,startedAt:c.startedAt,endsAt:c.endsAt,idx:Math.min(c.idx,items.length-1),finished:false,items};
+  EX={planKey:c.planKey,mode:c.mode,label:c.label,corr:c.corr,timeLimit:c.timeLimit,startedAt:c.startedAt,endsAt:c.endsAt,idx:Math.min(c.idx,items.length-1),finished:false,items,act:c.act||0,lastAct:Date.now()};
   nav('exam'); $('abortBtn').classList.remove('hide'); $('progpill').classList.remove('hide');
   if(EX.timeLimit){ $('clock').classList.remove('hide'); }
   buildSheet(); goTo(EX.idx); startTicker();
@@ -2442,12 +2450,12 @@ function reviewBeforeSubmit(){
 }
 function finishExam(byTime){
   if(!EX||EX.finished) return;
-  stopTicker(); markSpent(EX.idx); EX.finished=true; EX.endedAt=Date.now(); EX.byTime=!!byTime; delete store.cur;
+  stopTicker(); markSpent(EX.idx); EX.finished=true; EX.endedAt=Date.now(); EX.secs=exSecs(); EX.byTime=!!byTime; delete store.cur;
   EX.items.forEach(it=>recordStat(it.q.id,it.sel!==null&&it.opts[it.sel].ok));
   const correct=EX.items.filter(it=>it.sel!==null&&it.opts[it.sel].ok).length;
   const pct=correct/EX.items.length;
   store.history.push(Object.assign({ts:Date.now(),mode:EX.mode,label:EX.label,n:EX.items.length,correct,pct,pass:pct>=PASS,
-    secs:(EX.endedAt-EX.startedAt)/1000}, sessionOHLC(EX.items)));
+    secs:EX.secs}, sessionOHLC(EX.items)));
   EX.planMarked=planDone(EX.planKey);
   saveStore(); renderResults(correct,pct); nav('res');
   if(EX.planMarked) $('verdict').insertAdjacentHTML('beforeend','<div class="planok">✓ Bloque del plan de hoy marcado como hecho.</div>');
@@ -2535,10 +2543,11 @@ function nextCard(){
   ST.idx++; showCard();
 }
 function finishStudy(){
+  ST.done=true;
   const n=ST.r+ST.w+(ST.i||0), pct=n?ST.r/n:0;
   const planMarked=planDone(ST.planKey); ST.planKey=null;
   store.history.push({ts:Date.now(),mode:ST.mode,label:ST.label,n:n||ST.items.length,correct:ST.r,pct,self:true,
-    pass:false,secs:(Date.now()-ST.startedAt)/1000});
+    pass:false,secs:actSecs(ST)});
   saveStore();
   const host=$('modalHost');
   host.innerHTML=`<div class="modal"><div>
@@ -2557,7 +2566,7 @@ function finishStudy(){
 let REVFILTER="all";
 function renderResults(correct,pct){
   const n=EX.items.length, need=Math.ceil(n*PASS), pass=pct>=PASS;
-  const secs=(EX.endedAt-EX.startedAt)/1000;
+  const secs=EX.secs!=null?EX.secs:(EX.endedAt-EX.startedAt)/1000;
   const v=$('verdict'); v.className="verdict "+(pass?"pass":"fail"); setTimeout(()=>talOnResult(pct),300);
   v.innerHTML=`<div class="score">${Math.round(pct*100)}<span style="font-size:24px">%</span></div>
     <div class="vmeta">
@@ -2611,7 +2620,7 @@ function buildReportText(){
   const n=EX.items.length,pct=correct/n;
   let out=`INFORME — Simulador Idoneidad CNV\n${EX.label} · ${new Date(EX.startedAt).toLocaleString('es-AR')}\n`;
   out+=`Resultado: ${correct}/${n} (${Math.round(pct*100)}%) — ${pct>=PASS?"APROBADO":"DESAPROBADO"} (umbral 70%)\n`;
-  out+=`Duración: ${fmtDur((EX.endedAt-EX.startedAt)/1000)}\n\nPOR MÓDULO\n`;
+  out+=`Duración: ${fmtDur(EX.secs!=null?EX.secs:(EX.endedAt-EX.startedAt)/1000)}\n\nPOR MÓDULO\n`;
   const mods={};
   EX.items.forEach(it=>{const b=mods[it.q.m]=mods[it.q.m]||{n:0,ok:0};b.n++;if(it.sel!==null&&it.opts[it.sel].ok)b.ok++;});
   Object.keys(mods).sort().forEach(m=>{out+=`  Módulo ${m} (${MODSHORT[m]}): ${mods[m].ok}/${mods[m].n}\n`;});
@@ -2903,13 +2912,15 @@ updateStartBar(); $("cfgBtn").classList.toggle("hide",!(TAB==="estudiar"||TAB===
   const sc=document.createElement('script'); sc.defer=true; sc.src="https://cloud.umami.is/script.js";
   sc.setAttribute('data-website-id',ID); sc.setAttribute('data-domains',HOST); document.head.appendChild(sc);
 })();
+document.addEventListener('click',e=>{ try{ if(typeof ST!=="undefined"&&ST&&!ST.done&&e.target.closest('#sExit,#abortBtn'))
+  track('estudio_salida',{modo:ST.mode,vistas:ST.idx+(ST.items[ST.idx]&&ST.items[ST.idx].graded?1:0),total:ST.items.length,minutos:Math.round(actSecs(ST)/60)}); }catch(err){} },true);
 const _q=[]; function track(n,d){ try{ if(window.umami&&umami.track){ while(_q.length){const x=_q.shift();umami.track(x[0],x[1]);} umami.track(n,d||{}); } else if(_q.length<30) _q.push([n,d||{}]); }catch(e){} }
 setTimeout(()=>track('app_abierta',{pwa:matchMedia('(display-mode: standalone)').matches,fecha_examen:!!examDate()}),2500);
 const _wrap=(name,fn)=>{ const o=window[name]; if(typeof o!=="function") return; window[name]=function(){ const r=o.apply(this,arguments); try{ fn.apply(this,arguments); }catch(e){} return r; }; };
 _wrap('nav',s=>{ if(["tablas","mapa","tips","form","guia","ficha","warn","plan"].includes(s)) track('pantalla',{s}); });
 _wrap('buildExam',()=>{ if(EX) track('examen_inicio',{modo:EX.mode,n:EX.items.length,correccion:EX.corr,reloj:!!EX.timeLimit}); });
 _wrap('finishExam',()=>{ if(!EX) return; const c=EX.items.filter(it=>it.sel!==null&&it.opts[it.sel].ok).length, p=c/EX.items.length;
-  track('examen_fin',{modo:EX.mode,n:EX.items.length,pct:Math.round(p*10)*10,aprobado:p>=PASS,minutos:Math.round((EX.endedAt-EX.startedAt)/60000)}); });
+  track('examen_fin',{modo:EX.mode,n:EX.items.length,pct:Math.round(p*10)*10,aprobado:p>=PASS,minutos:Math.round((EX.secs!=null?EX.secs:(EX.endedAt-EX.startedAt)/1000)/60)}); });
 _wrap('startStudy',()=>{ if(typeof ST!=="undefined"&&ST) track('estudio_inicio',{modo:ST.mode}); });
 _wrap('finishStudy',()=>{ if(typeof ST!=="undefined"&&ST) track('estudio_fin',{modo:ST.mode,n:ST.r+ST.w+(ST.i||0)}); });
 _wrap('talTiltCheck',()=>{ if(EX&&EX.tilted&&!EX._tt){ EX._tt=1; track('taladrin_tilt',{modo:EX.mode}); } });

@@ -880,7 +880,7 @@ kbd{font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px s
 <nav class="tabbar" id="tabbar" aria-label="Secciones"><button class="tabbtn" data-tabgo="inicio" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></button><button class="tabbtn" data-tabgo="estudiar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/></svg><span>Estudiar</span></button><button class="tabbtn" data-tabgo="consultar" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2 13 13l-3.8 1.8L11 11z"/></svg><span>Estrategia</span></button><button class="tabbtn" data-tabgo="rendir" aria-current="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 13V9.5M9.5 3.5h5M12 3.5v2"/></svg><span>Rendir</span></button></nav>
 <div id="tal" class="tal hide">
   <div class="globo"><i class="cierra" id="talCierra" title="Cerrar">×</i><span id="talDice"></span><div id="talAcc"></div></div>
-  <button class="cuerpo" id="talCuerpo" title="Taladrín · tocalo y te tira un consejo · mantené apretado o clic derecho para esconderlo" aria-label="Taladrín, tu tutor"></button>
+  <button class="cuerpo" id="talCuerpo" title="Taladrín · tocalo y te tira un consejo · mantenelo apretado para esconderlo" aria-label="Taladrín, tu tutor"></button>
 </div>
 <div class="cfgov" id="helpOv"></div>
 <div class="helpdrawer foot" id="helpSect" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -3064,13 +3064,13 @@ function talSetOff(off){
   document.body.classList.toggle('taloff',off);
   const t=$('tal');
   if(off){ t.classList.remove('habla'); t.classList.add('chau'); setTimeout(()=>{ t.classList.remove('chau'); talOnScreen(TAL_SCREEN); },340); talToast('Taladrín se fue a descansar. Tocá la pestañita de la derecha para traerlo.'); }
-  else { talOnScreen(TAL_SCREEN); talSay({face:"guiño",txt:"¡Volví! Si te molesto, mantené apretado o hacé clic derecho y me voy."},true); }
+  else { talOnScreen(TAL_SCREEN); talSay({face:"guiño",txt:"¡Volví! Si te molesto, mantenéme apretado y me voy."},true); }
 }
 TPEEK.addEventListener('click',()=>talSetOff(false));
 (()=>{
   const c=$('talCuerpo'); let tm=null, fired=false, x0=0, y0=0;
-  c.addEventListener('contextmenu',e=>{ e.preventDefault(); clearTimeout(tm); $('tal').classList.remove('aprieta'); talSetOff(true); });
-  c.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse') return; fired=false; x0=e.clientX; y0=e.clientY; $('tal').classList.add('aprieta');
+  document.addEventListener('contextmenu',e=>{ if(!(e.target.closest&&e.target.closest('#talCuerpo'))) return; e.preventDefault(); e.stopPropagation(); clearTimeout(tm); $('tal').classList.remove('aprieta'); if(!TAL_OFF) talSetOff(true); },true);
+  c.addEventListener('pointerdown',e=>{ if(e.pointerType==='mouse'&&e.button!==0) return; fired=false; x0=e.clientX; y0=e.clientY; $('tal').classList.add('aprieta');
     tm=setTimeout(()=>{ fired=true; $('tal').classList.remove('aprieta'); try{ navigator.vibrate&&navigator.vibrate(15); }catch(_){} talSetOff(true); },600); });
   const cancel=()=>{ clearTimeout(tm); $('tal').classList.remove('aprieta'); };
   c.addEventListener('pointerup',cancel); c.addEventListener('pointercancel',cancel); c.addEventListener('pointerleave',cancel);

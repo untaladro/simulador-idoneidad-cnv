@@ -1763,27 +1763,28 @@ function tapeData(){
 (function(){
   const cv=$('tape'); if(!cv) return; const ctx=cv.getContext('2d'), ro=$('tapeRo');
   const RM=matchMedia('(prefers-reduced-motion: reduce)').matches; let SP=16, BW=9;
-  const spacing=()=>{ const base=W>700?22:18; SP=TAPE.real&&W? Math.max(base,Math.min(40,(W*0.7)/Math.max(1,TAPE.bars.length))):base; BW=Math.round(Math.min(16,SP*0.58)); };
+  const spacing=()=>{ const base=W>700?22:18; SP=TAPE.real&&W? Math.max(base,Math.min(64,(W*(W>700?0.62:0.8))/Math.max(1,TAPE.bars.length))):base; BW=Math.round(Math.min(TAPE.real?18:16,SP*(TAPE.real?0.45:0.58))); };
   const rgba=(c,a)=>{ c=c.replace('#',''); if(c.length===3) c=c.split('').map(x=>x+x).join(''); const n=parseInt(c,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   let W=0,H=0,sd=7,lvl=44,day=0,lo=40,hi=95; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
   let climbed=false;
   const ghost=()=>{ if(lvl>=74) climbed=true; const tgt=climbed? 74+8*Math.sin(day/9)+4*Math.sin(day/3.3) : lvl+2; const drift=(tgt-lvl)*(climbed?.25:.75), o=lvl+(rnd()-.5)*2.5, c=Math.max(40,Math.min(94,o+drift+(rnd()-.45)*6));
     TAPE.bars.push({o,c,h:Math.max(o,c)+1+rnd()*4,l:Math.min(o,c)-1-rnd()*5,v:40+rnd()*60,d:++day}); lvl=c; };
-  function load(){ const real=tapeData(); TAPE.real=real.length>=3; TAPE.bars=[]; lvl=44; sd=7; day=0; climbed=false;
-    if(TAPE.real){ const vmax=Math.max(...real.map(b=>b.v),1); TAPE.bars=real.map(b=>({...b,v:b.v/vmax*100})); } lo=Math.min(70,...TAPE.bars.map(b=>b.l||70))-3; hi=Math.max(70,...TAPE.bars.map(b=>b.h||70))+3; if(!TAPE.real){ lo=40; hi=92; } spacing(); fill(); TAPE.reveal=RM?1e9:0; TAPE.done=RM; }
+  function load(){ const real=tapeData(); TAPE.real=real.length>=7; TAPE.bars=[]; lvl=44; sd=7; day=0; climbed=false;
+    if(TAPE.real){ const vmax=Math.max(...real.map(b=>b.v),1); TAPE.bars=real.map(b=>({...b,v:b.v/vmax*100})); } lo=Math.min(45,...TAPE.bars.map(b=>b.l||70))-3; hi=Math.max(95,...TAPE.bars.map(b=>b.h||70))+3; if(!TAPE.real){ lo=40; hi=92; } spacing(); fill(); TAPE.reveal=RM?1e9:0; TAPE.done=RM; }
   function fill(){ if(!TAPE.real){ const need=Math.ceil(W/SP)+4; while(TAPE.bars.length<need) ghost(); } }
   function size(){ const r=cv.getBoundingClientRect(), dpr=Math.min(2,devicePixelRatio||1); W=r.width; H=r.height; if(!W) return; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); spacing(); fill(); draw(); }
   const band=()=> W>700? [H*0.12,H*0.78] : [H*0.24,H*0.68];
   const yOf=v=>{ const [a,b]=band(); return a+(1-(v-lo)/Math.max(8,hi-lo))*(b-a); };
   function rescale(snap){ const B=TAPE.bars, n=B.length, vis=B.filter((b,i)=>i<TAPE.reveal&&(W-SP*1.5-(n-1-i)*SP)>-SP); if(!vis.length) return;
-    let mn=Math.min(70,...vis.map(b=>b.l))-3, mx=Math.max(70,...vis.map(b=>b.h))+3; if(snap){ lo=mn; hi=mx; } else { lo+=(mn-lo)*.04; hi+=(mx-hi)*.04; } }
+    let mn=Math.min(TAPE.real?45:70,...vis.map(b=>b.l))-3, mx=Math.max(TAPE.real?95:70,...vis.map(b=>b.h))+3; if(snap){ lo=mn; hi=mx; } else { lo+=(mn-lo)*.04; hi+=(mx-hi)*.04; } }
   function draw(){
     if(!W) return; rescale(false); const up=css('--ok'), dn=css('--bad'), ink=css('--ink'); ctx.clearRect(0,0,W,H);
     const y70=yOf(70); ctx.setLineDash([4,5]); ctx.strokeStyle=rgba(ink,.28); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,y70); ctx.lineTo(W,y70); ctx.stroke(); ctx.setLineDash([]);
     ctx.font='500 10px ui-monospace, monospace'; ctx.fillStyle=rgba(ink,.45); ctx.textAlign='right'; ctx.fillText('70% · aprobación',W-10,y70-6);
     const B=TAPE.bars, n=B.length, x0=W-SP*1.5-TAPE.prog*SP;
     if(!TAPE.real){ for(let k=1;k<=6;k++){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const off=6*Math.sin((b.d||i)/(5+k*1.3)+k*1.9)+3*Math.sin((b.d||i)/(2.1+k*.4)+k); const v=b.c+off; e=e===null?v:v*.3+e*.7; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--m'+k)||'#888',.34); ctx.lineWidth=1.4; ctx.stroke(); } }
+    if(TAPE.real){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; e=e===null?b.c:b.c*.35+e*.65; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--accent'),.6); ctx.lineWidth=2; ctx.stroke(); }
     B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const x=x0-(n-1-i)*SP; if(x<-SP) return; const col=b.c>=b.o?up:dn, a=TAPE.hover===i?1:(TAPE.real?.8:.55);
       ctx.fillStyle=rgba(col,.14); const vh=b.v/100*H*0.12; ctx.fillRect(x-BW/2,H-vh,BW,vh);
       ctx.strokeStyle=rgba(col,a); ctx.beginPath(); ctx.moveTo(x,yOf(b.h)); ctx.lineTo(x,yOf(b.l)); ctx.stroke();

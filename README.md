@@ -18,9 +18,8 @@ Simulador no oficial del examen de idoneidad de la Comisión Nacional de Valores
 
 ## Fuentes y créditos
 
-- Enunciados y respuestas: Guía de Estudio para el Examen de Idoneidad, versión 5, publicada por la CNV.
-- Opciones incorrectas de las preguntas de la guía: [valentin-fabre/simulador-idoneidad-cnv](https://github.com/valentin-fabre/simulador-idoneidad-cnv), licencia MIT.
-- Preguntas complementarias: [octavioes/cnv-idoneo-v2](https://github.com/octavioes/cnv-idoneo-v2), licencia MIT, con opciones reescritas.
+- Enunciados y respuestas: Guía de Estudio para el Examen de Idoneidad, versión 5, publicada por la CNV en argentina.gob.ar (CC BY 4.0).
+- Opciones incorrectas: propias de este simulador.
 - Textos normativos: [argentina.gob.ar/normativa](https://www.argentina.gob.ar/normativa).
 
 Ver [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).

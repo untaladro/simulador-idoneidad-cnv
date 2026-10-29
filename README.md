@@ -22,6 +22,4 @@ Simulador no oficial del examen de idoneidad de la Comisión Nacional de Valores
 - Opciones incorrectas: propias de este simulador.
 - Textos normativos: [argentina.gob.ar/normativa](https://www.argentina.gob.ar/normativa).
 
-Ver [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
-
 Sin vínculo ni aval de la Comisión Nacional de Valores. Ante cualquier duda, manda el texto oficial vigente.

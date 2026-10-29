@@ -48,12 +48,14 @@ button,input,textarea{font-family:inherit;font-size:inherit}
 button{cursor:pointer}
 h1,h2,h3{line-height:1.25;margin:0}
 a{color:var(--accent)}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1400px;margin:0 auto;padding:0 20px}
+#scr-exam.wrap,#scr-study.wrap{max-width:1180px}
+.sect>h2 em,.hero p,.note{max-width:80ch}
 .hide{display:none !important}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
 
 .top{position:sticky;top:0;z-index:40;background:var(--panel);border-bottom:1px solid var(--line)}
-.top-in{max-width:1080px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
+.top-in{max-width:1400px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px}
 .brand{display:flex;align-items:baseline;gap:9px;margin-right:auto;min-width:0}
 .brand b{font-family:var(--serif);font-weight:600;font-size:17px;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .brand span{font-size:12px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -576,11 +578,11 @@ body.hastabs{padding-bottom:84px}
 .tapero.on{opacity:1}
 @media (max-width:699px){.tapero{top:auto;bottom:8px;right:10px;max-width:calc(100% - 20px)}}
 .hero.hv .hcopy{position:absolute;left:16px;right:16px;top:22px;pointer-events:none}
-@media (min-width:900px){.hero.hv .hcopy{left:max(28px,calc(50vw - 520px));top:40px}}
+@media (min-width:900px){.hero.hv .hcopy{left:max(28px,calc(50vw - 680px));top:40px}}
 .hero.hv h1{margin:0;font-family:var(--serif);font-weight:700;font-size:clamp(32px,8.6vw,52px)!important;line-height:1;letter-spacing:-.015em;max-width:11ch}
 .hero.hv h1 b{color:var(--accent)}
 .hero.hv .hcta{position:absolute;left:16px;right:16px;bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-@media (min-width:900px){.hero.hv .hcta{left:max(28px,calc(50vw - 520px));right:auto;bottom:34px}}
+@media (min-width:900px){.hero.hv .hcta{left:max(28px,calc(50vw - 680px));right:auto;bottom:34px}}
 .hero.hv .examdate{margin:0;gap:6px;background:color-mix(in srgb,var(--panel) 88%,transparent);border:1px solid var(--line);border-radius:999px;padding:3px 4px 3px 12px;font:500 12.5px var(--mono)}
 .hero.hv .examdate label{font-weight:500;color:var(--ink2)}
 .hero.hv .examdate input{border:0;background:transparent;padding:4px 6px;font:600 12.5px var(--mono);box-shadow:none}
@@ -1818,7 +1820,7 @@ function tapeData(){
   const RM=matchMedia('(prefers-reduced-motion: reduce)').matches; let SP=16, BW=9;
   let W=0,H=0,sd=7,lvl=44,day=0,lo=40,hi=95; const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
   // el gráfico real se alinea con la columna de contenido; la animación de fantasía ocupa todo el ancho
-  const edges=()=>{ const wide=W>700, R=TAPE.real&&wide? Math.min(W-16,W/2+540):W-8, L=wide? Math.max(16,W/2-540):0; return [L,R]; };
+  const edges=()=>{ const wide=W>700, R=TAPE.real&&wide? Math.min(W-16,W/2+680):W-8, L=wide? Math.max(16,W/2-680):0; return [L,R]; };
   const spacing=()=>{ const base=W>700?22:18; if(TAPE.real&&W){ const [L,R]=edges(); SP=Math.max(base,Math.min(56,((R-L)*(W>700?0.6:0.85))/Math.max(1,TAPE.bars.length))); } else SP=base; BW=Math.round(Math.min(TAPE.real?18:16,SP*(TAPE.real?0.45:0.58))); };
   const rgba=(c,a)=>{ c=c.replace('#',''); if(c.length===3) c=c.split('').map(x=>x+x).join(''); const n=parseInt(c,16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -1839,7 +1841,7 @@ function tapeData(){
   function draw(){
     if(!W) return; rescale(); const up=css('--ok'), dn=css('--bad'), ink=css('--ink'), acc=css('--accent'); ctx.clearRect(0,0,W,H);
     const [L,R]=edges(), y70=yOf(70); ctx.setLineDash([4,5]); ctx.strokeStyle=rgba(ink,.28); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,y70); ctx.lineTo(W,y70); ctx.stroke(); ctx.setLineDash([]);
-    ctx.font='500 10px ui-monospace, monospace'; ctx.fillStyle=rgba(ink,.45); ctx.textAlign='right'; ctx.fillText('70% · aprobación',W>700?Math.min(W-28,W/2+540):W-14,y70-6);
+    ctx.font='500 10px ui-monospace, monospace'; ctx.fillStyle=rgba(ink,.45); ctx.textAlign='right'; ctx.fillText('70% · aprobación',W>700?Math.min(W-28,W/2+680):W-14,y70-6);
     const B=TAPE.bars, n=B.length, x0=X0();
     if(!TAPE.real){ for(let k=1;k<=6;k++){ let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; const off=6*Math.sin((b.d||i)/(5+k*1.3)+k*1.9)+3*Math.sin((b.d||i)/(2.1+k*.4)+k); const v=b.c+off; e=e===null?v:v*.3+e*.7; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(css('--m'+k)||'#888',.34); ctx.lineWidth=1.4; ctx.stroke(); } }
     else { let e=null; ctx.beginPath(); B.forEach((b,i)=>{ if(i>=TAPE.reveal) return; e=e===null?b.c:b.c*.35+e*.65; const x=x0-(n-1-i)*SP; i?ctx.lineTo(x,yOf(e)):ctx.moveTo(x,yOf(e)); }); ctx.strokeStyle=rgba(acc,.6); ctx.lineWidth=2; ctx.stroke(); }

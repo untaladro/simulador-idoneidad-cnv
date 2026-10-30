@@ -2105,9 +2105,7 @@ function renderHome(){
   $('specEjer').textContent=`${BANK.filter(q=>q.calc===1).length} ejercicios`;
   $('specForm').textContent=`${FORM.grupos.reduce((a,g)=>a+g.items.length,0)} fórmulas`;
   $('specFicha').textContent=`${Object.values(FICHA).reduce((a,m)=>a+Object.values(m).reduce((b,g)=>b+g.length,0),0)} datos`;
-  const doneB=Object.values(store.plan).filter(Boolean).length;
-  const allB=PLAN_BASE.reduce((a,d)=>a+d.b.length,0);
-  $('specPlan').textContent=`${doneB}/${allB} bloques`;
+  $('specPlan').textContent=planSpec();
   const wp=wrongPool();
   $('wrongCount').textContent=wp.length?`${wp.length} pendientes`:"sin errores registrados";
   $('wrongBtn').disabled=wp.length===0;
@@ -2182,15 +2180,20 @@ function fillBlocks(host,day){
 function renderToday2(day){
   if($('todayBlocks')) renderToday();
   if(!$('scr-plan').classList.contains('hide')) renderPlan(day.d);
-  const doneB=Object.values(store.plan).filter(Boolean).length;
-  const allB=PLAN.dias.reduce((a,d)=>a+d.b.length,0);
-  if($('specPlan')) $('specPlan').textContent=`${doneB}/${allB} bloques`;
+  if($('specPlan')) $('specPlan').textContent=planSpec();
 }
 function labelFor(b){
   return {full:"Rendir",partial:"Rendir",practice:"Practicar",wrong:"Repasar",ejercicios:"Resolver",
           cards:"Tarjetas",recall:"Recall",datos:"Drill",guia:"Leer",ficha:"Abrir"}[b.m]||"Ir";
 }
 let PLAN_PENDING=null;
+/* Cuenta solo los bloques del plan vigente: store.plan puede guardar marcas de fechas de examen anteriores. */
+function planSpec(){
+  if(!PLAN.dias.length) return `${PLAN_BASE.reduce((a,d)=>a+d.b.length,0)} bloques`;
+  let done=0, all=0;
+  PLAN.dias.forEach(d=>d.b.forEach((_,i)=>{ all++; if(store.plan[d.d+"#"+i]) done++; }));
+  return `${done}/${all} bloques`;
+}
 function planDone(key){ if(!key) return false; store.plan[key]=true; saveStore(); return true; }
 function launchBlock(b){
   if(b.m==="guia"||b.m==="ficha"){ planDone(PLAN_PENDING); PLAN_PENDING=null; nav(b.m); return; }
